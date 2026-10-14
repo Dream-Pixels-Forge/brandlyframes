@@ -1,0 +1,24 @@
+{
+  "name": "@brandlyframes/renderer",
+  "version": "0.1.0",
+  "description": "BrandlyFrames Renderer — renders compositions to video/image sequences",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@vitest/coverage-v8": "^5.0.4",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4"
+  }
+}
