@@ -9,6 +9,37 @@ const isBrowserWithWebCodecs = (): boolean => {
 };
 
 /**
+ * Minimal shape of a media track list (`audioTracks` / `videoTracks`).
+ * Not exposed with a `codec` field in the standard TypeScript DOM lib.
+ */
+interface TrackListLike {
+  length: number;
+  [index: number]: { codec?: string };
+}
+
+type MediaElementWithTracks = HTMLMediaElement & {
+  audioTracks?: TrackListLike;
+  videoTracks?: TrackListLike;
+};
+
+/**
+ * Safely read the codec string from the first audio/video track, if present.
+ * @param mediaElement The media element to inspect
+ * @param kind Which track list to read
+ * @returns The codec string, or '' when unavailable
+ */
+const getTrackCodec = (
+  mediaElement: HTMLMediaElement,
+  kind: 'audioTracks' | 'videoTracks'
+): string => {
+  const tracks = (mediaElement as MediaElementWithTracks)[kind];
+  if (tracks && tracks.length > 0) {
+    return tracks[0].codec ?? '';
+  }
+  return '';
+};
+
+/**
  * Parse video metadata using WebCodecs API
  * @param videoBlob The video blob to parse
  * @returns Promise resolving to video metadata with frame rate and pixel format
@@ -57,19 +88,14 @@ export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
     videoElement.src = url;
     await metadataLoaded;
 
-    // Extract basic metadata from video element
-    const width = videoElement.videoWidth;
-    const height = videoElement.videoHeight;
-    
     // Try to get codec from video tracks
-    let codec = '';
-    if ('videoTracks' in videoElement && (videoElement as any).videoTracks.length > 0) {
-      codec = (videoElement as any).videoTracks[0].codec || '';
-    }
+    const codec = getTrackCodec(videoElement, 'videoTracks');
 
-    // Now use WebCodecs to get frame rate and pixel format
-    let frameRate = 0;
-    let pixelFormat = '';
+    // Note: frame rate and pixel format extraction requires WebCodecs decoding;
+    // the values below remain placeholders until BF-050/BF-052 implement it.
+    // HTMLVideoElement doesn't directly expose pixel format.
+    const frameRate = 0;
+    const pixelFormat = '';
 
     try {
       // For now, we'll check if WebCodecs is supported and return basic info
@@ -167,18 +193,13 @@ export const parseAudioMetadataWebCodecs = async (audioBlob: Blob): Promise<{
     audioElement.src = url;
     await metadataLoaded;
 
-    // Extract basic metadata from audio element
-    const duration = audioElement.duration;
-    
     // Try to get codec from audio tracks
-    let codec = '';
-    if ('audioTracks' in audioElement && (audioElement as any).audioTracks.length > 0) {
-      codec = (audioElement as any).audioTracks[0].codec || '';
-    }
+    const codec = getTrackCodec(audioElement, 'audioTracks');
 
-    // Now use WebCodecs AudioDecoder to get sample rate and channel count
-    let sampleRate = 0;
-    let channelCount = 0;
+    // Note: sample rate and channel count extraction requires WebCodecs decoding;
+    // the values below remain placeholders until BF-050/BF-052 implement it.
+    const sampleRate = 0;
+    const channelCount = 0;
 
     try {
       // For now, we'll check if WebCodecs AudioDecoder is supported and return basic info

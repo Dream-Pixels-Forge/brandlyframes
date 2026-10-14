@@ -1,9 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { 
-  parseMediaMetadata, 
-  MediaMetadata,
-  AudioMetadata,
-  VideoMetadata
+  parseMediaMetadata
 } from '../src/index';
 
 describe('media-parser', () => {

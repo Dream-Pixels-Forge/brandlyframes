@@ -31,21 +31,66 @@ const isBrowser = (): boolean => {
 };
 
 /**
+ * Minimal shape of a media track list (`audioTracks` / `videoTracks`).
+ * Not exposed with a `codec` field in the standard TypeScript DOM lib.
+ */
+interface TrackListLike {
+  length: number;
+  [index: number]: { codec?: string };
+}
+
+type MediaElementWithTracks = HTMLMediaElement & {
+  audioTracks?: TrackListLike;
+  videoTracks?: TrackListLike;
+};
+
+/** Structural type for the optional @brandlyframes/webcodecs module. */
+interface WebCodecsModule {
+  parseVideoMetadataWebCodecs?: (blob: Blob) => Promise<{
+    frameRate: number;
+    pixelFormat: string;
+    codec: string;
+  }>;
+  parseAudioMetadataWebCodecs?: (blob: Blob) => Promise<{
+    sampleRate: number;
+    channelCount: number;
+    codec: string;
+  }>;
+}
+
+/**
+ * Safely read the codec string from the first audio/video track, if present.
+ * @param mediaElement The media element to inspect
+ * @param kind Which track list to read
+ * @returns The codec string, or '' when unavailable
+ */
+const getTrackCodec = (
+  mediaElement: HTMLMediaElement,
+  kind: 'audioTracks' | 'videoTracks'
+): string => {
+  const tracks = (mediaElement as MediaElementWithTracks)[kind];
+  if (tracks && tracks.length > 0) {
+    return tracks[0].codec ?? '';
+  }
+  return '';
+};
+
+/**
  * Try to import the webcodecs package dynamically
  * @returns Promise resolving to the webcodecs module or null if not available
  */
-const tryImportWebCodecs = async (): Promise<any> => {
+const tryImportWebCodecs = async (): Promise<WebCodecsModule | null> => {
   // Check if we're in a browser environment first
   if (!isBrowser()) {
     return null;
   }
-  
+
   try {
     // Try to dynamically import the webcodecs package
     // We use a dynamic import to avoid hard dependency
     const module = await import('@brandlyframes/webcodecs');
     return module;
-  } catch (e) {
+  } catch {
     // WebCodecs package might not be available or might fail to import
     // Return null to indicate fallback to built-in implementation
     return null;
@@ -125,13 +170,18 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
 
     if (isAudio) {
       // Try to get codec from audio tracks
-      if ('audioTracks' in mediaElement && (mediaElement as any).audioTracks.length > 0) {
-        codec = (mediaElement as any).audioTracks[0].codec || '';
-      }
+      codec = getTrackCodec(mediaElement, 'audioTracks');
 
       // Try to get sample rate and channel count using Web Audio API
       try {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        type AudioContextCtor = typeof AudioContext;
+        const AudioContextClass: AudioContextCtor | undefined =
+          window.AudioContext ??
+          (window as Window & { webkitAudioContext?: AudioContextCtor }).webkitAudioContext;
+        if (!AudioContextClass) {
+          throw new Error('Web Audio API is not available');
+        }
+        const audioContext = new AudioContextClass();
         const source = audioContext.createMediaElementSource(mediaElement);
         const analyser = audioContext.createAnalyser();
         source.connect(analyser);
@@ -145,15 +195,13 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
         const arrayBuffer = await mediaBlob.arrayBuffer();
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         channelCount = audioBuffer.numberOfChannels;
-      } catch (e) {
+      } catch {
         // Web Audio API might not be available or might fail
         // Leave sampleRate and channelCount as 0
       }
     } else if (isVideo) {
       // Try to get codec from video tracks
-      if ('videoTracks' in mediaElement && (mediaElement as any).videoTracks.length > 0) {
-        codec = (mediaElement as any).videoTracks[0].codec || '';
-      }
+      codec = getTrackCodec(mediaElement, 'videoTracks');
 
       // Try to get frame rate and pixel format using WebCodecs if available
       // Fall back to default values if WebCodecs is not available or fails
