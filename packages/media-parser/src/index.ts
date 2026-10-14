@@ -31,6 +31,28 @@ const isBrowser = (): boolean => {
 };
 
 /**
+ * Try to import the webcodecs package dynamically
+ * @returns Promise resolving to the webcodecs module or null if not available
+ */
+const tryImportWebCodecs = async (): Promise<any> => {
+  // Check if we're in a browser environment first
+  if (!isBrowser()) {
+    return null;
+  }
+  
+  try {
+    // Try to dynamically import the webcodecs package
+    // We use a dynamic import to avoid hard dependency
+    const module = await import('@brandlyframes/webcodecs');
+    return module;
+  } catch (e) {
+    // WebCodecs package might not be available or might fail to import
+    // Return null to indicate fallback to built-in implementation
+    return null;
+  }
+};
+
+/**
  * Parse media metadata from a blob
  * @param mediaBlob The media blob to parse
  * @returns Promise resolving to audio or video metadata
@@ -133,12 +155,24 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
         codec = (mediaElement as any).videoTracks[0].codec || '';
       }
 
-      // Try to get frame rate - this is not directly available from HTMLVideoElement
-      // We would need to use WebCodecs or other advanced APIs
-      // For now, leave it as 0 and note it requires WebCodecs
-
-      // Try to get pixel format - also requires WebCodecs or similar
-      // For now, leave it as empty string
+      // Try to get frame rate and pixel format using WebCodecs if available
+      // Fall back to default values if WebCodecs is not available or fails
+      try {
+        const webCodecsModule = await tryImportWebCodecs();
+        if (webCodecsModule && webCodecsModule.parseVideoMetadataWebCodecs) {
+          const webCodecsResult = await webCodecsModule.parseVideoMetadataWebCodecs(mediaBlob);
+          frameRate = webCodecsResult.frameRate;
+          pixelFormat = webCodecsResult.pixelFormat;
+          // Only override codec if we got a valid one from webcodecs
+          if (webCodecsResult.codec) {
+            codec = webCodecsResult.codec;
+          }
+        }
+      } catch (e) {
+        // WebCodecs might not be available or might fail
+        // Leave frameRate and pixelFormat as default values (0 and empty string)
+        console.warn('WebCodecs not available or failed in media-parser:', e);
+      }
     }
 
     // Return the appropriate metadata type
