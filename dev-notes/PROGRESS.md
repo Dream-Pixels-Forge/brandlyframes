@@ -27,7 +27,7 @@
 ## Goal-phase tracking (GOAL_00.md §7 / §7c)
 - [x] P0 Foundation — **GATE PASSED** (commits 115f6b3, a7211e9 [BF-001])
 - [x] P1 Core — **GATE PASSED** (commits b80a0b3, 195107a, 075bb6d, f61922c; 366 tests; 100% lines timing/animation) → **v0.1 "Slate" COMPLETE**
-- [ ] P2 Studio (v0.2 "Projector") — **dispatched** (workflow v02-projector): design pkg (BF-013) → fonts (BF-410) → bundler (BF-010) → CLI+config (BF-014/015) **DONE** → studio shell+props editor+error overlay+frame inspector (BF-011/012/411/412) → integration → reviewer gate
+- [ ] P2 Studio (v0.2 "Projector") — **dispatched** (workflow v02-projector): design pkg (BF-013) → fonts (BF-410) → bundler (BF-010) → CLI+config (BF-014/015) **DONE** → media-utils (BF-050) **STARTED** → studio shell+props editor+error overlay+frame inspector (BF-011/012/411/412) → integration → reviewer gate
 - [ ] P3 Renderer (v0.3) → P19 (v3.0) — queued; dispatch only after previous gate passes
 
 ## Orchestration policy
