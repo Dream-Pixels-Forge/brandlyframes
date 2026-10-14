@@ -14,17 +14,35 @@ import { Loop } from '../../src/components/loop';
 import { Freeze } from '../../src/components/freeze';
 import { Series } from '../../src/components/series';
 import { TEST_VIDEO_CONFIG, FrameProbe } from '../helpers';
+import {
+  interpolate,
+  interpolateColors,
+  random,
+  resolveSequenceFrame as publicResolveSequenceFrame,
+  spring,
+} from '../../src/index';
 
 describe('pure timing determinism (no DOM)', () => {
   it('repeated resolution of the same frame always yields identical values', () => {
     for (let parentFrame = -20; parentFrame <= 320; parentFrame++) {
-      expect(Object.is(resolveSequenceFrame(parentFrame, 7), resolveSequenceFrame(parentFrame, 7))).toBe(true);
-      expect(Object.is(resolveLoopFrame(parentFrame, 9), resolveLoopFrame(parentFrame, 9))).toBe(true);
       expect(
-        Object.is(resolveFreezeFrame(parentFrame, (f) => f + 3), resolveFreezeFrame(parentFrame, (f) => f + 3)),
+        Object.is(resolveSequenceFrame(parentFrame, 7), resolveSequenceFrame(parentFrame, 7)),
       ).toBe(true);
-      expect(Object.is(isSequenceVisible(parentFrame, 7, 13), isSequenceVisible(parentFrame, 7, 13))).toBe(true);
-      expect(Object.is(isLoopActive(parentFrame, 9, 4), isLoopActive(parentFrame, 9, 4))).toBe(true);
+      expect(Object.is(resolveLoopFrame(parentFrame, 9), resolveLoopFrame(parentFrame, 9))).toBe(
+        true,
+      );
+      expect(
+        Object.is(
+          resolveFreezeFrame(parentFrame, (f) => f + 3),
+          resolveFreezeFrame(parentFrame, (f) => f + 3),
+        ),
+      ).toBe(true);
+      expect(
+        Object.is(isSequenceVisible(parentFrame, 7, 13), isSequenceVisible(parentFrame, 7, 13)),
+      ).toBe(true);
+      expect(Object.is(isLoopActive(parentFrame, 9, 4), isLoopActive(parentFrame, 9, 4))).toBe(
+        true,
+      );
     }
   });
 
@@ -59,6 +77,40 @@ describe('pure timing determinism (no DOM)', () => {
       secondPass.push(resolveComposite(parentFrame));
     }
     expect(secondPass).toEqual(firstPass);
+  });
+});
+
+describe('cross-module determinism through the public API', () => {
+  // One "resolution" of a frame touches timing, animation and utils at once.
+  const resolveFrameValue = (frame: number): string => {
+    const sequenceFrame = publicResolveSequenceFrame(frame, 5);
+    const position = interpolate(sequenceFrame, [0, 100], [0, 1080], { extrapolateRight: 'clamp' });
+    const eased = spring({ frame: Math.max(0, sequenceFrame), fps: 30, from: 0, to: 1 });
+    const color = interpolateColors(sequenceFrame, [0, 60], ['#FF6A00', '#0044FF']);
+    const jitter = random(`frame-${sequenceFrame}`);
+    return `${sequenceFrame}|${position}|${eased}|${color}|${jitter}`;
+  };
+
+  it('resolving the same frame twice is identical across timing, animation and utils', () => {
+    for (let frame = 0; frame <= 130; frame++) {
+      expect(resolveFrameValue(frame)).toBe(resolveFrameValue(frame));
+    }
+    // Sanity: the composite value actually moves with the frame (non-constant).
+    expect(resolveFrameValue(0)).not.toBe(resolveFrameValue(42));
+  });
+
+  it('two full SSR renders of the same frame through the public API are byte-identical', () => {
+    const renderPublic = (frame: number): string =>
+      renderToString(
+        <FrameContextProvider currentFrame={frame} videoConfig={TEST_VIDEO_CONFIG}>
+          <Sequence from={5} durationInFrames={100}>
+            <FrameProbe />
+          </Sequence>
+        </FrameContextProvider>,
+      );
+    for (const frame of [0, 6, 30, 104, 119]) {
+      expect(renderPublic(frame)).toBe(renderPublic(frame));
+    }
   });
 });
 

@@ -6,9 +6,15 @@ export default defineConfig({
     include: ['test/**/*.test.ts', 'test/**/*.test.tsx'],
     coverage: {
       provider: 'v8',
-      // Goal P1 gate: animation utils (BF-005) measured at >= 90% line coverage.
-      include: ['src/animation/**'],
+      // Goal P1 gate: >= 90% line coverage for the pure timing engine (BF-003/
+      // BF-004) and the animation utils (BF-005).
+      include: ['src/timing/**', 'src/animation/**'],
       reporter: ['text', 'json'],
+      thresholds: {
+        lines: 90,
+        'src/timing/**': { lines: 90 },
+        'src/animation/**': { lines: 90 },
+      },
     },
   },
 });
