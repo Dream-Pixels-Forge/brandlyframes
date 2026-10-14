@@ -1,0 +1,31 @@
+{
+  "name": "brandlyframes-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BrandlyFrames — programmatic video SDK for React (frame -> pixels). Monorepo root.",
+  "packageManager": "pnpm@11.5.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "eslint . --max-warnings 0",
+    "type-check": "turbo run type-check",
+    "format": "prettier --write .",
+    "dev": "turbo run dev"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "turbo": "^2.11.7",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.2"
+  }
+}

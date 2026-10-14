@@ -1,0 +1,7 @@
+# Never reformat generated or governance content
+node_modules/
+pnpm-lock.yaml
+dist/
+coverage/
+.turbo/
+dev-notes/

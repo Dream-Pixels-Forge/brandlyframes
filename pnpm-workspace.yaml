@@ -1,0 +1,9 @@
+packages:
+  - packages/*
+
+# esbuild ships platform binaries via optionalDependencies; its postinstall
+# only validates the binary. Approved so installs stay warning-free.
+onlyBuiltDependencies:
+  - esbuild
+allowBuilds:
+  esbuild: set this to true or false

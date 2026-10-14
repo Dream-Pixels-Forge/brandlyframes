@@ -8,9 +8,12 @@
 - Status: in-progress (async workflow dispatched)
 
 ## Pipeline Completion (pipeline-orchestrator map)
-- [x] Phase 1: Brainstorm — GOAL_00.md is the complete architecture vision (accepted; BRAINSTORM.md derived artifact dispatched)
-- [ ] Phase 2: Governance (BRAINSTORM.md, SPEC.md, SECURITY.md) + Design System (DESIGN.md) — dispatched to governance worker
-- [ ] Phase 3: Engineer — P0 scaffold (BF-001) → gate → P1 core TDD (BF-002..008, BF-400, BF-401) → integration → gate
+- [x] Phase 1: Brainstorm — GOAL_00.md is the complete architecture vision (accepted)
+- [x] Phase 2: Governance + Design — BRAINSTORM.md (145 ln), SPEC.md (188 ln), SECURITY.md (103 ln), DESIGN.md (95 ln, #FF6A00 verified) — worker run c566b9f1
+- [ ] Phase 3: Engineer — P0 scaffold ~90% on disk (root tooling + packages/core + CI + changesets; turbo build/type-check/test logs green, tests 1/1); child timed out at 30 min before commit — resumed as cf9b1bec to verify + commit [BF-001]. Then: P0 reviewer gate → P1 core TDD (BF-002..008, BF-400, BF-401, 3 sequential passes) → integration → gate.
+
+## Workflow run log
+- Workflow 1e8d1dd8 (v0.1 round 1): governance-docs ✅; p0-scaffold ⏱ timed out (30 min) — workflow script died at the rejected await (lesson stored to memorius: wrap runs.run in try/catch; raise timeout for install-heavy workers). Next round dispatches a failure-safe script.
 
 ## Goal-phase tracking (GOAL_00.md §7 / §7c)
 - [ ] P0 Foundation — gate: `pnpm build && pnpm test` green in CI

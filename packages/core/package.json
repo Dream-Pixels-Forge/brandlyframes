@@ -1,0 +1,32 @@
+{
+  "name": "brandlyframes",
+  "version": "0.1.0",
+  "description": "BrandlyFrames core — programmatic video SDK for React: a video is a pure function of the frame number (frame -> pixels).",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

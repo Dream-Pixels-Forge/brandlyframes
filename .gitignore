@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+
+# Turborepo
+.turbo/
+
+# Environment — never commit .env files (SECURITY.md §1); only .env.example is committed
+.env*
+!.env.example
+
+# Logs
+*.log
+
+# OS
+.DS_Store
