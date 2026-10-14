@@ -5,5 +5,3 @@ packages:
 # only validates the binary. Approved so installs stay warning-free.
 onlyBuiltDependencies:
   - esbuild
-allowBuilds:
-  esbuild: set this to true or false
