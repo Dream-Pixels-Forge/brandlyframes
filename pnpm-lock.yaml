@@ -104,6 +104,21 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
+  packages/media-parser:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.43
+      '@vitest/coverage-v8':
+        specifier: ^5.0.4
+        version: 5.0.4(vitest@5.0.4)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^5.0.4
+        version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/media-utils:
     devDependencies:
       '@types/node':
