@@ -15,4 +15,29 @@ export const StudioShell = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// TODO: Implement props editor (BF-012), error overlay (BF-411), and frame inspector (BF-412)
+// Props Editor - Generated from Zod schema (BF-012)
+export const PropsEditor = <T extends Record<string, any>>({ 
+  schema, 
+  initialData, 
+  onChange 
+}: { 
+  schema: any; 
+  initialData?: T; 
+  onChange: (data: T) => void 
+}) => {
+  // TODO: Implement actual form generation from Zod schema
+  // This would use zod-to-json-schema or similar to generate UI components
+  return (
+    <div className="props-editor">
+      <div className="props-editor-header">Props Editor</div>
+      <div className="props-editor-content">
+        {/* Form fields would be generated here based on schema */}
+        <div className="props-editor-placeholder">
+          Props editor for: {JSON.stringify(schema)}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// TODO: Implement error overlay (BF-411) and frame inspector (BF-412)
