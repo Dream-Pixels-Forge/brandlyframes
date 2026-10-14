@@ -15,8 +15,8 @@
     "test:coverage": "vitest run --coverage",
     "dev": "vitest"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/react": "^19.3.0",
     "@vitest/coverage-v8": "^5.0.4",
     "typescript": "^5.9.3",
     "vitest": "^5.0.4"
