@@ -16,14 +16,14 @@ export const StudioShell = ({ children }: { children: ReactNode }) => {
 };
 
 // Props Editor - Generated from Zod schema (BF-012)
-export const PropsEditor = <T extends Record<string, any>>({ 
+export const PropsEditor = <T extends Record<string, unknown>>({ 
   schema, 
-  initialData, 
-  onChange 
+  _initialData, 
+  _onChange 
 }: { 
-  schema: any; 
-  initialData?: T; 
-  onChange: (data: T) => void 
+  schema: Record<string, unknown>; 
+  _initialData?: T; 
+  _onChange: (data: T) => void 
 }) => {
   // TODO: Implement actual form generation from Zod schema
   // This would use zod-to-json-schema or similar to generate UI components
@@ -82,7 +82,7 @@ export const FrameInspector = ({
 }: { 
   element: Element | null; 
   frameNumber: number; 
-  computedProps: Record<string, any>; 
+  computedProps: Record<string, unknown>; 
   computedStyles: Record<string, string> 
 }) => {
   if (!element) {

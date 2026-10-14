@@ -322,7 +322,7 @@ export const createWaveformData = (
     if (style === 'filled' && fill) {
       // For filled style, we create a filled waveform effect
       // This is a simplified approach - in reality, filled would need min/max values
-      value = value;
+      // No op for filled style in this simplified implementation
     } else if (style === 'peaks') {
       // For peaks style, emphasize peaks by giving them more weight
       value = value > (opts.height * 0.3) ? value : value * 0.5;

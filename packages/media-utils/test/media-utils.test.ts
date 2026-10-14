@@ -22,7 +22,7 @@ class MockAudioBuffer implements AudioBuffer {
     public numberOfChannels: number = 2
   ) {}
   
-  getChannelData(channel: number): Float32Array {
+  getChannelData(_channel: number): Float32Array {
     // Return a simple test waveform (sine wave)
     const channelData = new Float32Array(this.length);
     for (let i = 0; i < this.length; i++) {
@@ -140,7 +140,7 @@ describe('media-utils', () => {
           public numberOfChannels: number = 1
         ) {}
 
-        getChannelData(channel: number): Float32Array {
+        getChannelData(_channel: number): Float32Array {
           return new Float32Array(this.length); // All zeros
         }
 
@@ -235,10 +235,10 @@ describe('media-utils', () => {
       
       // Peaks style should generally have different values (more contrast)
       // This is a basic check - in reality, peaks style amplifies peaks
-      let different = false;
+      let _different = false;
       for (let i = 0; i < lineWaveform.length; i++) {
         if (Math.abs(lineWaveform[i] - peaksWaveform[i]) > 0.1) {
-          different = true;
+          _different = true;
           break;
         }
       }
