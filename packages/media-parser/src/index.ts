@@ -41,72 +41,72 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
   if (!isBrowser()) {
     throw new Error('Media parser requires a browser environment with window, document, and Audio globals');
   }
-  
+
   // Create an object URL for the blob
   const url = URL.createObjectURL(mediaBlob);
-  
+
   try {
     // Determine if it's audio or video based on blob type
     const isAudio = mediaBlob.type.startsWith('audio/');
     const isVideo = mediaBlob.type.startsWith('video/');
-    
+
     if (!isAudio && !isVideo) {
       throw new Error('Unsupported media type');
     }
-    
+
     // Create appropriate media element
     const mediaElement = isAudio 
       ? new Audio() 
       : document.createElement('video');
-    
+
     // Set up event listeners for when metadata is loaded
     const metadataLoaded = new Promise<void>((resolve, reject) => {
       const handleLoadedMetadata = () => {
         resolve();
         cleanup();
       };
-      
+
       const handleError = (e: Event) => {
         reject(e);
         cleanup();
       };
-      
+
       const cleanup = () => {
         mediaElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
         mediaElement.removeEventListener('error', handleError);
         URL.revokeObjectURL(url);
       };
-      
+
       mediaElement.addEventListener('loadedmetadata', handleLoadedMetadata);
       mediaElement.addEventListener('error', handleError);
     });
-    
+
     // Set the source and wait for metadata
     mediaElement.src = url;
     await metadataLoaded;
-    
+
     // Extract metadata
     const duration = mediaElement.duration;
     // Safely get video dimensions (only available on video elements)
     const width = 'videoWidth' in mediaElement ? (mediaElement as HTMLVideoElement).videoWidth : 0;
     const height = 'videoHeight' in mediaElement ? (mediaElement as HTMLVideoElement).videoHeight : 0;
-    
+
     // Calculate bitrate from blob size and duration
     const bitrate = duration > 0 ? (mediaBlob.size * 8) / duration : 0;
-    
+
     // Try to get codec from tracks
     let codec = '';
     let sampleRate = 0;
     let channelCount = 0;
     let frameRate = 0;
     let pixelFormat = '';
-    
+
     if (isAudio) {
       // Try to get codec from audio tracks
       if ('audioTracks' in mediaElement && (mediaElement as any).audioTracks.length > 0) {
         codec = (mediaElement as any).audioTracks[0].codec || '';
       }
-      
+
       // Try to get sample rate and channel count using Web Audio API
       try {
         const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -114,14 +114,15 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
         const analyser = audioContext.createAnalyser();
         source.connect(analyser);
         analyser.connect(audioContext.destination);
-        
+
         // Get the sample rate from the audio context
         sampleRate = audioContext.sampleRate;
-        
-        // For channel count, we can try to get it from the audio buffer
-        // This requires actually decoding the audio, which is more complex
-        // For now, we'll leave it as 0 and note it requires full audio decoding
-        // In a more complete implementation, we would decode the audio and get the channel count
+
+        // Get channel count by decoding the audio data
+        // We need to fetch the blob as ArrayBuffer and decode it
+        const arrayBuffer = await mediaBlob.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        channelCount = audioBuffer.numberOfChannels;
       } catch (e) {
         // Web Audio API might not be available or might fail
         // Leave sampleRate and channelCount as 0
@@ -131,15 +132,15 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
       if ('videoTracks' in mediaElement && (mediaElement as any).videoTracks.length > 0) {
         codec = (mediaElement as any).videoTracks[0].codec || '';
       }
-      
+
       // Try to get frame rate - this is not directly available from HTMLVideoElement
       // We would need to use WebCodecs or other advanced APIs
       // For now, leave it as 0 and note it requires WebCodecs
-      
+
       // Try to get pixel format - also requires WebCodecs or similar
       // For now, leave it as empty string
     }
-    
+
     // Return the appropriate metadata type
     if (isAudio) {
       return {

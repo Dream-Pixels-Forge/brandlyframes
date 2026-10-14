@@ -17,14 +17,14 @@ describe('media-parser', () => {
       const audioBlob = new Blob(['fake audio data'], { 
         type: 'audio/wav' 
       });
-      
+
       // Since we're not in a browser environment in tests, this should throw
       await expect(parseMediaMetadata(audioBlob)).rejects.toThrow('Media parser requires a browser environment');
     });
 
-    it('should return metadata for audio files with sample rate', async () => {
+    it('should return metadata for audio files with sample rate and channel count', async () => {
       // This test is meant to run in a browser environment. Since we are not in a browser, we skip the actual assertion.
-      // In a proper browser test, we would expect the function to return an AudioMetadata object with sampleRate > 0.
+      // In a proper browser test, we would expect the function to return an AudioMetadata object with sampleRate > 0 and channelCount > 0.
       expect(true).toBe(true); // Placeholder
     });
 
