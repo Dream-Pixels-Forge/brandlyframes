@@ -106,17 +106,38 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
       if ('audioTracks' in mediaElement && (mediaElement as any).audioTracks.length > 0) {
         codec = (mediaElement as any).audioTracks[0].codec || '';
       }
-      // Note: sampleRate and channelCount are not directly available from HTMLAudioElement
-      // We would need to use the Web Audio API to decode and analyze, which is complex.
-      // For now, we'll leave them as 0 and note that they need to be implemented via Web Audio API.
+      
+      // Try to get sample rate and channel count using Web Audio API
+      try {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const source = audioContext.createMediaElementSource(mediaElement);
+        const analyser = audioContext.createAnalyser();
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+        
+        // Get the sample rate from the audio context
+        sampleRate = audioContext.sampleRate;
+        
+        // For channel count, we can try to get it from the audio buffer
+        // This requires actually decoding the audio, which is more complex
+        // For now, we'll leave it as 0 and note it requires full audio decoding
+        // In a more complete implementation, we would decode the audio and get the channel count
+      } catch (e) {
+        // Web Audio API might not be available or might fail
+        // Leave sampleRate and channelCount as 0
+      }
     } else if (isVideo) {
       // Try to get codec from video tracks
       if ('videoTracks' in mediaElement && (mediaElement as any).videoTracks.length > 0) {
         codec = (mediaElement as any).videoTracks[0].codec || '';
       }
-      // Frame rate is not directly available from HTMLVideoElement
-      // Pixel format is also not available
-      // These would require WebCodecs or other advanced APIs.
+      
+      // Try to get frame rate - this is not directly available from HTMLVideoElement
+      // We would need to use WebCodecs or other advanced APIs
+      // For now, leave it as 0 and note it requires WebCodecs
+      
+      // Try to get pixel format - also requires WebCodecs or similar
+      // For now, leave it as empty string
     }
     
     // Return the appropriate metadata type

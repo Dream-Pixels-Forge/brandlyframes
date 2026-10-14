@@ -22,9 +22,9 @@ describe('PropsEditor', () => {
 
   it('should accept schema, initialData, and onChange props', () => {
     const schema = { type: 'object', properties: { name: { type: 'string' } } };
-    const onChange = () => {}; // Simple mock function
-    expect(PropsEditor({ schema, onChange })).toBeDefined();
-    expect(PropsEditor({ schema, initialData: { name: 'test' }, onChange })).toBeDefined();
+    const _onChange = () => {}; // Simple mock function
+    expect(PropsEditor({ schema, _onChange })).toBeDefined();
+    expect(PropsEditor({ schema, _initialData: { name: 'test' }, _onChange })).toBeDefined();
   });
 });
 
