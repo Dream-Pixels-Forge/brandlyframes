@@ -1,0 +1,35 @@
+/**
+ * BrandlyFrames "Cinema Black" design tokens — CSS form (BF-013).
+ *
+ * Source of truth: dev-notes/DESIGN.md §2. Keep in sync with `src/tokens.ts`
+ * and `tokens.json` (enforced by `test/tokens.test.ts`).
+ *
+ * Dark is the default (`:root`); set `data-theme="paper"` on a root element
+ * for the light inverse ("Paper": white background, black text, same orange
+ * accent). Orange is the only accent and covers at most ~5% of any screen
+ * (DESIGN.md §3).
+ */
+:root {
+  --bf-black: #0A0A0A;
+  --bf-surface-1: #111111;
+  --bf-surface-2: #1A1A1A;
+  --bf-border: #2A2A2A;
+  --bf-text-muted: #8A8A8A;
+  --bf-white: #FAFAFA;
+  --bf-orange: #FF6A00;
+  --bf-orange-hover: #FF8533;
+  --bf-orange-dim: #FF6A0026;
+}
+
+/* Light inverse ("Paper"): white background, black text, same orange accent. */
+[data-theme='paper'] {
+  --bf-black: #FAFAFA;
+  --bf-surface-1: #F0F0F0;
+  --bf-surface-2: #E6E6E6;
+  --bf-border: #C9C9C9;
+  --bf-text-muted: #595959;
+  --bf-white: #0A0A0A;
+  --bf-orange: #FF6A00;
+  --bf-orange-hover: #FF8533;
+  --bf-orange-dim: #FF6A0026;
+}
