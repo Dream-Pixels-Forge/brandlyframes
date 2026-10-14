@@ -1,0 +1,24 @@
+{
+  "name": "@brandlyframes/media-utils",
+  "version": "0.1.0",
+  "description": "BrandlyFrames media utilities — audio data, waveform helpers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4",
+    "@vitest/coverage-v8": "^5.0.4"
+  }
+}
