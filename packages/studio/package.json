@@ -1,0 +1,34 @@
+{
+  "name": "@brandlyframes/studio",
+  "version": "0.1.0",
+  "description": "BrandlyFrames studio — composition sidebar, canvas, scrubber, hot reload, props editor, error overlay, and frame inspector (BF-011/012/411/412).",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*",
+    "@brandlyframes/design": "workspace:*"
+  }
+}
