@@ -16,17 +16,43 @@ program
   .name(packageJson.name)
   .description(packageJson.description)
   .version(packageJson.version)
-  .option('-d, --debug', 'enable debug mode')
-  .arguments('<command>')
-  .action((cmd) => {
-    if (!cmd) {
-      program.help();
-    }
-    console.error(`Unknown command: ${cmd}`);
-    process.exit(1);
+  .option('-d, --debug', 'enable debug mode');
+
+program
+  .command('dev')
+  .description('start development server with hot-reloading (Studio)')
+  .action(() => {
+    console.log('Starting development server...');
   });
 
-// Parse command line arguments
-program.parse(process.argv);
+program
+  .command('build')
+  .description('render a composition to video/image sequence')
+  .action(() => {
+    console.log('Building composition...');
+  });
+
+  program
+    .command('export')
+    .description('export to platform-specific formats')
+    .action(() => {
+      console.log('Exporting to platform-specific formats...');
+    });
+
+  program
+    .command('upgrade')
+    .description('handle SDK upgrades with codemods')
+    .action(() => {
+      console.log('Checking for upgrades...');
+    });
+
+  program
+    .command('*')
+    .action((cmd) => {
+      console.error(`Unknown command: ${cmd}`);
+      process.exit(1);
+    });
+
+  program.parse(process.argv);
 
 export default program;
