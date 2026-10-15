@@ -19,15 +19,35 @@ export interface VideoMetadata extends MediaMetadata {
   frameRate: number;
   codec: string;
   pixelFormat: string;
+  /**
+   * Exact rational frame rate mirroring `@brandlyframes/frames` `Rational`
+   * (`{ num, den }`, `den > 0`). Optional so existing contracts keep working;
+   * set by {@link applyProbedFrameRate} when a probe result is available.
+   */
+  frameRateRational?: FrameRateRational;
+}
+
+/**
+ * Rational frame rate mirroring the `Rational` interface from
+ * `@brandlyframes/frames` (`{ num, den }`, `den > 0`).
+ *
+ * Defined locally so this package has no workspace dependency; the shape is
+ * assignment-compatible. No logic is copied — only the two-field shape.
+ */
+export interface FrameRateRational {
+  /** Numerator (frames per second numerator). Positive safe integer. */
+  num: number;
+  /** Denominator (frames per second denominator). Positive safe integer. */
+  den: number;
 }
 
 /**
  * Check if we're in a browser environment
  */
 const isBrowser = (): boolean => {
-  return typeof window !== 'undefined' && 
-         typeof document !== 'undefined' &&
-         typeof Audio !== 'undefined';
+  return (
+    typeof window !== 'undefined' && typeof document !== 'undefined' && typeof Audio !== 'undefined'
+  );
 };
 
 /**
@@ -56,7 +76,123 @@ interface WebCodecsModule {
     channelCount: number;
     codec: string;
   }>;
+  probeVideo?: (blob: Blob) => Promise<VideoProbeResult>;
+  probeVideoFallback?: (
+    videoElement: ProbeableVideoElement,
+    sourceInfo: VideoProbeSourceInfo,
+  ) => VideoProbeResult;
 }
+
+/**
+ * Minimal structural result of a webcodecs video probe.
+ * Mirrors `ProbedVideo` from `@brandlyframes/webcodecs` without importing it,
+ * keeping media-parser decoupled (dynamic import only).
+ */
+export interface VideoProbeResult {
+  /** Exact rational frame rate. */
+  fps: FrameRateRational;
+  /** Frame count (estimated unless the probe knew it exactly). */
+  frameCount: number;
+  /** Color space label, or `'unknown'`. */
+  colorSpace: string;
+  /** Whether the stream carries an alpha channel. */
+  hasAlpha: boolean;
+  /** Variable-frame-rate heuristic flag. */
+  isVFR: boolean;
+  /** Codec string, or `''` when unknown. */
+  codec: string;
+  /** Intrinsic video width in pixels. */
+  width: number;
+  /** Intrinsic video height in pixels. */
+  height: number;
+  /** Media duration in seconds. */
+  duration: number;
+}
+
+/**
+ * Minimal structural source-info for a webcodecs probe call.
+ * Mirrors `ProbeSourceInfo` from `@brandlyframes/webcodecs`.
+ */
+export interface VideoProbeSourceInfo {
+  /** Codec string hint. */
+  codec?: string;
+  /** Exact frame count hint. */
+  frameCountHint?: number;
+  /** Color space label hint. */
+  colorSpace?: string;
+  /** Alpha channel hint. */
+  hasAlpha?: boolean;
+}
+
+/**
+ * Minimal structural video element for probe delegation.
+ * Satisfied by `HTMLVideoElement` and by plain mocks in tests.
+ */
+export interface ProbeableVideoElement {
+  /** Media duration in seconds. */
+  duration: number;
+  /** Intrinsic video width in pixels. */
+  videoWidth: number;
+  /** Intrinsic video height in pixels. */
+  videoHeight: number;
+  /** Optional playback-quality readout used for the VFR heuristic. */
+  getVideoPlaybackQuality?: () => {
+    droppedVideoFrames: number;
+    totalVideoFrames: number;
+  };
+}
+
+/**
+ * Merge a probed exact-rational fps into video metadata.
+ *
+ * Keeps the legacy numeric `frameRate` (`num / den`) for existing consumers
+ * and additionally records the exact `frameRateRational`. Degenerate rationals
+ * (`den <= 0` or non-finite) leave `frameRate` as `0` and still attach the
+ * rational as given. Never mutates its input.
+ *
+ * @param metadata Base video metadata (all fields preserved)
+ * @param fps Exact rational frame rate from a probe
+ * @returns New `VideoMetadata` with `frameRate` and `frameRateRational` set
+ */
+export const applyProbedFrameRate = (
+  metadata: VideoMetadata,
+  fps: FrameRateRational,
+): VideoMetadata => {
+  const frameRate =
+    Number.isFinite(fps.num) && Number.isFinite(fps.den) && fps.den > 0 ? fps.num / fps.den : 0;
+  return {
+    ...metadata,
+    frameRate,
+    frameRateRational: { ...fps },
+  };
+};
+
+/**
+ * Probe a video blob via `@brandlyframes/webcodecs` when available.
+ *
+ * Browser path: dynamically imports the webcodecs probe (the source of
+ * truth for video probing) and delegates. Node / unavailable path: rejects
+ * with the same environment error `parseMediaMetadata` uses. The audio path
+ * is untouched by this function.
+ *
+ * @param mediaBlob The video blob to probe
+ * @returns Promise resolving to the webcodecs probe result
+ * @throws Error when outside a browser environment or the probe is unavailable
+ */
+export const probeVideo = async (mediaBlob: Blob): Promise<VideoProbeResult> => {
+  if (!isBrowser()) {
+    throw new Error(
+      'Media parser requires a browser environment with window, document, and Audio globals',
+    );
+  }
+  const webCodecsModule = await tryImportWebCodecs();
+  if (webCodecsModule?.probeVideo) {
+    return webCodecsModule.probeVideo(mediaBlob);
+  }
+  throw new Error(
+    'Media parser requires a browser environment with window, document, and Audio globals',
+  );
+};
 
 /**
  * Safely read the codec string from the first audio/video track, if present.
@@ -66,7 +202,7 @@ interface WebCodecsModule {
  */
 const getTrackCodec = (
   mediaElement: HTMLMediaElement,
-  kind: 'audioTracks' | 'videoTracks'
+  kind: 'audioTracks' | 'videoTracks',
 ): string => {
   const tracks = (mediaElement as MediaElementWithTracks)[kind];
   if (tracks && tracks.length > 0) {
@@ -103,10 +239,14 @@ const tryImportWebCodecs = async (): Promise<WebCodecsModule | null> => {
  * @returns Promise resolving to audio or video metadata
  * @throws Error if not in a browser environment or if media type is unsupported
  */
-export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata | VideoMetadata> => {
+export const parseMediaMetadata = async (
+  mediaBlob: Blob,
+): Promise<AudioMetadata | VideoMetadata> => {
   // Check if we're in a browser environment
   if (!isBrowser()) {
-    throw new Error('Media parser requires a browser environment with window, document, and Audio globals');
+    throw new Error(
+      'Media parser requires a browser environment with window, document, and Audio globals',
+    );
   }
 
   // Create an object URL for the blob
@@ -122,9 +262,7 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
     }
 
     // Create appropriate media element
-    const mediaElement = isAudio 
-      ? new Audio() 
-      : document.createElement('video');
+    const mediaElement = isAudio ? new Audio() : document.createElement('video');
 
     // Set up event listeners for when metadata is loaded
     const metadataLoaded = new Promise<void>((resolve, reject) => {
@@ -156,7 +294,8 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
     const duration = mediaElement.duration;
     // Safely get video dimensions (only available on video elements)
     const width = 'videoWidth' in mediaElement ? (mediaElement as HTMLVideoElement).videoWidth : 0;
-    const height = 'videoHeight' in mediaElement ? (mediaElement as HTMLVideoElement).videoHeight : 0;
+    const height =
+      'videoHeight' in mediaElement ? (mediaElement as HTMLVideoElement).videoHeight : 0;
 
     // Calculate bitrate from blob size and duration
     const bitrate = duration > 0 ? (mediaBlob.size * 8) / duration : 0;
@@ -167,6 +306,7 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
     let channelCount = 0;
     let frameRate = 0;
     let pixelFormat = '';
+    let frameRateRational: FrameRateRational | undefined;
 
     if (isAudio) {
       // Try to get codec from audio tracks
@@ -203,11 +343,23 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
       // Try to get codec from video tracks
       codec = getTrackCodec(mediaElement, 'videoTracks');
 
-      // Try to get frame rate and pixel format using WebCodecs if available
-      // Fall back to default values if WebCodecs is not available or fails
+      // Try the webcodecs probe first (source of truth for video probing),
+      // then fall back to the legacy numeric metadata path.
+      // Behavior is preserved: frameRate still ends up numeric,
+      // with the exact Rational additionally attached when available.
       try {
         const webCodecsModule = await tryImportWebCodecs();
-        if (webCodecsModule && webCodecsModule.parseVideoMetadataWebCodecs) {
+        if (webCodecsModule?.probeVideoFallback) {
+          const probed = webCodecsModule.probeVideoFallback(
+            mediaElement as unknown as ProbeableVideoElement,
+            {},
+          );
+          frameRate = probed.fps.den > 0 ? probed.fps.num / probed.fps.den : 0;
+          frameRateRational = { ...probed.fps };
+          if (probed.codec) {
+            codec = probed.codec;
+          }
+        } else if (webCodecsModule?.parseVideoMetadataWebCodecs) {
           const webCodecsResult = await webCodecsModule.parseVideoMetadataWebCodecs(mediaBlob);
           frameRate = webCodecsResult.frameRate;
           pixelFormat = webCodecsResult.pixelFormat;
@@ -229,26 +381,27 @@ export const parseMediaMetadata = async (mediaBlob: Blob): Promise<AudioMetadata
         duration: isNaN(duration) ? 0 : duration,
         size: {
           width: width,
-          height: height
+          height: height,
         },
         format: mediaBlob.type.split('/')[1] || 'unknown',
         bitrate: bitrate,
         sampleRate: sampleRate,
         channelCount: channelCount,
-        codec: codec
+        codec: codec,
       };
     } else {
       return {
         duration: isNaN(duration) ? 0 : duration,
         size: {
           width: width,
-          height: height
+          height: height,
         },
         format: mediaBlob.type.split('/')[1] || 'unknown',
         bitrate: bitrate,
         frameRate: frameRate,
         codec: codec,
-        pixelFormat: pixelFormat
+        pixelFormat: pixelFormat,
+        ...(frameRateRational !== undefined ? { frameRateRational } : {}),
       };
     }
   } catch (error) {
