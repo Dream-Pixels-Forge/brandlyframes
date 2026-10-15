@@ -106,6 +106,11 @@ export type { FpsConversionMode } from './fps-conversion';
 export { mapFrameVideoIndex, FrameVideo } from './frame-video';
 export type { FrameVideoOptions, FrameVideoProps } from './frame-video';
 
+// --- <FrameAudio> [BF-059] — slicing + pitch-preserve ---
+
+export { mapFrameAudioIndex, FrameAudio } from './frame-audio';
+export type { FrameAudioOptions, FrameAudioProps } from './frame-audio';
+
 // --- useVideoFrame pixel access + prefetch [BF-058] ---
 
 export { mountVideoFrameEffect, planPrefetchFrames } from './use-video-frame';
