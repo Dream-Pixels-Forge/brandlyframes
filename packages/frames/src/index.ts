@@ -95,3 +95,8 @@ export const ptsToFrame = (pts: bigint, fps: Rational): number => {
 
 export { deriveFrameKey, FrameStore } from './frame-store';
 export type { FrameStoreOptions } from './frame-store';
+
+// --- FPS conversion modes [BF-055] — exact / nearest / blend ---
+
+export { convertFrameIndex } from './fps-conversion';
+export type { FpsConversionMode } from './fps-conversion';
