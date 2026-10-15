@@ -369,8 +369,16 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark
 
 **v0.6 "Reel": extras** (P6)
-- [ ] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
+- [x] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
 - [ ] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
+  - [x] BF-071 `fonts` (font loading, subsetting, glyph layout)
+  - [x] BF-071 `three` (Three.js integration)
+  - [ ] BF-071 `lottie` (Lottie animation support)
+  - [ ] BF-071 `gif` (GIF export/import)
+  - [ ] BF-071 `media-utils` (audio/video helpers)
+  - [ ] BF-071 `media-parser` (extended media metadata)
+  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode)
+  - [ ] BF-071 `whisper` (speech-to-text)
 
 **v0.7 "Dailies": cloud** (P7)
 - [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter

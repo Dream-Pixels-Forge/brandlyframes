@@ -1,0 +1,47 @@
+{
+  "name": "@brandlyframes/three",
+  "version": "0.1.0",
+  "description": "Three.js integration for 3D scenes in BrandlyFrames",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "three": ">=0.160"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
+  "devDependencies": {
+    "@brandlyframes/design": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
+    "@brandlyframes/fonts": "workspace:*",
+    "@types/react": "^18.3.0",
+    "@types/three": "^0.160.0",
+    "react": "^18.3.0",
+    "three": "^0.160.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": [
+    "brandlyframes",
+    "three",
+    "3d",
+    "webgl",
+    "react"
+  ],
+  "license": "MIT"
+}
