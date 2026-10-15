@@ -35,4 +35,50 @@ describe('CLI', () => {
     const output = execSync(`node ${cliBin} upgrade`, { encoding: 'utf8' });
     expect(output).toContain('Checking for upgrades...');
   });
+
+  // frames subcommands [BF-060]
+  it('should output frames probe help', () => {
+    const output = execSync(`node ${cliBin} frames probe --help`, { encoding: 'utf8' });
+    expect(output).toContain('probe a video file for metadata');
+    expect(output).toContain('--json');
+  });
+
+  it('should output frames extract help', () => {
+    const output = execSync(`node ${cliBin} frames extract --help`, { encoding: 'utf8' });
+    expect(output).toContain('extract frames from a video to image files');
+    expect(output).toContain('--output');
+    expect(output).toContain('--format');
+  });
+
+  it('should output frames cache help', () => {
+    const output = execSync(`node ${cliBin} frames cache --help`, { encoding: 'utf8' });
+    expect(output).toContain('manage the frame cache');
+    expect(output).toContain('--stats');
+    expect(output).toContain('--clear');
+  });
+
+  it('should run frames probe command', () => {
+    const output = execSync(`node ${cliBin} frames probe test.mp4`, { encoding: 'utf8' });
+    expect(output).toContain('Probing video: test.mp4');
+    expect(output).toContain('fps: 30/1');
+    expect(output).toContain('frameCount: 900');
+  });
+
+  it('should run frames probe with --json', () => {
+    const output = execSync(`node ${cliBin} frames probe test.mp4 --json`, { encoding: 'utf8' });
+    expect(output).toContain('"fps": "30/1"');
+    expect(output).toContain('"frameCount": 900');
+  });
+
+  it('should run frames extract command', () => {
+    const output = execSync(`node ${cliBin} frames extract test.mp4 -o /tmp/output`, { encoding: 'utf8' });
+    expect(output).toContain('Extracting frames from: test.mp4');
+    expect(output).toContain('output: /tmp/output');
+  });
+
+  it('should run frames cache --stats', () => {
+    const output = execSync(`node ${cliBin} frames cache --stats`, { encoding: 'utf8' });
+    expect(output).toContain('Frame Cache Statistics');
+    expect(output).toContain('memory entries');
+  });
 });

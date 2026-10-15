@@ -364,8 +364,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-056 VFR normalization via pts table
 - [ ] BF-057 Alpha sources (VP9 alpha, ProRes 4444) and color-space handling
 - [x] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
-- [ ] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
-- [ ] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
+- [x] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
+- [x] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
 - [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark
 
 **v0.6 "Reel": extras** (P6)
