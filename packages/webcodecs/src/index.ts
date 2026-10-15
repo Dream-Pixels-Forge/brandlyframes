@@ -1,11 +1,27 @@
 /**
+ * @brandlyframes/webcodecs — WebCodecs-backed media metadata helpers.
+ *
+ * Video probing with exact-rational fps lives in `./probe-video`
+ * ([BF-050]) and is re-exported here as the source of truth.
+ */
+export { reduceRational, probeVideoFallback, probeVideo } from './probe-video';
+export type {
+  ProbeRational,
+  ProbeableVideoElement,
+  ProbeSourceInfo,
+  ProbedVideo,
+} from './probe-video';
+
+/**
  * Check if we're in a browser environment with WebCodecs support
  */
 const isBrowserWithWebCodecs = (): boolean => {
-  return typeof window !== 'undefined' && 
-         typeof document !== 'undefined' &&
-         typeof VideoDecoder !== 'undefined' &&
-         typeof AudioDecoder !== 'undefined';
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined' &&
+    typeof VideoDecoder !== 'undefined' &&
+    typeof AudioDecoder !== 'undefined'
+  );
 };
 
 /**
@@ -30,7 +46,7 @@ type MediaElementWithTracks = HTMLMediaElement & {
  */
 const getTrackCodec = (
   mediaElement: HTMLMediaElement,
-  kind: 'audioTracks' | 'videoTracks'
+  kind: 'audioTracks' | 'videoTracks',
 ): string => {
   const tracks = (mediaElement as MediaElementWithTracks)[kind];
   if (tracks && tracks.length > 0) {
@@ -45,14 +61,18 @@ const getTrackCodec = (
  * @returns Promise resolving to video metadata with frame rate and pixel format
  * @throws Error if not in a browser environment or if WebCodecs is not supported
  */
-export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
+export const parseVideoMetadataWebCodecs = async (
+  videoBlob: Blob,
+): Promise<{
   frameRate: number;
   pixelFormat: string;
   codec: string;
 }> => {
   // Check if we're in a browser environment with WebCodecs support
   if (!isBrowserWithWebCodecs()) {
-    throw new Error('WebCodecs parser requires a browser environment with window, document, VideoDecoder, and AudioDecoder globals');
+    throw new Error(
+      'WebCodecs parser requires a browser environment with window, document, VideoDecoder, and AudioDecoder globals',
+    );
   }
 
   // Create an object URL for the blob
@@ -61,7 +81,7 @@ export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
   try {
     // Create a video element to get basic info
     const videoElement = document.createElement('video');
-    
+
     // Set up event listeners for when metadata is loaded
     const metadataLoaded = new Promise<void>((resolve, reject) => {
       const handleLoadedMetadata = () => {
@@ -102,21 +122,20 @@ export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
       // A full implementation would require more complex chunk handling
       // This serves as a foundation for future enhancement
       console.log('WebCodecs API is available for advanced media parsing');
-      
+
       // We can at least check if the browser supports the codecs we need
       if (VideoDecoder.isConfigSupported) {
         const isSupported = await VideoDecoder.isConfigSupported({
-          codec: codec || 'av01.0.08M.08.0.110.09.0.0'
+          codec: codec || 'av01.0.08M.08.0.110.09.0.0',
           // Note: VideoDecoderConfig doesn't take width/height/bitrate/framerate directly
           // Those are part of the video track initialization, not the decoder config
         });
-        
+
         if (isSupported.supported) {
           // Codec is supported, we could proceed with decoding
           // For now, we'll just note that WebCodecs is functional
           // In a future implementation, we would actually decode frames here
           // to get the real pixel format and calculate frame rate
-          
           // As a simple improvement over the placeholder, let's at least try to get
           // the pixel format from the video element if possible
           // Note: HTMLVideoElement doesn't directly expose pixel format
@@ -135,7 +154,7 @@ export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
     return {
       frameRate: frameRate, // Will be 0 until we implement proper frame rate extraction
       pixelFormat: pixelFormat,
-      codec: codec
+      codec: codec,
     };
   } catch (error) {
     // Clean up object URL on error
@@ -150,14 +169,18 @@ export const parseVideoMetadataWebCodecs = async (videoBlob: Blob): Promise<{
  * @returns Promise resolving to audio metadata with sample rate and channel count
  * @throws Error if not in a browser environment or if WebCodecs is not supported
  */
-export const parseAudioMetadataWebCodecs = async (audioBlob: Blob): Promise<{
+export const parseAudioMetadataWebCodecs = async (
+  audioBlob: Blob,
+): Promise<{
   sampleRate: number;
   channelCount: number;
   codec: string;
 }> => {
   // Check if we're in a browser environment with WebCodecs support
   if (!isBrowserWithWebCodecs()) {
-    throw new Error('WebCodecs parser requires a browser environment with window, document, VideoDecoder, and AudioDecoder globals');
+    throw new Error(
+      'WebCodecs parser requires a browser environment with window, document, VideoDecoder, and AudioDecoder globals',
+    );
   }
 
   // Create an object URL for the blob
@@ -166,7 +189,7 @@ export const parseAudioMetadataWebCodecs = async (audioBlob: Blob): Promise<{
   try {
     // Create an audio element to get basic info
     const audioElement = new Audio();
-    
+
     // Set up event listeners for when metadata is loaded
     const metadataLoaded = new Promise<void>((resolve, reject) => {
       const handleLoadedMetadata = () => {
@@ -206,15 +229,15 @@ export const parseAudioMetadataWebCodecs = async (audioBlob: Blob): Promise<{
       // A full implementation would require more complex chunk handling
       // This serves as a foundation for future enhancement
       console.log('WebCodecs AudioDecoder API is available for advanced audio parsing');
-      
+
       // We can at least check if the browser supports the codecs we need
       if (AudioDecoder.isConfigSupported) {
         const isSupported = await AudioDecoder.isConfigSupported({
           codec: codec || 'mp4a.40.2', // Default to AAC if we don't know
           sampleRate: 44100, // Dummy values for checking support
-          numberOfChannels: 2 // Dummy values for checking support
+          numberOfChannels: 2, // Dummy values for checking support
         });
-        
+
         if (isSupported.supported) {
           // Codec is supported, we could proceed with decoding
           // For now, we'll just note that WebCodecs is functional
@@ -234,7 +257,7 @@ export const parseAudioMetadataWebCodecs = async (audioBlob: Blob): Promise<{
     return {
       sampleRate: sampleRate,
       channelCount: channelCount,
-      codec: codec
+      codec: codec,
     };
   } catch (error) {
     // Clean up object URL on error
