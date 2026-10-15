@@ -4,7 +4,12 @@
  * Clean-room implementation. No real decoding here (that belongs to future
  * VideoDecoder work); this module provides a documented, correctly-typed
  * probing path whose fps is always an exact rational — never a float.
+ *
+ * Alpha and color-space normalization live in `./color-alpha` ([BF-057]).
  */
+
+import { detectAlphaFromCodec, parseColorSpace } from './color-alpha';
+import type { AlphaMode, ColorSpace } from './color-alpha';
 
 /**
  * Rational frame rate, mirroring the `Rational` interface from
@@ -71,10 +76,15 @@ export interface ProbedVideo {
   fps: ProbeRational;
   /** Frame count (estimated unless derived from `frameCountHint`). */
   frameCount: number;
-  /** Color space label, or `'unknown'` when not provided. */
-  colorSpace: string;
+  /** Normalized color space (closed {@link ColorSpace} token). */
+  colorSpace: ColorSpace;
   /** Whether the stream carries an alpha channel. */
   hasAlpha: boolean;
+  /**
+   * How alpha is encoded when present; `null` when `hasAlpha` is `false`.
+   * Derived from the codec hint via `detectAlphaFromCodec`.
+   */
+  alphaMode: AlphaMode | null;
   /** Variable-frame-rate heuristic flag. */
   isVFR: boolean;
   /** Codec string, or `''` when unknown. */
@@ -177,6 +187,9 @@ export const probeVideoFallback = (
 ): ProbedVideo => {
   const duration = videoElement.duration;
   const hint = sourceInfo.frameCountHint;
+  const codec = sourceInfo.codec ?? '';
+  const alpha = detectAlphaFromCodec(codec);
+  const hasAlpha = sourceInfo.hasAlpha ?? alpha.hasAlpha;
   const fps = hint !== undefined && duration > 0 ? fpsFromHint(hint, duration) : { ...DEFAULT_FPS };
   const frameCount =
     hint !== undefined
@@ -198,10 +211,11 @@ export const probeVideoFallback = (
   return {
     fps,
     frameCount,
-    colorSpace: sourceInfo.colorSpace ?? 'unknown',
-    hasAlpha: sourceInfo.hasAlpha ?? false,
+    colorSpace: parseColorSpace(sourceInfo.colorSpace),
+    hasAlpha,
+    alphaMode: hasAlpha ? alpha.mode : null,
     isVFR,
-    codec: sourceInfo.codec ?? '',
+    codec,
     width: videoElement.videoWidth,
     height: videoElement.videoHeight,
     duration,

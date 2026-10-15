@@ -3,7 +3,16 @@
  *
  * Video probing with exact-rational fps lives in `./probe-video`
  * ([BF-050]) and is re-exported here as the source of truth.
+ * Alpha and color-space handling lives in `./color-alpha` ([BF-057]).
  */
+export { detectAlphaFromCodec, parseColorSpace, alphaBlendOver } from './color-alpha';
+export type {
+  ColorSpace,
+  AlphaMode,
+  AlphaInfo,
+  SrgbPixel,
+  SrgbPixelWithAlpha,
+} from './color-alpha';
 export { reduceRational, probeVideoFallback, probeVideo } from './probe-video';
 export type {
   ProbeRational,

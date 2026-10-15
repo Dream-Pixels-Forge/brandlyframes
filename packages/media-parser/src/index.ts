@@ -25,7 +25,38 @@ export interface VideoMetadata extends MediaMetadata {
    * set by {@link applyProbedFrameRate} when a probe result is available.
    */
   frameRateRational?: FrameRateRational;
+  /**
+   * Normalized color space of the probed stream [BF-057]. Optional so
+   * existing contracts keep working; set by {@link applyProbedVideoDetails}
+   * when a probe result is available.
+   */
+  colorSpace?: ColorSpace;
+  /**
+   * Whether the probed stream carries an alpha channel [BF-057]. Optional
+   * so existing contracts keep working; see {@link applyProbedVideoDetails}.
+   */
+  hasAlpha?: boolean;
+  /**
+   * How alpha is encoded when present; `null` when `hasAlpha` is `false`
+   * [BF-057]. Optional so existing contracts keep working.
+   */
+  alphaMode?: AlphaMode | null;
 }
+
+/**
+ * Closed set of color spaces the probe path understands [BF-057].
+ *
+ * Mirrors `ColorSpace` from `@brandlyframes/webcodecs` without importing it,
+ * keeping media-parser decoupled (dynamic import only).
+ */
+export type ColorSpace = 'unknown' | 'srgb' | 'bt709' | 'bt2020' | 'display-p3';
+
+/**
+ * How an alpha channel is encoded when one is present [BF-057].
+ *
+ * Mirrors `AlphaMode` from `@brandlyframes/webcodecs` without importing it.
+ */
+export type AlphaMode = 'opaque' | 'premultiplied' | 'straight';
 
 /**
  * Rational frame rate mirroring the `Rational` interface from
@@ -97,6 +128,11 @@ export interface VideoProbeResult {
   colorSpace: string;
   /** Whether the stream carries an alpha channel. */
   hasAlpha: boolean;
+  /**
+   * How alpha is encoded when present; `null`/absent when there is none.
+   * Mirrors `alphaMode` on `ProbedVideo` from `@brandlyframes/webcodecs`.
+   */
+  alphaMode?: AlphaMode | null;
   /** Variable-frame-rate heuristic flag. */
   isVFR: boolean;
   /** Codec string, or `''` when unknown. */
@@ -164,6 +200,65 @@ export const applyProbedFrameRate = (
     ...metadata,
     frameRate,
     frameRateRational: { ...fps },
+  };
+};
+
+/**
+ * Normalize a probe color-space label to the closed {@link ColorSpace} union.
+ *
+ * Module-local mirror of `parseColorSpace` from `@brandlyframes/webcodecs`
+ * (kept local so media-parser has no static workspace dependency).
+ *
+ * @param value Raw color-space label from a probe result
+ * @returns The matching {@link ColorSpace} token, or `'unknown'`
+ */
+const normalizeColorSpace = (value: string | undefined): ColorSpace => {
+  if (value === undefined) {
+    return 'unknown';
+  }
+  switch (value.trim().toLowerCase()) {
+    case 'srgb':
+    case 'iec61966-2-1':
+      return 'srgb';
+    case 'bt709':
+    case 'bt.709':
+    case 'rec709':
+    case 'rec.709':
+      return 'bt709';
+    case 'bt2020':
+    case 'bt.2020':
+    case 'rec2020':
+    case 'rec.2020':
+      return 'bt2020';
+    case 'display-p3':
+    case 'p3':
+    case 'displayp3':
+      return 'display-p3';
+    default:
+      return 'unknown';
+  }
+};
+
+/**
+ * Merge a probed video result's color/alpha fields into video metadata [BF-057].
+ *
+ * Sets `colorSpace` (normalized to the closed {@link ColorSpace} union),
+ * `hasAlpha`, and `alphaMode` (`null` when the probe carries no alpha mode).
+ * Never mutates its input; all other metadata fields are preserved.
+ *
+ * @param metadata Base video metadata (all fields preserved)
+ * @param probed Probe result carrying color/alpha information
+ * @returns New `VideoMetadata` with `colorSpace`/`hasAlpha`/`alphaMode` set
+ */
+export const applyProbedVideoDetails = (
+  metadata: VideoMetadata,
+  probed: VideoProbeResult,
+): VideoMetadata => {
+  return {
+    ...metadata,
+    colorSpace: normalizeColorSpace(probed.colorSpace),
+    hasAlpha: probed.hasAlpha,
+    alphaMode: probed.alphaMode ?? null,
   };
 };
 
@@ -307,6 +402,9 @@ export const parseMediaMetadata = async (
     let frameRate = 0;
     let pixelFormat = '';
     let frameRateRational: FrameRateRational | undefined;
+    let colorSpace: ColorSpace | undefined;
+    let hasAlpha: boolean | undefined;
+    let alphaMode: AlphaMode | null | undefined;
 
     if (isAudio) {
       // Try to get codec from audio tracks
@@ -347,18 +445,35 @@ export const parseMediaMetadata = async (
       // then fall back to the legacy numeric metadata path.
       // Behavior is preserved: frameRate still ends up numeric,
       // with the exact Rational additionally attached when available.
+      // The probe's color/alpha fields flow through via
+      // applyProbedVideoDetails [BF-057].
       try {
         const webCodecsModule = await tryImportWebCodecs();
         if (webCodecsModule?.probeVideoFallback) {
           const probed = webCodecsModule.probeVideoFallback(
             mediaElement as unknown as ProbeableVideoElement,
-            {},
+            { codec },
           );
           frameRate = probed.fps.den > 0 ? probed.fps.num / probed.fps.den : 0;
           frameRateRational = { ...probed.fps };
           if (probed.codec) {
             codec = probed.codec;
           }
+          const details = applyProbedVideoDetails(
+            {
+              duration: 0,
+              size: { width: 0, height: 0 },
+              format: '',
+              bitrate: 0,
+              frameRate,
+              codec,
+              pixelFormat,
+            },
+            probed,
+          );
+          colorSpace = details.colorSpace;
+          hasAlpha = details.hasAlpha;
+          alphaMode = details.alphaMode;
         } else if (webCodecsModule?.parseVideoMetadataWebCodecs) {
           const webCodecsResult = await webCodecsModule.parseVideoMetadataWebCodecs(mediaBlob);
           frameRate = webCodecsResult.frameRate;
@@ -402,6 +517,9 @@ export const parseMediaMetadata = async (
         codec: codec,
         pixelFormat: pixelFormat,
         ...(frameRateRational !== undefined ? { frameRateRational } : {}),
+        ...(colorSpace !== undefined ? { colorSpace } : {}),
+        ...(hasAlpha !== undefined ? { hasAlpha } : {}),
+        ...(alphaMode !== undefined ? { alphaMode } : {}),
       };
     }
   } catch (error) {
