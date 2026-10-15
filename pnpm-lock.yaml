@@ -157,6 +157,37 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
+  packages/lottie:
+    dependencies:
+      brandlyframes:
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
+      '@brandlyframes/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@brandlyframes/frames':
+        specifier: workspace:*
+        version: link:../frames
+      '@brandlyframes/three':
+        specifier: workspace:*
+        version: link:../three
+      '@types/react':
+        specifier: ^18.3.0
+        version: 18.3.31
+      react:
+        specifier: ^18.3.0
+        version: 18.3.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.1.0
+        version: 3.2.7(@types/node@20.19.43)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
+
   packages/media-parser:
     devDependencies:
       '@types/node':
