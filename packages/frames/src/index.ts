@@ -105,3 +105,8 @@ export type { FpsConversionMode } from './fps-conversion';
 
 export { mapFrameVideoIndex, FrameVideo } from './frame-video';
 export type { FrameVideoOptions, FrameVideoProps } from './frame-video';
+
+// --- VFR normalization via PTS table [BF-056] — CFR frame→source-frame map ---
+
+export { buildPtsTable, ptsTableLookup, normalizeToCfr } from './vfr-normalization';
+export type { PtsTable } from './vfr-normalization';
