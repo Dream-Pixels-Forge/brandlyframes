@@ -100,3 +100,8 @@ export type { FrameStoreOptions } from './frame-store';
 
 export { convertFrameIndex } from './fps-conversion';
 export type { FpsConversionMode } from './fps-conversion';
+
+// --- <FrameVideo> [BF-054] — trim / playbackRate / reverse / freeze / ping-pong ---
+
+export { mapFrameVideoIndex, FrameVideo } from './frame-video';
+export type { FrameVideoOptions, FrameVideoProps } from './frame-video';
