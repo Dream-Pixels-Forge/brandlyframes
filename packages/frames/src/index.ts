@@ -122,3 +122,13 @@ export type {
 
 export { buildPtsTable, ptsTableLookup, normalizeToCfr } from './vfr-normalization';
 export type { PtsTable } from './vfr-normalization';
+
+// --- extractFrames API [BF-060] — programmatic frame extraction ---
+
+export { extractFrames, extractFramesToDisk, extractSingleFrame } from './extract-frames';
+export type {
+  ExtractFramesOptions,
+  ExtractFramesToDiskOptions,
+  ExtractFramesToDiskResult,
+  ExtractedFrame,
+} from './extract-frames';
