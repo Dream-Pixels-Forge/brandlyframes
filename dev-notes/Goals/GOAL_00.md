@@ -363,7 +363,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-055 fps conversion modes: exact / nearest / blend
 - [ ] BF-056 VFR normalization via pts table
 - [ ] BF-057 Alpha sources (VP9 alpha, ProRes 4444) and color-space handling
-- [ ] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
+- [x] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
 - [ ] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
 - [ ] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
 - [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark

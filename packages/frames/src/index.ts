@@ -106,6 +106,18 @@ export type { FpsConversionMode } from './fps-conversion';
 export { mapFrameVideoIndex, FrameVideo } from './frame-video';
 export type { FrameVideoOptions, FrameVideoProps } from './frame-video';
 
+// --- useVideoFrame pixel access + prefetch [BF-058] ---
+
+export { mountVideoFrameEffect, planPrefetchFrames } from './use-video-frame';
+export type {
+  HoldFn,
+  MountVideoFrameEffectOptions,
+  ReleaseFn,
+  VideoFrameData,
+  VideoFrameEffectCleanup,
+  VideoFrameLoader,
+} from './use-video-frame';
+
 // --- VFR normalization via PTS table [BF-056] — CFR frame→source-frame map ---
 
 export { buildPtsTable, ptsTableLookup, normalizeToCfr } from './vfr-normalization';
