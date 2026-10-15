@@ -90,3 +90,8 @@ export const ptsToFrame = (pts: bigint, fps: Rational): number => {
   const frame = (pts * BigInt(fps.num)) / (PTS_DENOMINATOR * BigInt(fps.den));
   return Number(frame);
 };
+
+// --- FrameStore [BF-052] — content-hashed keys + LRU memory cache ---
+
+export { deriveFrameKey, FrameStore } from './frame-store';
+export type { FrameStoreOptions } from './frame-store';
