@@ -7,7 +7,7 @@
  * Clean-room implementation. Dependency-free of sibling packages.
  */
 
-import type { ReactElement, AudioHTMLAttributes } from 'react';
+import type { ReactElement } from 'react';
 import { jsx } from 'react/jsx-runtime';
 
 /**

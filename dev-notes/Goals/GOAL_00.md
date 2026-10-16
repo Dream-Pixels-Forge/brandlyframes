@@ -323,22 +323,22 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 ### Pre-1.0 (foundation)
 
 **v0.1 "Slate": core engine** (P0, P1)
-- [ ] BF-001 Monorepo, tooling, CI (Linux/macOS/Windows), license, name reservation
-- [ ] BF-002 `registerRoot`, `<Composition>`, composition registry
-- [ ] BF-003 `useCurrentFrame`, `useVideoConfig`, frame context provider
-- [ ] BF-004 `<Sequence>`, `<Series>`, `<Loop>`, `<Freeze>`, `<AbsoluteFill>`
-- [ ] BF-005 `interpolate`, `interpolateColors`, `Easing`, `spring`
-- [ ] BF-006 `holdFrame` / `releaseFrame`, `getInputProps`, `staticFile`
-- [ ] BF-007 `<Img>`, `<Audio>`, basic `<Video>`
-- [ ] BF-008 Zod props schema + `calculateMetadata`
+- [x] BF-001 Monorepo, tooling, CI (Linux/macOS/Windows), license, name reservation
+- [x] BF-002 `registerRoot`, `<Composition>`, composition registry
+- [x] BF-003 `useCurrentFrame`, `useVideoConfig`, frame context provider
+- [x] BF-004 `<Sequence>`, `<Series>`, `<Loop>`, `<Freeze>`, `<AbsoluteFill>`
+- [x] BF-005 `interpolate`, `interpolateColors`, `Easing`, `spring`
+- [x] BF-006 `holdFrame` / `releaseFrame`, `getInputProps`, `staticFile`
+- [x] BF-007 `<Img>`, `<Audio>`, basic `<Video>`
+- [x] BF-008 Zod props schema + `calculateMetadata`
 
 **v0.2 "Projector": bundler + Studio** (P2)
-- [ ] BF-010 `@brandlyframes/bundler` (esbuild/Vite) with asset manifest
-- [ ] BF-011 Studio shell: composition sidebar, canvas, scrubber, hot reload
-- [ ] BF-012 Props editor generated from Zod schema
-- [ ] BF-013 `@brandlyframes/design` tokens + core components (Cinema Black, §5b)
-- [ ] BF-014 `brandlyframes.config.ts` loader
-- [ ] BF-015 `brandlyframes studio` and `bundle` CLI commands
+- [x] BF-010 `@brandlyframes/bundler` (esbuild/Vite) with asset manifest
+- [x] BF-011 Studio shell: composition sidebar, canvas, scrubber, hot reload
+- [x] BF-012 Props editor generated from Zod schema
+- [x] BF-013 `@brandlyframes/design` tokens + core components (Cinema Black, §5b)
+- [x] BF-014 `brandlyframes.config.ts` loader
+- [x] BF-015 `brandlyframes studio` and `bundle` CLI commands
 
 **v0.3 "First Take": renderer** (P3)
 - [ ] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking
@@ -355,22 +355,34 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-032 Seek-accuracy test suite; Next.js and plain React examples
 
 **v0.5 "Frame by Frame": frame video** (P5)
-- [ ] BF-050 `probeVideo` (rational fps, frame count, codec, color, alpha, VFR flag)
-- [ ] BF-051 Frame-exact timestamp mapping (rational timebase)
-- [ ] BF-052 FrameStore: content-hashed disk cache + LRU memory cache
-- [ ] BF-053 FFmpeg decode backend (render) and WebCodecs backend (Studio/Player), `<video>` fallback
-- [ ] BF-054 `<FrameVideo>`: trim, `playbackRate`, reverse, freeze, ping-pong
-- [ ] BF-055 fps conversion modes: exact / nearest / blend
-- [ ] BF-056 VFR normalization via pts table
-- [ ] BF-057 Alpha sources (VP9 alpha, ProRes 4444) and color-space handling
+- [x] BF-050 `probeVideo` (rational fps, frame count, codec, color, alpha, VFR flag)
+- [x] BF-051 Frame-exact timestamp mapping (rational timebase)
+- [x] BF-052 FrameStore: content-hashed disk cache + LRU memory cache
+- [x] BF-053 FFmpeg decode backend (render) and WebCodecs backend (Studio/Player), `<video>` fallback
+- [x] BF-054 `<FrameVideo>`: trim, `playbackRate`, reverse, freeze, ping-pong
+- [x] BF-055 fps conversion modes: exact / nearest / blend
+- [x] BF-056 VFR normalization via pts table
+- [x] BF-057 Alpha sources (VP9 alpha, ProRes 4444) and color-space handling
 - [x] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
 - [x] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
 - [x] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
 - [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark
 
 **v0.6 "Reel": extras** (P6)
-- [ ] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
+- [x] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
 - [ ] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
+  - [x] BF-071 `fonts` (font loading, subsetting, glyph layout)
+  - [x] BF-071 `three` (Three.js integration)
+  - [x] BF-071 `lottie` (Lottie animation support)
+  - [x] BF-071 `gif` (GIF export/import — pure-TS encoder + decoder: LZW, median-cut palette, delays, NETSCAPE loop, transparency)
+  - [x] BF-071 `media-utils` (audio/video helpers)
+  - [x] BF-071 `media-parser` (extended media metadata)
+  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring remains)
+  - [x] BF-071 `whisper` (speech-to-text — injectable model factory + pure align/pack helpers)
+
+**BF-071 COMPLETE (2026-10-16)**: fonts, three, lottie, gif, media-utils, media-parser, webcodecs (decode + encode), whisper — all implemented, tested, lint-clean.
+
+**Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 
 **v0.7 "Dailies": cloud** (P7)
 - [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter

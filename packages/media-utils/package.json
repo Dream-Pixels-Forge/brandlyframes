@@ -3,19 +3,34 @@
   "version": "0.1.0",
   "description": "BrandlyFrames media utilities — audio data, waveform helpers",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit",
     "dev": "vitest"
   },
-  "dependencies": {},
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
   "devDependencies": {
+    "@brandlyframes/design": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
+    "@brandlyframes/fonts": "workspace:*",
+    "@brandlyframes/three": "workspace:*",
     "@types/node": "^20.0.0",
     "typescript": "^5.9.3",
     "vitest": "^5.0.4",

@@ -20,6 +20,31 @@ export type {
   ProbeSourceInfo,
   ProbedVideo,
 } from './probe-video';
+export { probeVideoDecode, probeAudioDecode, fpsFromFrames } from './decode';
+export type {
+  DecodedVideoFrameLike,
+  VideoCodecLike,
+  VideoCodecFactory,
+  AudioCodecLike,
+  AudioCodecFactory,
+  VideoDecodeProbe,
+  AudioDecodeProbe,
+} from './decode';
+export {
+  encodeVideoFrames,
+  encodeAudioFrames,
+  createDefaultVideoEncoderFactory,
+  createDefaultAudioEncoderFactory,
+} from './encode';
+export type {
+  EncodableVideoFrameLike,
+  EncodedChunkLike,
+  VideoEncoderLike,
+  VideoEncoderFactory,
+  AudioEncoderLike,
+  AudioEncoderFactory,
+  EncodeResult,
+} from './encode';
 
 /**
  * Check if we're in a browser environment with WebCodecs support

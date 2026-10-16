@@ -1,0 +1,40 @@
+{
+  "name": "@brandlyframes/captions",
+  "version": "0.1.0",
+  "description": "BrandlyFrames captions — SRT/VTT parsing, karaoke timing, text rendering",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit",
+    "dev": "vitest"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
+  "devDependencies": {
+    "@brandlyframes/design": "workspace:*",
+    "@brandlyframes/fonts": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
+    "@brandlyframes/three": "workspace:*",
+    "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^5.0.4",
+    "happy-dom": "^21.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4"
+  }
+}

@@ -2,7 +2,7 @@
  * extractFrames API tests — [BF-060]
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { extractFrames, extractFramesToDisk } from '../src/extract-frames';
 
 // Mock the frame store

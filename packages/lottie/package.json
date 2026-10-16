@@ -1,0 +1,45 @@
+{
+  "name": "@brandlyframes/lottie",
+  "version": "0.1.0",
+  "description": "Lottie (Bodymovin JSON) animation rendering for BrandlyFrames",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
+  "devDependencies": {
+    "@brandlyframes/design": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
+    "@brandlyframes/fonts": "workspace:*",
+    "@brandlyframes/three": "workspace:*",
+    "@types/react": "^18.3.0",
+    "react": "^18.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": [
+    "brandlyframes",
+    "lottie",
+    "animation",
+    "bodymovin",
+    "after-effects"
+  ],
+  "license": "MIT"
+}
