@@ -377,8 +377,10 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
   - [x] BF-071 `gif` (GIF export/import — pure-TS encoder + decoder: LZW, median-cut palette, delays, NETSCAPE loop, transparency)
   - [x] BF-071 `media-utils` (audio/video helpers)
   - [x] BF-071 `media-parser` (extended media metadata)
-  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode) — decode/probe done; encode still pending
+  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring remains)
   - [ ] BF-071 `whisper` (speech-to-text) — package not started
+
+**Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 
 **v0.7 "Dailies": cloud** (P7)
 - [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter
