@@ -378,7 +378,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
   - [x] BF-071 `media-utils` (audio/video helpers)
   - [x] BF-071 `media-parser` (extended media metadata)
   - [ ] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring remains)
-  - [ ] BF-071 `whisper` (speech-to-text) — package not started
+  - [x] BF-071 `whisper` (speech-to-text — injectable model factory + pure align/pack helpers)
+
+**BF-071 COMPLETE (2026-10-16)**: fonts, three, lottie, gif, media-utils, media-parser, webcodecs (decode + encode), whisper — all implemented, tested, lint-clean.
 
 **Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 

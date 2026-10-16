@@ -20,6 +20,12 @@
 - Lint-cleaned all 5 packages (`2168d4c`); verified lint 0 / build 19/19 / test 38/38.
 - Push now works (gh credentials live); PR #27 opened and updated by push.
 
+## 2026-10-16 session 4 — finish BF-071
+- `gif` package: pure-TS GIF89a encoder + decoder (LZW, median-cut palette, delays, loop, transparency), 6 tests.
+- `webcodecs` encode paths: encodeVideoFrames/encodeAudioFrames mirroring decode factories, 6 tests (55/55 package total).
+- `whisper` package: injectable model factory + pure alignWordsToDuration/transcriptionToCues, 7 tests.
+- **BF-071 COMPLETE**: verified lint 0 / build 21/21 / test 42/42.
+
 ## Pipeline Completion (pipeline-orchestrator map)
 - [x] Phase 1: Brainstorm — GOAL_00.md is the complete architecture vision (accepted)
 - [x] Phase 2: Governance + Design — BRAINSTORM.md (145 ln), SPEC.md (188 ln), SECURITY.md (103 ln), DESIGN.md (95 ln, #FF6A00 verified) — worker run c566b9f1
