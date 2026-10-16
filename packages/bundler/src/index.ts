@@ -203,7 +203,7 @@ function createChunks(entries: BundleEntry[], strategy: BundlerOptions['chunkStr
       }
 
       let chunkIndex = 0;
-      for (const [depKey, groupEntries] of depGroups) {
+      for (const [_depKey, groupEntries] of depGroups) {
         const entryIds = groupEntries.map(e => e.id);
         const size = groupEntries.reduce((sum, e) => sum + e.size, 0);
         const content = entryIds.join(',');
@@ -226,7 +226,7 @@ function createChunks(entries: BundleEntry[], strategy: BundlerOptions['chunkStr
 /**
  * Create asset list from entries
  */
-function createAssets(entries: BundleEntry[], options: BundlerOptions): BundleAsset[] {
+function createAssets(entries: BundleEntry[], _options: BundlerOptions): BundleAsset[] {
   return entries.map(entry => ({
     name: `${entry.id}.${entry.type}`,
     source: entry.path,

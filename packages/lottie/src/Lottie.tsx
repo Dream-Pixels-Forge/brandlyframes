@@ -15,7 +15,7 @@ import type {
   LottieControls,
   LottieProps,
 } from './types';
-import { createLottiePlayer, markerToFrame } from './animation';
+import { createLottiePlayer } from './animation';
 import { parseAnimation } from './parser';
 import { renderLottieFrame } from './renderer';
 
@@ -45,15 +45,15 @@ export const Lottie: FC<LottieProps> = ({
   autoplay = true,
   loop = true,
   speed = 1,
-  direction = 1,
-  renderer = 'canvas',
+  direction: _direction = 1,
+  renderer: _renderer = 'canvas',
   width,
   height,
   onLoad,
   onFrame,
-  onComplete,
+  onComplete: _onComplete,
   className,
-  canvasRef,
+  canvasRef: _canvasRef,
 }) => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const playerRef = useRef<LottieControls | null>(null);
@@ -69,7 +69,7 @@ export const Lottie: FC<LottieProps> = ({
   }
 
   const frame = useCurrentFrame();
-  const video = useVideoConfig();
+  const _video = useVideoConfig();
 
   const draw = useCallback(() => {
     const canvas = canvasEl.current;
@@ -124,7 +124,6 @@ export const Lottie: FC<LottieProps> = ({
       playerRef.current = null;
       modelRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animation]);
 
   // Sync to composition frame each render.
@@ -157,7 +156,7 @@ export const Lottie: FC<LottieProps> = ({
 export function useLottie(animation: LottieAnimation | string): LottieControls {
   const controlsRef = useRef<LottieControls | null>(null);
   const frame = useCurrentFrame();
-  const video = useVideoConfig();
+  const _video = useVideoConfig();
 
   useEffect(() => {
     const init = async () => {
@@ -180,7 +179,6 @@ export function useLottie(animation: LottieAnimation | string): LottieControls {
       controlsRef.current?.destroy();
       controlsRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [animation]);
 
   // Derive read-only state from ref.

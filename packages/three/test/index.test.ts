@@ -2,7 +2,7 @@
  * Three.js integration tests — [BF-071]
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   ThreeRenderer,
   useThree,
@@ -13,14 +13,20 @@ import {
 } from '../src/index';
 
 // Mock document for tests
+interface MockDocument {
+  createElement: (
+    tag: string
+  ) => { width: number; height: number; getContext: (contextId: string) => object } | object;
+}
+
 global.document = {
-  createElement: vi.fn((tag) => {
+  createElement: vi.fn((tag: string) => {
     if (tag === 'canvas') {
       return { width: 0, height: 0, getContext: () => ({}) };
     }
     return {};
   }),
-} as any;
+} as MockDocument;
 
 // Mock Three.js
 vi.mock('three', async () => {
@@ -120,8 +126,17 @@ describe('useThree hook', () => {
 });
 
 describe('createFrameTexture', () => {
+  // Minimal structural type for the WebGLRenderer mock — createFrameTexture never reads the renderer.
+  interface MockWebGLRenderer {
+    setSize?: (width: number, height: number) => void;
+    setPixelRatio?: (value: number) => void;
+    setClearColor?: (color: number, alpha?: number) => void;
+    render?: (scene: unknown, camera: unknown) => void;
+    autoClear?: boolean;
+  }
+
   it('creates a texture from source', () => {
-    const mockRenderer = {} as any;
+    const mockRenderer: MockWebGLRenderer = {};
     const mockSource = document.createElement('canvas');
     const texture = createFrameTexture(mockRenderer, mockSource);
     expect(texture).toBeDefined();

@@ -157,12 +157,12 @@ export async function extractFrames(options: ExtractFramesOptions): Promise<Extr
     frameCount,
     width,
     height,
-    startFrame = 0,
+    startFrame: _startFrame = 0,
     endFrame,
     frameStore,
   } = options;
 
-  const effectiveEndFrame = endFrame ?? frameCount - 1;
+  const _effectiveEndFrame = endFrame ?? frameCount - 1;
   const frameIndices = generateFrameIndices(options);
 
   const extractedFrames: ExtractedFrame[] = [];
@@ -215,12 +215,12 @@ export async function extractFrames(options: ExtractFramesOptions): Promise<Extr
  * In a real implementation, this would use a proper image encoder (sharp, canvas, etc.).
  * For now, we create a minimal valid PNG/JPG/WebP structure.
  */
-async function encodeFrameToFormat(
+async function _encodeFrameToFormat(
   data: Uint8Array,
   width: number,
   height: number,
   format: 'png' | 'jpg' | 'webp',
-  quality: number
+  _quality: number
 ): Promise<Uint8Array> {
   // This is a simplified placeholder. In production, you'd use:
   // - sharp: await sharp(data, { raw: { width, height, channels: 4 } }).png().toBuffer()
@@ -251,7 +251,7 @@ export async function extractFramesToDisk(
   const {
     outputDir,
     format = 'png',
-    quality = 90,
+    quality: _quality = 90,
     filenamePattern = 'frame-{index:05d}.{ext}',
   } = options;
 

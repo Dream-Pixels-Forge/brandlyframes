@@ -5,7 +5,7 @@
  * the BrandlyFrames composition frame clock.
  */
 
-import type { AnimationModel, LottieControls, MarkerModel } from './types';
+import type { AnimationModel, LottieControls } from './types';
 
 /** Internal playback state. */
 interface PlaybackState {
@@ -21,7 +21,7 @@ interface PlaybackState {
 
 /** Create a playback controller for a model. */
 export function createLottiePlayer(model: AnimationModel): LottieControls {
-  let state: PlaybackState = {
+  const state: PlaybackState = {
     model,
     isPlaying: false,
     speed: 1,

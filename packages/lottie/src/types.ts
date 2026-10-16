@@ -93,12 +93,12 @@ export interface KeyframeGroup {
 /** A single keyframe. */
 export interface Keyframe {
   t: number; // time (frames)
-  s?: any; // start value
-  e?: any; // end value
+  s?: unknown; // start value
+  e?: unknown; // end value
   o?: { x: number; y: number }; // out tangent
   i?: { x: number; y: number }; // in tangent
-  to?: any; // end value (alt)
-  ti?: any; // in value (alt)
+  to?: unknown; // end value (alt)
+  ti?: unknown; // in value (alt)
 }
 
 /** Base layer. */
@@ -280,6 +280,8 @@ export interface GradientStrokeShape extends ShapeItem {
   lc: string;
   lj: string;
   ml: number;
+  /** Gradient type (1 = linear, 2 = radial). */
+  t?: number;
 }
 
 /** Trim paths shape. */
@@ -353,7 +355,7 @@ export interface TransformModel {
 /** Value accessor resolves a property value at a frame. */
 export interface ValueAccessor {
   /** Get interpolated value at frame. */
-  get: (frame: number) => any;
+  get: (frame: number) => unknown;
 }
 
 /** Normalized shape model. */

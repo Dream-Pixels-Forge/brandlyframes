@@ -7,7 +7,7 @@
  * Clean-room implementation.
  */
 
-import React, { type FC, ReactElement, RefObject } from 'react';
+import React, { type FC, RefObject } from 'react';
 import { useCurrentFrame, useVideoConfig } from 'brandlyframes';
 import * as THREE from 'three';
 
@@ -46,7 +46,7 @@ export class TextGeometry extends THREE.BufferGeometry {
     super();
     // Simplified implementation - creates a basic text geometry
     // In a full implementation, this would generate proper glyph geometry
-    const { font, size = 1, height: textHeight = 0.1, curveSegments = 12 } = parameters;
+    const { size = 1, height: textHeight = 0.1 } = parameters;
     
     // Create a simple placeholder - a plane with text dimensions
     const width = text.length * size * 0.5;
@@ -253,7 +253,7 @@ export function createFrameTexture(
   renderer: THREE.WebGLRenderer,
   source: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement | string | HTMLCanvasElement
 ): THREE.Texture {
-  const texture = new THREE.Texture(source as any);
+  const texture = new THREE.Texture(source as TexImageSource);
   texture.needsUpdate = true;
   return texture;
 }
@@ -313,7 +313,7 @@ export const ThreeText: FC<ThreeTextProps> = ({
   rotation,
   scale,
 }) => {
-  const { time } = useThree();
+  const { time: _time } = useThree();
 
   const geometryRef = React.useRef<TextGeometry | null>(null);
   const meshRef = React.useRef<THREE.Mesh | null>(null);
@@ -354,7 +354,7 @@ interface MeshProps {
   object: THREE.Mesh;
 }
 
-const Mesh: FC<MeshProps> = ({ object }) => {
+const Mesh: FC<MeshProps> = ({ object: _object }) => {
   // Placeholder - in real implementation would use @react-three/fiber's primitive
   return null;
 };
@@ -366,7 +366,7 @@ interface PrimitiveProps {
   object: THREE.Object3D;
 }
 
-export const Primitive: FC<PrimitiveProps> = ({ object }) => {
+export const Primitive: FC<PrimitiveProps> = ({ object: _object }) => {
   // Placeholder component - in real implementation would use @react-three/fiber's primitive
   // For now, we render nothing but the component exists
   return null;

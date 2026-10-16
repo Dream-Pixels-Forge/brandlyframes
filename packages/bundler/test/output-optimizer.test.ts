@@ -10,9 +10,6 @@ import {
   createBundleOutputOptions,
   generateFileName,
   createOutputManifest,
-  OptimizationResult,
-  AssetOptimizationResult,
-  OutputManifest,
 } from '../src/output-optimizer';
 
 describe('output-optimizer', () => {

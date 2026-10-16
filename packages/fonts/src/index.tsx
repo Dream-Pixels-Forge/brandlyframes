@@ -6,7 +6,7 @@
  */
 
 import type { FC } from 'react';
-import { useCurrentFrame, useVideoConfig } from 'brandlyframes';
+import { useCurrentFrame } from 'brandlyframes';
 
 /**
  * Font weight values.
@@ -306,7 +306,7 @@ export class FontRegistry {
     return `${family}-${weight}-${style}`;
   }
 
-  private async loadFont(source: FontSource, options: FontLoadOptions): Promise<FontLoadResult> {
+  private async loadFont(source: FontSource, _options: FontLoadOptions): Promise<FontLoadResult> {
     // In a real implementation, this would use FontFace API or load from URL
     // For now, return a placeholder result
     return {
@@ -406,7 +406,6 @@ export function measureText(
   const wordSpacing = options?.wordSpacing || 0;
   const letterSpacing = options?.letterSpacing || 0;
   const words = text.split(/\s+/);
-  const totalChars = text.length - words.length + 1; // total chars including spaces
   const totalWords = words.length;
   const width = (text.length - totalWords + 1) * charWidth + letterSpacing * (text.length - 1) + wordSpacing * (totalWords - 1);
   const height = fontSize * 1.2;
@@ -418,8 +417,8 @@ export function measureText(
  */
 export function createSubset(
   fontData: ArrayBuffer,
-  characters: string,
-  options?: { format?: FontFormat; hinting?: boolean }
+  _characters: string,
+  _options?: { format?: FontFormat; hinting?: boolean }
 ): ArrayBuffer {
   // In a real implementation, this would use font subsetting library (e.g., fontkit, opentype.js)
   // For now, return the original font data
@@ -429,7 +428,7 @@ export function createSubset(
 /**
  * Parse font metadata from binary data.
  */
-export function parseFontMetadata(fontData: ArrayBuffer): FontMetrics | null {
+export function parseFontMetadata(_fontData: ArrayBuffer): FontMetrics | null {
   // In a real implementation, this would parse font tables (head, hhea, maxp, etc.)
   // For now, return null
   return null;
@@ -442,7 +441,7 @@ export function shapeText(
   text: string,
   fontFamily: string,
   fontSize: number,
-  options?: TextLayoutOptions
+  _options?: TextLayoutOptions
 ): ShapedText {
   // Simplified shaping - real implementation would use HarfBuzz
   const lines: ShapedLine[] = [];
@@ -493,7 +492,7 @@ export function shapeText(
  * React hook for font loading.
  */
 export function useFont(sources: FontSource[]): { loaded: boolean; error?: string } {
-  const frame = useCurrentFrame();
+  const _frame = useCurrentFrame();
   const [loaded, setLoaded] = React.useState(false);
   const [error, setError] = React.useState<string | undefined>();
 

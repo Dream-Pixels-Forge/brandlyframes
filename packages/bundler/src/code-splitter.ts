@@ -93,7 +93,7 @@ export const splitByDependencyStrategy: SplitStrategy = {
     const chunks: BundleChunk[] = [];
     let chunkIndex = 0;
 
-    for (const [depSig, groupEntries] of depGroups) {
+    for (const [_depSig, groupEntries] of depGroups) {
       const entryIds = groupEntries.map(e => e.id);
       const size = groupEntries.reduce((sum, e) => sum + e.size, 0);
       const content = entryIds.sort().join(',');
@@ -117,7 +117,7 @@ export const splitByDependencyStrategy: SplitStrategy = {
  */
 export const smartSplitStrategy: SplitStrategy = {
   name: 'smart',
-  split(entries: BundleEntry[], options: BundlerOptions): BundleChunk[] {
+  split(entries: BundleEntry[], _options: BundlerOptions): BundleChunk[] {
     // First, separate vendor/third-party from app code
     const vendorEntries: BundleEntry[] = [];
     const appEntries: BundleEntry[] = [];

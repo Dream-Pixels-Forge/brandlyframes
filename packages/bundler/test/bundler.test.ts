@@ -8,7 +8,6 @@ import {
   optimizeChunkGraph,
   BundleEntry,
   BundleManifest,
-  BundlerOptions,
 } from '../src/index';
 
 describe('bundler', () => {

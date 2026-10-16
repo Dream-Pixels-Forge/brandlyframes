@@ -6,13 +6,14 @@
  * trim paths, transforms, and opacity. Image/precomp layers are placeholders.
  */
 
-import type { AnimationModel, LayerModel, ShapeModel } from './types';
+import type { AnimationModel, ShapeModel, TransformModel, ValueAccessor } from './types';
 
 /** Resolve a CSS rgb string from a color accessor value. */
-function colorToRgba(value: any, opacity: number): string {
-  const r = clamp(Math.round((value?.r ?? 0) * 255), 0, 255);
-  const g = clamp(Math.round((value?.g ?? 0) * 255), 0, 255);
-  const b = clamp(Math.round((value?.b ?? 0) * 255), 0, 255);
+function colorToRgba(value: unknown, opacity: number): string {
+  const color = value as { r?: number; g?: number; b?: number } | null | undefined;
+  const r = clamp(Math.round((color?.r ?? 0) * 255), 0, 255);
+  const g = clamp(Math.round((color?.g ?? 0) * 255), 0, 255);
+  const b = clamp(Math.round((color?.b ?? 0) * 255), 0, 255);
   const a = opacity / 100;
   return `rgba(${r},${g},${b},${a})`;
 }
@@ -22,8 +23,8 @@ function clamp(v: number, min: number, max: number): number {
 }
 
 /** Get value accessor result with a fallback. */
-function accessor(acc: any, fallback: any): any {
-  return acc ? acc.get(fallback) : fallback;
+function accessor<T>(acc: ValueAccessor | undefined, fallback: T): T {
+  return (acc ? acc.get(fallback as unknown as number) : fallback) as T;
 }
 
 /** Render a single shape model onto ctx. */
@@ -100,9 +101,6 @@ function renderShape(
       const pos = accessor(shape.ellipsePosition, { x: 0, y: 0 });
       const w = size.w ?? 100;
       const h = size.h ?? 100;
-      const x = pos.x - w / 2;
-      const y = pos.y - h / 2;
-      const kappa = 0.5522848;
 
       if (shape.fillRule !== undefined && shape.color) {
         ctx.fillStyle = colorToRgba(shape.color, accessor(shape.fillOpacity, 100));
@@ -201,7 +199,7 @@ function renderShape(
 /** Apply a transform model to the canvas context. */
 function applyTransform(
   ctx: CanvasRenderingContext2D,
-  transform: any,
+  transform: TransformModel,
   opacity: number,
 ): void {
   const pos = accessor(transform.position, { x: 0, y: 0, z: 0 });
@@ -226,7 +224,7 @@ function applyTransform(
 }
 
 /** Parse a simplified SVG-like path data string into draw commands. */
-function parsePathData(data: any): Array<{ type: string; pts: number[] }> {
+function parsePathData(data: unknown): Array<{ type: string; pts: number[] }> {
   const commands: Array<{ type: string; pts: number[] }> = [];
   if (typeof data === 'string') {
     // Very light parser: M, L, C, Q, Z, m, l, c, q, z
@@ -251,9 +249,9 @@ function parsePathData(data: any): Array<{ type: string; pts: number[] }> {
 function applyTrim(
   ctx: CanvasRenderingContext2D,
   path: Array<{ type: string; pts: number[] }>,
-  start: number,
-  end: number,
-  offset: number,
+  _start: number,
+  _end: number,
+  _offset: number,
 ): void {
   // Trim implementation: skip — render full path. Trim paths require
   // per-segment length computation; placeholder keeps geometry intact.
@@ -267,13 +265,11 @@ function drawPath(
   path: Array<{ type: string; pts: number[] }>,
 ): void {
   ctx.beginPath();
-  let subpathStarted = false;
   for (const cmd of path) {
     const p = cmd.pts;
     switch (cmd.type) {
       case 'M':
         ctx.moveTo(p[0], p[1]);
-        subpathStarted = true;
         break;
       case 'L':
         ctx.lineTo(p[0], p[1]);
@@ -340,11 +336,11 @@ export function renderLottieFrame(
 
     ctx.save();
     // Apply layer transform.
-    const pos = layer.transform.position.get(frame);
-    const anchor = layer.transform.anchor.get(frame);
+    const pos = layer.transform.position.get(frame) as { x?: number; y?: number } | null;
+    const anchor = layer.transform.anchor.get(frame) as { x?: number; y?: number } | null;
     const scale = layer.transform.scale.get(frame);
-    const rotation = layer.transform.rotation.get(frame);
-    const layerOp = layer.transform.opacity.get(frame);
+    const rotation = layer.transform.rotation.get(frame) as number;
+    const layerOp = layer.transform.opacity.get(frame) as number;
 
     const x = pos?.x ?? 0;
     const y = pos?.y ?? 0;

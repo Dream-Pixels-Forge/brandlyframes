@@ -4,8 +4,15 @@
 - Project: BrandlyFrames (programmatic video SDK, React → MP4)
 - Source of truth: `dev-notes/Goals/GOAL_00.md`
 - Started: 2026-10-13
-- Pipeline Phase: 3 (Engineer) — **v0.1 "Slate" COMPLETE**; driving v0.2 "Projector" (P2)
-- Status: in-progress (async workflow dispatched)
+- Pipeline Phase: 3 (Engineer) — v0.1–v0.5 COMPLETE; driving **v0.6 "Reel" (BF-071)**
+- Status: in-progress
+- Last synced: 2026-10-16 (checkboxes in GOAL_00 §7c reconciled with disk; captions + webcodecs fixes landed; repo-wide lint now clean)
+
+## BF-071 status (v0.6 "Reel")
+- [x] fonts, three, lottie, media-utils, media-parser — implemented + tests
+- [x] webcodecs decode/probe paths (commit e903f4c) — **encode still pending**
+- [ ] gif, whisper — not started
+- Remaining after BF-071: v0.3 renderer work (BF-020..026) and v0.4 player (BF-030..032) are still open despite version numbering — see GOAL_00 §7c.
 
 ## Pipeline Completion (pipeline-orchestrator map)
 - [x] Phase 1: Brainstorm — GOAL_00.md is the complete architecture vision (accepted)

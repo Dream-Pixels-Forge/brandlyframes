@@ -196,3 +196,13 @@ Three.js: ^0.160.0
 ---
 
 *End of Handoff*
+
+---
+
+## Addendum — 2026-10-16 (post-handoff fixes)
+
+- **Fixed**: `@brandlyframes/captions` VTT/karaoke/render bugs + build/test hygiene (commit b459986); `@brandlyframes/webcodecs` decode paths landed (commit e903f4c).
+- **Repo-wide lint is now clean** (was 117 errors): unused-vars removed/`_`-prefixed, `any` eliminated across lottie/three/fonts/bundler/frames, dead eslint-disable comments removed.
+- **Verified**: `pnpm lint`, `pnpm build` (14/14), `pnpm test` (28/28 tasks) all green.
+- **Stale claims corrected**: "Test Results"/"lint ✅" table above was aspirational at the time; captions had 25 failing tests then. GOAL_00 §7c and PROGRESS.md synced to disk state.
+- **Still open** (unchanged from Known Issues): three's Mesh/Primitive placeholders, no CHANGELOG/API docs, webcodecs encode, gif, whisper.

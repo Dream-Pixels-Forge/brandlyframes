@@ -7,23 +7,32 @@
 
 import type {
   AnimationModel,
+  FillShape,
+  GradientFillShape,
+  GradientStrokeShape,
+  GroupShape,
   Keyframe,
   KeyframeGroup,
   LayerModel,
   LottieAnimation,
   LottieLayer,
-  MarkerModel,
+  RectShape,
+  RepeaterShape,
+  EllipseShape,
+  PathShape,
   ShapeItem,
-  ShapeItemType,
   ShapeModel,
+  StrokeShape,
+  Transform,
   TransformModel,
+  TrimPathsShape,
   ValueAccessor,
 } from './types';
 
 /** Resolve a static value or keyframe group into a ValueAccessor. */
 function makeValueAccessor(
-  k: KeyframeGroup | any,
-  fallback: any = 0,
+  k: unknown,
+  fallback: unknown = 0,
 ): ValueAccessor {
   // If it's not a keyframe group (no `k` array / `a` flag), treat as static.
   if (!k || typeof k !== 'object' || !Array.isArray((k as KeyframeGroup).k)) {
@@ -45,8 +54,8 @@ function makeValueAccessor(
 function interpolateKeyframes(
   keyframes: Keyframe[],
   frame: number,
-  fallback: any,
-): any {
+  fallback: unknown,
+): unknown {
   if (keyframes.length === 0) return fallback;
   if (keyframes.length === 1) return keyframes[0].s ?? keyframes[0].e ?? fallback;
 
@@ -75,7 +84,7 @@ function interpolateKeyframes(
 }
 
 /** Linear interpolate between two values. */
-function lerp(a: any, b: any, t: number): any {
+function lerp(a: unknown, b: unknown, t: number): unknown {
   if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
     return a.map((v, i) => lerp(v, b[i], t));
   }
@@ -87,7 +96,7 @@ function lerp(a: any, b: any, t: number): any {
 }
 
 /** Parse a transform block into a TransformModel. */
-function parseTransform(ks: any): TransformModel {
+function parseTransform(ks: Transform): TransformModel {
   return {
     anchor: makeValueAccessor(ks.a, { x: 0, y: 0, z: 0 }),
     position: makeValueAccessor(ks.p, { x: 0, y: 0, z: 0 }),
@@ -109,7 +118,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
 
   switch (item.ty) {
     case 'gr': {
-      const group = item as any;
+      const group = item as GroupShape;
       return {
         ...base,
         children: (group.it || []).map(parseShapeItem),
@@ -117,7 +126,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'rc': {
-      const rect = item as any;
+      const rect = item as RectShape;
       return {
         ...base,
         rectSize: makeValueAccessor(rect.s, { w: 100, h: 100 }),
@@ -126,7 +135,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'el': {
-      const el = item as any;
+      const el = item as EllipseShape;
       return {
         ...base,
         ellipseSize: makeValueAccessor(el.s, { w: 100, h: 100 }),
@@ -134,14 +143,14 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'sh': {
-      const path = item as any;
+      const path = item as PathShape;
       return {
         ...base,
         pathData: makeValueAccessor(path.k, null),
       };
     }
     case 'fl': {
-      const fill = item as any;
+      const fill = item as FillShape;
       return {
         ...base,
         color: makeValueAccessor(fill.c, { r: 0, g: 0, b: 0 }),
@@ -150,7 +159,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'st': {
-      const stroke = item as any;
+      const stroke = item as StrokeShape;
       return {
         ...base,
         strokeColor: makeValueAccessor(stroke.c, { r: 0, g: 0, b: 0 }),
@@ -162,7 +171,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'gf': {
-      const gf = item as any;
+      const gf = item as GradientFillShape;
       return {
         ...base,
         gradientColors: makeValueAccessor(gf.g, [{ r: 0, g: 0, b: 0 }]),
@@ -173,7 +182,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'gs': {
-      const gs = item as any;
+      const gs = item as GradientStrokeShape;
       return {
         ...base,
         gradientColors: makeValueAccessor(gs.g, [{ r: 0, g: 0, b: 0 }]),
@@ -188,7 +197,7 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'tm': {
-      const tm = item as any;
+      const tm = item as TrimPathsShape;
       return {
         ...base,
         trimStart: makeValueAccessor(tm.s, 0),
@@ -198,12 +207,12 @@ function parseShapeItem(item: ShapeItem): ShapeModel {
       };
     }
     case 'rp': {
-      const rp = item as any;
+      const rp = item as RepeaterShape;
       return {
         ...base,
         ...(rp.transform ? { transform: parseTransform(rp.transform) } : {}),
         // Repeater copies/offset handled at render time; expose via raw group below.
-      } as any;
+      };
     }
     default:
       return base;
@@ -227,8 +236,9 @@ function parseLayer(layer: LottieLayer): LayerModel {
   if (layer.parent !== undefined) model.parent = layer.parent;
   if (layer.refId !== undefined) model.refId = layer.refId;
 
-  if ((layer as any).shapes) {
-    model.shapes = (layer as any).shapes.map(parseShapeItem);
+  const shapes = (layer as LottieLayer & { shapes?: ShapeItem[] }).shapes;
+  if (shapes) {
+    model.shapes = shapes.map(parseShapeItem);
   }
 
   return model;

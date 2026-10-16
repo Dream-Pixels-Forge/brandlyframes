@@ -2,13 +2,12 @@
  * Fonts tests — [BF-071]
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   FontRegistry,
   fontRegistry,
   FontSource,
   FontMetrics,
-  FontLoadResult,
   measureText,
   shapeText,
   fontStacks,
@@ -25,13 +24,6 @@ describe('FontRegistry', () => {
   });
 
   it('registers and retrieves font faces', () => {
-    const source: FontSource = {
-      family: 'TestFont',
-      weight: 400,
-      style: 'normal',
-      local: 'TestFont',
-    };
-
     // We can't easily test FontFace without a browser environment
     // but we can test the registry structure
     expect(registry.has('TestFont', 400, 'normal')).toBe(false);

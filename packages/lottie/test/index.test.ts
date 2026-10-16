@@ -3,6 +3,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
+import type { LottieAnimation } from '../src/index';
 import {
   Lottie,
   useLottie,
@@ -57,7 +58,7 @@ global.document = {
     }
     return {};
   }),
-} as any;
+} as unknown as Document;
 
 // Mock requestAnimationFrame for animation tests
 global.requestAnimationFrame = vi.fn((cb: FrameRequestCallback) => setTimeout(cb, 16) as unknown as number);
@@ -66,9 +67,9 @@ global.performance = {
   now: vi.fn(() => Date.now()),
   timeOrigin: Date.now(),
   eventCounts: {},
-  navigation: {} as any,
+  navigation: {} as unknown as PerformanceNavigation,
   onresourcetimingbufferfull: null,
-  timing: {} as any,
+  timing: {} as unknown as PerformanceTiming,
   mark: vi.fn(),
   measure: vi.fn(),
   clearMarks: vi.fn(),
@@ -129,7 +130,7 @@ const simpleRectAnimation = {
     },
   ],
   markers: [{ tm: 0, dr: 0, cm: 'start' }, { tm: 1, dr: 0, cm: 'mid' }],
-} as any;
+} as unknown as LottieAnimation;
 
 describe('@brandlyframes/lottie', () => {
   describe('exports', () => {
@@ -205,7 +206,7 @@ describe('@brandlyframes/lottie', () => {
       const canvas = document.createElement('canvas');
       canvas.width = 100;
       canvas.height = 100;
-      const ctx = canvas.getContext('2d') as any;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       expect(() => renderLottieFrame(ctx, model, 0)).not.toThrow();
       expect(() => renderLottieFrame(ctx, model, 15)).not.toThrow();
       expect(() => renderLottieFrame(ctx, model, 30)).not.toThrow();
@@ -216,7 +217,7 @@ describe('@brandlyframes/lottie', () => {
       const canvas = document.createElement('canvas');
       canvas.width = 100;
       canvas.height = 100;
-      const ctx = canvas.getContext('2d') as any;
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
       // Frame outside layer range should not throw.
       expect(() => renderLottieFrame(ctx, model, 100)).not.toThrow();
     });

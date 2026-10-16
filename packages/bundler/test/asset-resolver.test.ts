@@ -8,7 +8,6 @@ import {
   createAssetResolution,
   createDependencyGraph,
   AssetResolution,
-  ResolverOptions,
 } from '../src/asset-resolver';
 
 describe('asset-resolver', () => {

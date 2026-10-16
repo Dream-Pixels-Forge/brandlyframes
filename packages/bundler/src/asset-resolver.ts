@@ -170,7 +170,7 @@ export function createAssetResolution(
   originalPath: string,
   resolvedPath: string,
   content: string | Uint8Array,
-  options: ResolverOptions
+  _options: ResolverOptions
 ): AssetResolution {
   const strContent = typeof content === 'string' ? content : new TextDecoder().decode(content);
   const type = getAssetType(resolvedPath);
