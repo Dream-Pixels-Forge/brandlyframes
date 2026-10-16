@@ -33,6 +33,68 @@ importers:
         specifier: ^8.71.2
         version: 8.71.2(eslint@10.12.0)(typescript@5.9.3)
 
+  packages/bundler:
+    dependencies:
+      brandlyframes:
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
+      '@brandlyframes/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@brandlyframes/frames':
+        specifier: workspace:*
+        version: link:../frames
+      '@brandlyframes/three':
+        specifier: workspace:*
+        version: link:../three
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.43
+      '@vitest/coverage-v8':
+        specifier: ^5.0.4
+        version: 5.0.4(vitest@5.0.4)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^5.0.4
+        version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
+  packages/captions:
+    dependencies:
+      brandlyframes:
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
+      '@brandlyframes/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@brandlyframes/frames':
+        specifier: workspace:*
+        version: link:../frames
+      '@brandlyframes/three':
+        specifier: workspace:*
+        version: link:../three
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.43
+      '@vitest/coverage-v8':
+        specifier: ^5.0.4
+        version: 5.0.4(vitest@5.0.4)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^5.0.4
+        version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/cli:
     dependencies:
       commander:
@@ -189,7 +251,23 @@ importers:
         version: 3.2.7(@types/node@20.19.43)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/media-parser:
+    dependencies:
+      brandlyframes:
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
+      '@brandlyframes/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@brandlyframes/frames':
+        specifier: workspace:*
+        version: link:../frames
+      '@brandlyframes/three':
+        specifier: workspace:*
+        version: link:../three
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.43
@@ -204,7 +282,23 @@ importers:
         version: 5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
 
   packages/media-utils:
+    dependencies:
+      brandlyframes:
+        specifier: workspace:*
+        version: link:../core
     devDependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
+      '@brandlyframes/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@brandlyframes/frames':
+        specifier: workspace:*
+        version: link:../frames
+      '@brandlyframes/three':
+        specifier: workspace:*
+        version: link:../three
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.43
@@ -2515,7 +2609,7 @@ snapshots:
     optionalDependencies:
       vite: 7.3.7(@types/node@20.19.43)(lightningcss@1.33.0)(tsx@4.23.15)(yaml@2.9.1)
 
-  '@vitest/mocker@5.0.4(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))':
+  '@vitest/mocker@5.0.4(vite@8.3.4(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       '@vitest/spy': 5.0.4
@@ -3217,7 +3311,7 @@ snapshots:
   vitest@5.0.4(@types/node@20.19.43)(@vitest/coverage-v8@5.0.4)(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1)):
     dependencies:
       '@types/chai': 5.2.3
-      '@vitest/mocker': 5.0.4(vite@8.3.4(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
+      '@vitest/mocker': 5.0.4(vite@8.3.4(esbuild@0.28.2)(tsx@4.23.15)(yaml@2.9.1))
       chai: 6.3.0
       es-module-lexer: 2.3.2
       expect-type: 1.4.0
