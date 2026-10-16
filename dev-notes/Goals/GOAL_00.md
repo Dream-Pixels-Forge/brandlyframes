@@ -374,7 +374,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
   - [x] BF-071 `fonts` (font loading, subsetting, glyph layout)
   - [x] BF-071 `three` (Three.js integration)
   - [x] BF-071 `lottie` (Lottie animation support)
-  - [ ] BF-071 `gif` (GIF export/import) — package not started
+  - [x] BF-071 `gif` (GIF export/import — pure-TS encoder + decoder: LZW, median-cut palette, delays, NETSCAPE loop, transparency)
   - [x] BF-071 `media-utils` (audio/video helpers)
   - [x] BF-071 `media-parser` (extended media metadata)
   - [ ] BF-071 `webcodecs` (WebCodecs encode/decode) — decode/probe done; encode still pending
