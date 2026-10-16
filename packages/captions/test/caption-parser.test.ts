@@ -120,14 +120,15 @@ Hello world`;
       const vtt = `WEBVTT
 
 1
-00:00:01.000 --> 00:00:04.000 position:50% align:center
+00:00:01.000 --> 00:00:04.000 position:50% align:center size:75%
 Hello world`;
 
       const result = parseVTT(vtt);
+      // W3C WebVTT: position and size are independent settings.
       expect(result.cues[0].settings).toEqual({
         position: 'center',
         alignment: 'center',
-        size: 50,
+        size: 75,
       });
     });
 
@@ -140,6 +141,20 @@ Hello world`;
 
       const result = parseVTT(vtt);
       expect(result.cues[0].settings?.vertical).toBe(true);
+    });
+
+    it('ignores bare cue-setting tokens that carry no colon-separated value', () => {
+      // Regression: `part.split(':')` yields `value === undefined` for a bare
+      // token, which previously produced NaN for `size` and type-unsafe
+      // narrowing for position/alignment.
+      const vtt = `WEBVTT
+
+1
+00:00:01.000 --> 00:00:04.000 align:start size bare
+Hello world`;
+
+      const result = parseVTT(vtt);
+      expect(result.cues[0].settings).toEqual({ alignment: 'start' });
     });
 
     it('handles last cue without trailing newline', () => {
@@ -212,7 +227,8 @@ Hello world`;
       const parsed = parseVTT(vtt);
       const output = generateVTT(parsed);
 
-      expect(output).toContain('position:center');
+      // W3C WebVTT: position serializes as a percentage
+      expect(output).toContain('position:50%');
       expect(output).toContain('align:center');
     });
   });

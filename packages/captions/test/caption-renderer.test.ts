@@ -1,3 +1,4 @@
+// @vitest-environment happy-dom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   renderCaptionToCanvas,
@@ -7,6 +8,61 @@ import {
   createCaptionOverlay,
 } from '../src/caption-renderer';
 import type { CaptionCue, RendererOptions } from '../src/index';
+
+/**
+ * Minimal mock CanvasRenderingContext2D. happy-dom has no real 2D canvas,
+ * and these tests assert on call behavior (spies) + property writes, which
+ * a real context could not provide anyway.
+ */
+function createMockContext2D(canvas: HTMLCanvasElement | OffscreenCanvas): CanvasRenderingContext2D {
+  const ctx = {
+    canvas,
+    font: '',
+    fillStyle: '',
+    strokeStyle: '',
+    lineWidth: 0,
+    lineJoin: '',
+    miterLimit: 0,
+    globalAlpha: 1,
+    textBaseline: 'alphabetic' as CanvasTextBaseline,
+    clearRect: vi.fn(),
+    fillRect: vi.fn(),
+    fillText: vi.fn(),
+    strokeText: vi.fn(),
+    measureText: vi.fn((text: string) => ({ width: text.length * 10 })),
+  };
+  return ctx as unknown as CanvasRenderingContext2D;
+}
+
+// Install the mock 2D context on every canvas happy-dom creates
+const contextMap = new WeakMap<object, CanvasRenderingContext2D>();
+HTMLCanvasElement.prototype.getContext = function getContext(this: HTMLCanvasElement) {
+  let ctx = contextMap.get(this);
+  if (!ctx) {
+    ctx = createMockContext2D(this);
+    contextMap.set(this, ctx);
+  }
+  return ctx;
+} as unknown as typeof HTMLCanvasElement.prototype.getContext;
+
+// OffscreenCanvas fallback used when no canvas is passed to the renderer
+class MockOffscreenCanvas {
+  width: number;
+  height: number;
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+  }
+  getContext(): CanvasRenderingContext2D {
+    let ctx = contextMap.get(this);
+    if (!ctx) {
+      ctx = createMockContext2D(this as unknown as OffscreenCanvas);
+      contextMap.set(this, ctx);
+    }
+    return ctx;
+  }
+}
+vi.stubGlobal('OffscreenCanvas', MockOffscreenCanvas);
 
 // Create a real canvas for testing
 function createTestCanvas(width: number = 1920, height: number = 1080): HTMLCanvasElement {

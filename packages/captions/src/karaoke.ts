@@ -44,8 +44,10 @@ export function createKaraokeOptions(overrides: Partial<KaraokeOptions> = {}): K
  */
 export function parseASSKaraoke(text: string): KaraokeData {
   const words: KaraokeWord[] = [];
-  // Match {\kf<number>} or {\k<number>} tags - capture the tag and the following text
-  const regex = /{\\kf?(\d+)}([^}]*)/g;
+  // Match {\kf<number>} or {\k<number>} tags - capture the tag and the following text.
+  // The text segment ends at the next tag (`{`) or closing `}` — using [^{}]
+  // prevents swallowing the next tag's body (e.g. "Hello{\kf50").
+  const regex = /{\\kf?(\d+)}([^{}]*)/g;
   let match;
   let currentTime = 0; // in seconds
 
@@ -101,7 +103,7 @@ export function getKaraokeState(karaoke: KaraokeData, currentTime: number): Kara
   const words = karaoke.words;
   let currentWordIndex = -1;
   let currentWordProgress = 0;
-  let completedWords: string[] = [];
+  const completedWords: string[] = [];
   let currentWord: string | null = null;
 
   // Handle empty karaoke
@@ -228,8 +230,6 @@ export function renderKaraokeToSVG(
     .karaoke-outline { stroke: ${options.outlineColor || 'none'}; stroke-width: ${options.outlineWidth || 0}; paint-order: stroke fill; }
   </style>`;
 
-  let x = options.x;
-  let y = options.y;
   const maxWidth = options.width - options.x * 2;
 
   // Simple layout - all words on one line with wrapping
@@ -315,7 +315,8 @@ export function createBouncingBallData(
 ): { x: number; y: number; wordIndex: number; progress: number } | null {
   const state = getKaraokeState(karaoke, currentTime);
 
-  if (state.currentWordIndex < 0) return null;
+  // No active word: before the first word or after the last one completed
+  if (state.currentWordIndex < 0 || state.currentWordProgress >= 1) return null;
 
   // Simplified - would calculate actual position based on rendered text
   return {
@@ -357,10 +358,18 @@ export function exportKaraokeJSON(karaoke: KaraokeData): string {
 /**
  * Import karaoke from JSON
  */
+/** Shape of the JSON accepted by {@link importKaraokeJSON}. */
+interface ImportedKaraokeWord {
+  text: string;
+  start: number;
+  end: number;
+  confidence?: number;
+}
+
 export function importKaraokeJSON(json: string): KaraokeData {
-  const data = JSON.parse(json);
+  const data = JSON.parse(json) as { words: ImportedKaraokeWord[] };
   return {
-    words: data.words.map((w: any) => ({
+    words: data.words.map((w) => ({
       text: w.text,
       startTime: w.start,
       endTime: w.end,

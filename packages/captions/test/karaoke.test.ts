@@ -13,11 +13,11 @@ import {
   exportKaraokeJSON,
   importKaraokeJSON,
 } from '../src/karaoke';
-import type { KaraokeData, KaraokeWord, CaptionCue } from '../src/index';
+import type { KaraokeData, CaptionCue } from '../src/index';
 
 describe('Karaoke Utilities', () => {
   describe('parseASSKaraoke', () => {
-    it('parses ASS karaoke format with \kf tags', () => {
+    it('parses ASS karaoke format with kf tags', () => {
       const assText = '{\\kf100}Hello{\\kf50} world';
       const result = parseASSKaraoke(assText);
 
@@ -30,7 +30,7 @@ describe('Karaoke Utilities', () => {
       expect(result.words[1].endTime).toBe(1.5); // 50 centiseconds = 0.5 seconds
     });
 
-    it('parses ASS karaoke format with \k tags', () => {
+    it('parses ASS karaoke format with k tags', () => {
       const assText = '{\\k100}Hello{\\k50} world';
       const result = parseASSKaraoke(assText);
 
@@ -123,7 +123,7 @@ describe('Karaoke Utilities', () => {
       const state = getKaraokeState(karaoke, 1.2);
 
       expect(state.currentWordIndex).toBe(1);
-      expect(state.currentWordProgress).toBe(0.2);
+      expect(state.currentWordProgress).toBeCloseTo(0.2, 10);
       expect(state.overallProgress).toBeCloseTo(0.4, 1);
       expect(state.completedWords).toEqual(['Hello']);
       expect(state.currentWord).toBe('world');

@@ -28,12 +28,13 @@
   },
   "devDependencies": {
     "@brandlyframes/design": "workspace:*",
-    "@brandlyframes/frames": "workspace:*",
     "@brandlyframes/fonts": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
     "@brandlyframes/three": "workspace:*",
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^5.0.4",
+    "happy-dom": "^21.0.1",
     "typescript": "^5.9.3",
-    "vitest": "^5.0.4",
-    "@vitest/coverage-v8": "^5.0.4"
+    "vitest": "^5.0.4"
   }
 }

@@ -3,8 +3,7 @@
  * Renders captions to Canvas 2D or SVG
  */
 
-import type { CaptionCue, CaptionSettings, ParsedCaption } from './index';
-
+import type { CaptionCue } from './index';
 export interface RendererOptions {
   width: number;
   height: number;

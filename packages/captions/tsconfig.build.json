@@ -8,5 +8,7 @@
     "moduleResolution": "bundler",
     "noEmit": false,
     "allowImportingTsExtensions": false
-  }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "test", "**/*.test.ts", "**/*.test.tsx"]
 }

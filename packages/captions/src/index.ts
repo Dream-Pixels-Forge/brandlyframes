@@ -76,7 +76,7 @@ export function parseSRT(content: string): ParsedCaption {
     // Parse timestamp line
     const timestampLine = lines[lineIndex].trim();
     const timeMatch = timestampLine.match(
-      /(\d{2}):(\d{2}):(\d{2})[,\.](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,\.](\d{3})/
+      /(\d{2}):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{3})/
     );
 
     if (!timeMatch) continue;
@@ -210,7 +210,12 @@ function parseVTTSettings(settingsStr: string): CaptionSettings {
   const parts = settingsStr.split(/\s+/);
 
   for (const part of parts) {
-    const [key, value] = part.split(':');
+    const sep = part.indexOf(':');
+    // Bare tokens carry no `key:value` pair — skip them (a bare `size` used
+    // to reach parseInt(undefined) and poison settings with NaN).
+    if (sep === -1) continue;
+    const key = part.slice(0, sep);
+    const value = part.slice(sep + 1);
     switch (key) {
       case 'position':
         // Convert percentage values to position enum
@@ -225,14 +230,10 @@ function parseVTTSettings(settingsStr: string): CaptionSettings {
             settings.position = 'bottom';
             break;
           default:
-            // If it's already a valid enum value, use it directly
-            if (['top', 'bottom', 'center'].includes(value as CaptionSettings['position'])) {
-              settings.position = value as CaptionSettings['position'];
-            }
-            // Default to center for unrecognized values
-            else {
-              settings.position = 'center';
-            }
+            // Literal enum values (`position:top` etc.) pass through;
+            // anything unrecognized defaults to center
+            settings.position =
+              value === 'top' || value === 'bottom' || value === 'center' ? value : 'center';
         }
         break;
       case 'align':
@@ -251,14 +252,8 @@ function parseVTTSettings(settingsStr: string): CaptionSettings {
             settings.alignment = 'end';
             break;
           default:
-            // If it's already a valid enum value, use it directly
-            if (['start', 'center', 'end'].includes(value as CaptionSettings['alignment'])) {
-              settings.alignment = value as CaptionSettings['alignment'];
-            }
-            // Default to center for unrecognized values
-            else {
-              settings.alignment = 'center';
-            }
+            // Unrecognized alignment value — default to center
+            settings.alignment = 'center';
         }
         break;
       case 'size':
@@ -433,7 +428,6 @@ export function generateKaraokeTiming(
   text: string,
   startTime: number,
   endTime: number,
-  wordCount?: number
 ): KaraokeData {
   const words = text.split(/\s+/).filter(w => w.length > 0);
   const duration = endTime - startTime;
