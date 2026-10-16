@@ -6,7 +6,7 @@
  */
 
 import type { FC, SVGProps } from 'react';
-import { useCurrentFrame, useVideoConfig } from 'brandlyframes';
+import { useCurrentFrame } from 'brandlyframes';
 
 /**
  * Path command types for building paths programmatically.
@@ -175,7 +175,7 @@ export function starPath(
   innerRadius: number
 ): string {
   let path = '';
-  const step = (Math.PI * 2) / spikes;
+  const _step = (Math.PI * 2) / spikes;
   const startAngle = -Math.PI / 2;
 
   for (let i = 0; i < spikes; i++) {
@@ -208,7 +208,7 @@ export function polygonPath(
   rotation = 0
 ): string {
   let path = '';
-  const angleStep = (Math.PI * 2) / sides;
+  const _angleStep = (Math.PI * 2) / sides;
   const startAngle = rotation - Math.PI / 2;
 
   for (let i = 0; i < sides; i++) {

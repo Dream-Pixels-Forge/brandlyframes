@@ -5,7 +5,6 @@
  * Clean-room implementation.
  */
 
-import type { FC } from 'react';
 import { useCurrentFrame, useVideoConfig } from 'brandlyframes';
 
 /**
@@ -125,7 +124,7 @@ export function generateNoiseField(options: NoiseFieldOptions): number[][] {
     scale = 0.01,
     octaves = 4,
     persistence = 0.5,
-    lacunarity = 2.0,
+    lacunarity: _lacunarity = 2.0,
     seed = 0,
     type = 'fbm',
   } = options;
@@ -263,7 +262,7 @@ export const AnimatedNoise = ({
   width = 100,
   height = 100,
   scale = 0.05,
-  octaves = 4,
+  octaves: _octaves = 4,
   speed = 1,
   type = 'fbm' as 'fbm' | 'turbulence' | 'ridged',
   colorStops = [

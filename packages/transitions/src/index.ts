@@ -28,9 +28,9 @@ export { Slide, slideVariants, type SlideProps, type SlideDirection } from './sl
 export { Wipe, wipeVariants, type WipeProps, type WipeDirection } from './wipe';
 
 // Transition registry for dynamic lookup
-import { Crossfade, crossfadeVariant } from './crossfade';
-import { Slide, slideVariants } from './slide';
-import { Wipe, wipeVariants } from './wipe';
+import { crossfadeVariant } from './crossfade';
+import { slideVariants } from './slide';
+import { wipeVariants } from './wipe';
 import type { TransitionVariantConfig } from './types';
 
 export const TRANSITION_VARIANTS: ReadonlyArray<TransitionVariantConfig> = [

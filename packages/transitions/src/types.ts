@@ -5,7 +5,7 @@
  * that work with the BrandlyFrames frame-by-frame architecture.
  */
 
-import type { FC, ReactElement, ReactNode } from 'react';
+import type { FC, ReactElement } from 'react';
 
 /**
  * Transition progress: 0 = start (from), 1 = end (to)

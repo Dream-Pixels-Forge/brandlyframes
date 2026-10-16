@@ -116,7 +116,7 @@ describe('starPath', () => {
 
   it('generates correct number of spikes', () => {
     const path = starPath(0, 0, 5, 50, 25);
-    const moveCount = (path.match(/M /g) || []).length;
+    const _moveCount = (path.match(/M /g) || []).length;
     const lineCount = (path.match(/ L /g) || []).length;
     // 5 spikes = 2 lines per spike (outer + inner) = 10 lines total
     // But first spike uses M for first point, so 9 L commands total

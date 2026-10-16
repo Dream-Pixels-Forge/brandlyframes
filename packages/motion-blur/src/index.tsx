@@ -121,7 +121,7 @@ export const TransformMotionBlur: FC<TransformMotionBlurProps> = ({
   samples = QUALITY_SAMPLES[quality],
   shutterAngle = 180,
   shutterPhase = 0,
-  transformOnly = true,
+  transformOnly: _transformOnly = true,
   style = {},
   ...rest
 } = {} as TransformMotionBlurProps) => {
@@ -129,7 +129,7 @@ export const TransformMotionBlur: FC<TransformMotionBlurProps> = ({
   const { fps } = useVideoConfig();
 
   const shutterTime = (shutterAngle / 360) / fps;
-  const phaseOffset = (shutterPhase / 360) / fps;
+  const _phaseOffset = (shutterPhase / 360) / fps;
 
   // We need to track previous transforms - simplified here
   // In a real implementation, this would track transform matrices
@@ -190,8 +190,8 @@ export const DirectionalMotionBlur: FC<DirectionalMotionBlurProps> = ({
   style = {},
   ...rest
 } = {} as DirectionalMotionBlurProps) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const _frame = useCurrentFrame();
+  const { fps: _fps } = useVideoConfig();
 
   const angleRad = (angle * Math.PI) / 180;
   const dx = Math.cos(angleRad) * distance;
@@ -245,12 +245,12 @@ export const RadialMotionBlur: FC<RadialMotionBlurProps> = ({
   samples = QUALITY_SAMPLES[quality],
   centerX = 0,
   centerY = 0,
-  radius = 50,
+  radius: _radius = 50,
   style = {},
   ...rest
 } = {} as RadialMotionBlurProps) => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const _frame = useCurrentFrame();
+  const { fps: _fps } = useVideoConfig();
 
   const layers = Array.from({ length: samples }, (_, i) => {
     const t = (i + 0.5) / samples;
@@ -302,7 +302,7 @@ export function createDirectionalBlurFilter(
 ): JSX.Element {
   const angleRad = (angle * Math.PI) / 180;
   const dx = Math.cos(angleRad) * distance;
-  const dy = Math.sin(angleRad) * distance;
+  const _dy = Math.sin(angleRad) * distance;
 
   return (
     <filter id={id}>

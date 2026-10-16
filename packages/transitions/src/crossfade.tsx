@@ -7,8 +7,8 @@
 
 import { type FC, type ReactElement, cloneElement, isValidElement, CSSProperties } from 'react';
 
-type TypedReactElement = ReactElement<any, any>;
-import { TransitionBaseProps, EasingFn, createProgress, easeInOut } from './types';
+type TypedReactElement = ReactElement<Record<string, unknown>>;
+import { TransitionBaseProps, createProgress, easeInOut } from './types';
 
 /**
  * Crossfade transition props.

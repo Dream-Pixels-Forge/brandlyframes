@@ -49,11 +49,11 @@ export const Rect: FC<ShapeProps & { width: number; height: number; x?: number; 
   style = {},
   durationFrames = 1,
   easing = (t) => t,
-  children,
+  children: _children,
   ...rest
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps: _fps } = useVideoConfig();
   const progress = Math.min(frame / durationFrames, 1);
   const easedProgress = easing(progress);
 

@@ -20,10 +20,10 @@ describe('createProgress', () => {
   });
 
   it('throws on invalid values', () => {
-    expect(() => createProgress(-0.1)).toThrow('TransitionProgress must be in \[0, 1\]');
-    expect(() => createProgress(1.1)).toThrow('TransitionProgress must be in \[0, 1\]');
-    expect(() => createProgress(NaN)).toThrow('TransitionProgress must be in \[0, 1\]');
-    expect(() => createProgress(Infinity)).toThrow('TransitionProgress must be in \[0, 1\]');
+    expect(() => createProgress(-0.1)).toThrow('TransitionProgress must be in [0, 1]');
+    expect(() => createProgress(1.1)).toThrow('TransitionProgress must be in [0, 1]');
+    expect(() => createProgress(NaN)).toThrow('TransitionProgress must be in [0, 1]');
+    expect(() => createProgress(Infinity)).toThrow('TransitionProgress must be in [0, 1]');
   });
 });
 
