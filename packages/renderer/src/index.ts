@@ -15,8 +15,10 @@ export type {
 export {
   captureFrame,
   captureChunk,
+  captureParallel,
   splitFrameRange,
   DEFAULT_CHROME_FLAGS,
+  DEFAULT_CONCURRENCY,
 } from './capture';
 export type {
   BrowserTabLike,
@@ -25,4 +27,5 @@ export type {
   FrameRange,
   CaptureFrameOptions,
   CaptureChunkOptions,
+  CaptureParallelOptions,
 } from './capture';
