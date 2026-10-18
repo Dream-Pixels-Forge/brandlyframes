@@ -1,7 +1,8 @@
 /**
  * @brandlyframes/renderer — headless render path [BF-053]
  *
- * FFmpeg frame-exact decode backend used by `brandlyframes render`.
+ * FFmpeg frame-exact decode backend, headless frame capture and frame
+ * stitching used by `brandlyframes render`.
  */
 
 export { decodeFrameFFmpeg, FFmpegNotFoundError } from './ffmpeg-decode';
@@ -29,3 +30,17 @@ export type {
   CaptureChunkOptions,
   CaptureParallelOptions,
 } from './capture';
+export {
+  buildStitchArgs,
+  stitchFrames,
+  resolveFramePattern,
+  CODEC_PROFILES,
+  DEFAULT_FRAME_PATTERN,
+  DEFAULT_STITCH_FPS,
+} from './stitch';
+export type {
+  StitchCodec,
+  StitchCodecProfile,
+  StitchOptions,
+  StitchFramesOptions,
+} from './stitch';
