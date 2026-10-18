@@ -341,7 +341,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-015 `brandlyframes studio` and `bundle` CLI commands
 
 **v0.3 "First Take": renderer** (P3)
-- [ ] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking
+- [ ] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking *(partial: captureFrame/captureChunk/splitFrameRange landed; parallel tabs, CLI wiring pending)*
 - [ ] BF-021 FFmpeg stitching: h264, h265, vp8, vp9, prores, gif, png-seq
 - [ ] BF-022 Audio mixing with volume curves
 - [ ] BF-023 Transparent-background and alpha output
@@ -350,8 +350,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-026 Golden-frame and determinism test harness
 
 **v0.4 "Premiere": player** (P4)
-- [ ] BF-030 `@brandlyframes/player` component with controls, loop, autoplay
-- [ ] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps`
+- [ ] BF-030 `@brandlyframes/player` component with controls, loop, autoplay *(component + 9 tests landed; docs page/example pending)*
+- [ ] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps` *(landed; docs pending)*
 - [ ] BF-032 Seek-accuracy test suite; Next.js and plain React examples
 
 **v0.5 "Frame by Frame": frame video** (P5)
@@ -385,13 +385,13 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 **Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 
 **v0.7 "Dailies": cloud** (P7)
-- [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter
-- [ ] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks
-- [ ] BF-082 Cost estimate, retries, 10-minute-video drift test
+- [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter *(adapters/orchestration code landed; real-credential integration test pending)*
+- [ ] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks *(code landed; integration test pending)*
+- [ ] BF-082 Cost estimate, retries, 10-minute-video drift test *(estimate/budget/drift harness code landed; 10-min run pending)*
 
 **v1.0 "Premiere Night": release** (P8)
 - [ ] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
-- [ ] BF-091 Docs site, API reference, brand guide page, Remotion migration guide
+- [ ] BF-091 Docs site, API reference, brand guide page, Remotion migration guide *(site builds/type-checks green as of 2026-10-18; API reference generation + brand guide + migration guide pending)*
 - [ ] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report
 - [ ] BF-093 Public release, `@brandlyframes` scope live
 
