@@ -15,5 +15,8 @@ coverage/
 # Logs
 *.log
 
+# Generated route tree (tsr generate)
+docs-site/src/routeTree.gen.ts
+
 # OS
 .DS_Store
