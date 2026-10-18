@@ -12,3 +12,17 @@ export type {
   SpawnError,
   SpawnFn,
 } from './ffmpeg-decode';
+export {
+  captureFrame,
+  captureChunk,
+  splitFrameRange,
+  DEFAULT_CHROME_FLAGS,
+} from './capture';
+export type {
+  BrowserTabLike,
+  BrowserLauncherLike,
+  LauncherFn,
+  FrameRange,
+  CaptureFrameOptions,
+  CaptureChunkOptions,
+} from './capture';
