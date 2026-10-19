@@ -2,6 +2,7 @@ import { EventEmitter } from 'node:events';
 import { Buffer } from 'node:buffer';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  ALPHA_PIXEL_FORMATS,
   buildStitchArgs,
   CODEC_PROFILES,
   DEFAULT_FRAME_PATTERN,
@@ -300,6 +301,96 @@ describe('stitch [BF-021]', () => {
       expect(() =>
         buildStitchArgs('/f', { codec: 'png-sequence', output: '/o/frames-%06d.png' }),
       ).not.toThrow();
+    });
+  });
+
+  describe('transparentBackground [BF-023]', () => {
+    it('exposes the alpha pixel-format matrix for the two alpha-capable codecs', () => {
+      expect(ALPHA_PIXEL_FORMATS).toEqual({ vp9: 'yuva420p', prores: 'yuva444p10le' });
+    });
+
+    it('pins yuva420p for vp9 (WebM alpha) instead of the profile default', () => {
+      const args = buildStitchArgs('/f', {
+        codec: 'vp9',
+        transparentBackground: true,
+        output: '/o/out.webm',
+      });
+      const codecIndex = args.indexOf('-c:v');
+      expect(args.slice(codecIndex)).toEqual([
+        '-c:v',
+        'libvpx-vp9',
+        '-pix_fmt',
+        'yuva420p',
+        '/o/out.webm',
+      ]);
+    });
+
+    it('pins yuva444p10le for prores (ProRes 4444 alpha) instead of the profile default', () => {
+      const args = buildStitchArgs('/f', {
+        codec: 'prores',
+        transparentBackground: true,
+        output: '/o/out.mov',
+      });
+      const codecIndex = args.indexOf('-c:v');
+      expect(args.slice(codecIndex)).toEqual([
+        '-c:v',
+        'prores_ks',
+        '-profile:v',
+        '4444',
+        '-pix_fmt',
+        'yuva444p10le',
+        '/o/out.mov',
+      ]);
+    });
+
+    it('keeps the profile-default (non-alpha) pixel formats when the flag is unset', () => {
+      expect(buildStitchArgs('/f', { codec: 'vp9', output: '/o/out.webm' })).toContain('yuv420p');
+      expect(
+        buildStitchArgs('/f', { codec: 'prores', output: '/o/out.mov' }),
+      ).toContain('yuv444p10le');
+    });
+
+    it('rejects h264 + transparentBackground with the cause and a doctor hint', () => {
+      expect(() =>
+        buildStitchArgs('/f', { transparentBackground: true, output: '/o/out.mp4' }),
+      ).toThrow(/transparentBackground.*codec 'h264'[\s\S]*brandlyframes doctor/);
+    });
+
+    it.each(['h265', 'vp8', 'gif', 'png-sequence'] as const)(
+      'rejects transparentBackground with %s',
+      (codec) => {
+        expect(() =>
+          buildStitchArgs('/f', { codec, transparentBackground: true, output: '/o/out.bin' }),
+        ).toThrow(/transparentBackground/);
+      },
+    );
+
+    it('rejects an explicit pixelFormat together with transparentBackground', () => {
+      expect(() =>
+        buildStitchArgs('/f', {
+          codec: 'vp9',
+          transparentBackground: true,
+          pixelFormat: 'yuv420p',
+          output: '/o/out.webm',
+        }),
+      ).toThrow(/mutually exclusive/);
+    });
+
+    it('rejects a non-boolean transparentBackground', () => {
+      expect(() =>
+        buildStitchArgs('/f', {
+          transparentBackground: 'yes' as unknown as boolean,
+          output: '/o/out.mp4',
+        }),
+      ).toThrow(/boolean/);
+    });
+
+    it('rejects before spawning when the codec cannot carry alpha', () => {
+      const spawnFn = vi.fn();
+      expect(() =>
+        stitchFrames('/f', { transparentBackground: true, output: '/o/out.mp4', spawnFn }),
+      ).toThrow(RangeError);
+      expect(spawnFn).not.toHaveBeenCalled();
     });
   });
 

@@ -61,6 +61,20 @@ export const CODEC_PROFILES: Readonly<Record<StitchCodec, StitchCodecProfile>> =
   'png-sequence': { encoder: 'png', extension: 'png' },
 };
 
+/**
+ * Alpha-capable pixel formats per codec, pinned when
+ * {@link StitchOptions.transparentBackground} is set [BF-023].
+ * Every other codec rejects the flag (see {@link buildStitchArgs}).
+ */
+export const ALPHA_PIXEL_FORMATS: Readonly<Record<'vp9' | 'prores', string>> = {
+  vp9: 'yuva420p',
+  prores: 'yuva444p10le',
+};
+
+/** Narrows to the codecs that can carry an alpha channel [BF-023]. */
+const isAlphaCodec = (codec: StitchCodec): codec is keyof typeof ALPHA_PIXEL_FORMATS =>
+  codec === 'vp9' || codec === 'prores';
+
 /** Frame-file pattern assumed when the stitch input is a directory. */
 export const DEFAULT_FRAME_PATTERN = 'frame-%06d.png';
 
@@ -104,6 +118,13 @@ export interface StitchOptions {
   pixelFormat?: string;
   /** Output color space metadata, e.g. `'bt709'` (`-colorspace`). */
   colorSpace?: string;
+  /**
+   * Render on a transparent background (alpha channel) [BF-023]. Only the
+   * codecs in {@link ALPHA_PIXEL_FORMATS} support it — `vp9` pins
+   * `yuva420p` (WebM alpha) and `prores` pins `yuva444p10le` (ProRes 4444
+   * alpha). Mutually exclusive with {@link pixelFormat}.
+   */
+  transparentBackground?: boolean;
   /** Half-open input frame range `[start, end)` to encode (default: all). */
   frameRange?: FrameRange;
   /** Output file path — for `'png-sequence'`, a `%d` image pattern. */
@@ -122,9 +143,10 @@ export interface StitchOptions {
  * @param inputDirOrPattern Directory of numbered frames or an explicit
  *   image2 pattern (see {@link resolveFramePattern})
  * @param options Codec, fps, quality, scale, pixel format, color space,
- *   frame range and output path
+ *   transparent background (alpha), frame range and output path
  * @returns The full ffmpeg argv (command is always `'ffmpeg'`)
  * @throws {RangeError} synchronously on invalid options — nothing is built
+ *   (including alpha-incapable codecs with `transparentBackground`)
  */
 export function buildStitchArgs(inputDirOrPattern: string, options: StitchOptions): string[] {
   if (inputDirOrPattern.length === 0) {
@@ -161,6 +183,29 @@ export function buildStitchArgs(inputDirOrPattern: string, options: StitchOption
   if (options.scale !== undefined) nonEmpty('scale', options.scale);
   if (options.pixelFormat !== undefined) nonEmpty('pixelFormat', options.pixelFormat);
   if (options.colorSpace !== undefined) nonEmpty('colorSpace', options.colorSpace);
+  if (
+    options.transparentBackground !== undefined &&
+    typeof options.transparentBackground !== 'boolean'
+  ) {
+    throw new RangeError('buildStitchArgs: transparentBackground must be a boolean when provided');
+  }
+  if (options.transparentBackground === true) {
+    if (!isAlphaCodec(codec)) {
+      throw new RangeError(
+        `buildStitchArgs: transparentBackground is not supported by codec '${codec}' — h264/MP4 ` +
+          'has no alpha channel; alpha output requires vp9 ' +
+          `(WebM, ${ALPHA_PIXEL_FORMATS.vp9}) or prores (MOV ProRes 4444, ` +
+          `${ALPHA_PIXEL_FORMATS.prores}). Run 'brandlyframes doctor' to verify the ` +
+          'installed FFmpeg supports alpha encoding.',
+      );
+    }
+    if (options.pixelFormat !== undefined) {
+      throw new RangeError(
+        'buildStitchArgs: pixelFormat and transparentBackground are mutually exclusive — ' +
+          `transparentBackground pins '${ALPHA_PIXEL_FORMATS[codec]}' for ${codec}`,
+      );
+    }
+  }
   const range = options.frameRange;
   if (range !== undefined) {
     const { start, end } = range;
@@ -183,7 +228,11 @@ export function buildStitchArgs(inputDirOrPattern: string, options: StitchOption
   if (options.crf !== undefined) args.push('-crf', String(options.crf));
   if (options.bitrate !== undefined) args.push('-b:v', options.bitrate);
   if (profile.extraArgs !== undefined) args.push(...profile.extraArgs);
-  const pixelFormat = options.pixelFormat ?? profile.pixelFormat;
+  const pixelFormat =
+    options.pixelFormat ??
+    (options.transparentBackground === true && isAlphaCodec(codec)
+      ? ALPHA_PIXEL_FORMATS[codec]
+      : profile.pixelFormat);
   if (pixelFormat !== undefined) args.push('-pix_fmt', pixelFormat);
   if (options.scale !== undefined) args.push('-vf', `scale=${options.scale}`);
   if (options.colorSpace !== undefined) args.push('-colorspace', options.colorSpace);

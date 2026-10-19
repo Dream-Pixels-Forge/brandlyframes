@@ -35,6 +35,7 @@ export {
   stitchFrames,
   resolveFramePattern,
   CODEC_PROFILES,
+  ALPHA_PIXEL_FORMATS,
   DEFAULT_FRAME_PATTERN,
   DEFAULT_STITCH_FPS,
 } from './stitch';
@@ -44,3 +45,10 @@ export type {
   StitchOptions,
   StitchFramesOptions,
 } from './stitch';
+export { mixAudio, buildMixArgs, DEFAULT_MIX_FPS } from './audio';
+export type {
+  AudioTrackInput,
+  VolumeKeyframe,
+  MixAudioOptions,
+  MixAudioSpawnOptions,
+} from './audio';
