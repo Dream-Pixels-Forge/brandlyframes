@@ -67,3 +67,15 @@ export type {
   RenderJobResult,
   RenderProgress,
 } from './job.js';
+export {
+  frameHash,
+  compareGoldenFrames,
+  assertGoldenFrame,
+  assertDeterministic,
+} from './testing.js';
+export type {
+  GoldenFrameResult,
+  CompareGoldenFramesOptions,
+  AssertGoldenFrameOptions,
+  AssertDeterministicOptions,
+} from './testing.js';
