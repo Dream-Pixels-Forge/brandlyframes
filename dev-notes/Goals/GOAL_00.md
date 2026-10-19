@@ -370,14 +370,14 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v0.6 "Reel": extras** (P6)
 - [x] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
-- [ ] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
+- [x] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
   - [x] BF-071 `fonts` (font loading, subsetting, glyph layout)
   - [x] BF-071 `three` (Three.js integration)
   - [x] BF-071 `lottie` (Lottie animation support)
   - [x] BF-071 `gif` (GIF export/import — pure-TS encoder + decoder: LZW, median-cut palette, delays, NETSCAPE loop, transparency)
   - [x] BF-071 `media-utils` (audio/video helpers)
   - [x] BF-071 `media-parser` (extended media metadata)
-  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring remains)
+  - [x] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring landed)
   - [x] BF-071 `whisper` (speech-to-text — injectable model factory + pure align/pack helpers)
 
 **BF-071 COMPLETE (2026-10-16)**: fonts, three, lottie, gif, media-utils, media-parser, webcodecs (decode + encode), whisper — all implemented, tested, lint-clean.
