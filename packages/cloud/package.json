@@ -1,16 +1,19 @@
 {
   "name": "@brandlyframes/cloud",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames cloud — chunked parallel rendering with AWS Lambda & GCP Cloud Run adapters, storage upload, webhooks, cost estimation (BF-080/081/082).",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "dev": "vitest"

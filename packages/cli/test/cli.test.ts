@@ -1,7 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { tmpdir } from 'node:os';
+
+const packageJson = JSON.parse(
+  readFileSync(join(__dirname, '..', 'package.json'), 'utf8')
+);
 
 describe('CLI', () => {
   const cliBin = resolve('./dist/index.js');
@@ -34,7 +39,21 @@ describe('CLI', () => {
 
   it('should output usage when called with upgrade command', () => {
     const output = execSync(`node ${cliBin} upgrade`, { encoding: 'utf8' });
-    expect(output).toContain('Checking for upgrades...');
+    expect(output).toContain('BrandlyFrames SDK Upgrade');
+    expect(output).toContain('Usage:');
+  });
+
+  it('should output usage when called with doctor command', () => {
+    const output = execSync(`node ${cliBin} doctor`, { encoding: 'utf8' });
+    expect(output).toContain('BrandlyFrames Doctor');
+    expect(output).toContain('Overall status:');
+    expect(output).toContain(`CLI version: ${packageJson.version}`);
+  });
+
+  it('should output usage when called with benchmark command', () => {
+    const output = execSync(`node ${cliBin} benchmark`, { encoding: 'utf8' });
+    expect(output).toContain('BrandlyFrames Benchmarks');
+    expect(output).toContain('Render throughput');
   });
 
   // frames subcommands [BF-060]
@@ -193,5 +212,69 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('Unknown template: nonexistent-template');
+  });
+
+  // upgrade command [BF-092][BF-480]
+  it('should upgrade --check report aligned versions', () => {
+    const output = execSync(`node ${cliBin} upgrade --check`, { encoding: 'utf8' });
+    expect(output).toContain('Checking for version mismatches');
+    expect(output).toContain('All @brandlyframes packages aligned');
+  });
+
+  it('should upgrade with unknown codemod fail', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} upgrade --codemod nonexistent-codemod`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('Unknown codemod');
+  });
+
+  // doctor command [BF-092][BF-430]
+  it('should doctor output diagnostics summary', () => {
+    const output = execSync(`node ${cliBin} doctor`, { encoding: 'utf8' });
+    expect(output).toContain('BrandlyFrames Doctor');
+    expect(output).toContain('Overall status:');
+    expect(output).toContain(`CLI version: ${packageJson.version}`);
+  });
+
+  it('should doctor --json output valid JSON', () => {
+    const output = execSync(`node ${cliBin} doctor --json`, { encoding: 'utf8' });
+    const parsed = JSON.parse(output);
+    expect(parsed).toHaveProperty('overall');
+    expect(parsed).toHaveProperty('checks');
+    expect(Array.isArray(parsed.checks)).toBe(true);
+    expect(parsed.checks.some((c: { name: string }) => c.name === 'ffmpeg')).toBe(true);
+    expect(parsed.checks.some((c: { name: string }) => c.name === 'chrome')).toBe(true);
+  });
+
+  // benchmark command [BF-092][BF-421]
+  it('should benchmark output report', () => {
+    const output = execSync(`node ${cliBin} benchmark`, { encoding: 'utf8' });
+    expect(output).toContain('BrandlyFrames Benchmarks');
+    expect(output).toContain('CPUs:');
+    expect(output).toContain('Auto-concurrency:');
+    expect(output).toContain('Benchmark concurrency:');
+    expect(output).toContain('Render throughput:');
+    expect(output).toContain('Benchmark complete.');
+  });
+
+  it('should benchmark reject invalid frames', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} benchmark --frames abc`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('frames must be an integer >= 1');
   });
 });

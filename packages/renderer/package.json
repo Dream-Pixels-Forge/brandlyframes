@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/renderer",
   "type": "module",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames renderer — headless render path: FFmpeg frame-exact decode backend [BF-053]",
   "private": false,
   "main": "dist/index.js",

@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames CLI — command-line interface for the BrandlyFrames SDK",
   "type": "module",
   "bin": {

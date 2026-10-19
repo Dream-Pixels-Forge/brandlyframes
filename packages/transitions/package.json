@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/transitions",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Transition components for BrandlyFrames (crossfade, slide, wipe, etc.)",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

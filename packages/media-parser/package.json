@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/media-parser",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames media parser — audio/video parsing capabilities",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

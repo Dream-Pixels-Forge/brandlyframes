@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@brandlyframes/webcodecs": ["./packages/webcodecs/dist/index.ts"],
+      "@brandlyframes/zod-types": ["./packages/zod-types/src/index.ts"],
+      "@brandlyframes/brand": ["./packages/brand/src/index.ts"],
+      "@brandlyframes/mcp": ["./packages/mcp/src/index.ts"],
+      "@brandlyframes/cache": ["./packages/cache/src/index.ts"],
+      "@brandlyframes/audio-reactive": ["./packages/audio-reactive/src/index.ts"],
+      "@brandlyframes/fx": ["./packages/fx/src/index.ts"],
+      "@brandlyframes/ai": ["./packages/ai/src/index.ts"],
+      "@brandlyframes/interop": ["./packages/interop/src/index.ts"],
+      "@brandlyframes/test": ["./packages/test/src/index.ts"]
+    }
+  },
+  "include": ["packages/*/src/**/*.ts", "packages/*/src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", ".turbo"]
+}

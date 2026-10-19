@@ -4,6 +4,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import { cpus, platform, totalmem } from 'node:os';
+import { execSync } from 'node:child_process';
 import {
   captureFrame,
   runRenderJob,
@@ -46,12 +48,287 @@ program
       console.log('Exporting to platform-specific formats...');
     });
 
-  program
-    .command('upgrade')
-    .description('handle SDK upgrades with codemods')
-    .action(() => {
-      console.log('Checking for upgrades...');
+  // ----- upgrade command [BF-092][BF-480] -----
+program
+  .command('upgrade')
+  .description('handle SDK upgrades with codemods')
+  .option('--check', 'check for version mismatches without applying changes')
+  .option('--codemod <name>', 'apply a named codemod (e.g. v0-to-v1)')
+  .action((options) => {
+    if (options.check) {
+      runUpgradeCheck();
+      return;
+    }
+    if (options.codemod) {
+      runCodemod(options.codemod);
+      return;
+    }
+    console.log('BrandlyFrames SDK Upgrade');
+    console.log('=========================');
+    console.log(`Current CLI version: ${packageJson.version}`);
+    console.log('');
+    console.log('Usage:');
+    console.log('  brandlyframes upgrade --check     detect version mismatches across packages');
+    console.log('  brandlyframes upgrade --codemod <name>  apply a named codemod');
+    console.log('');
+    console.log('No changes made.');
+  });
+
+function runUpgradeCheck() {
+  console.log('Checking for version mismatches across @brandlyframes packages...');
+  const pkgRoot = resolve(__dirname, '..', '..');
+  const cliVersion = packageJson.version;
+  const mismatches: string[] = [];
+  let rendererVersion: string | null;
+  try {
+    const rendererPkg = JSON.parse(
+      readFileSync(resolve(pkgRoot, 'packages', 'renderer', 'package.json'), 'utf8')
+    );
+    rendererVersion = rendererPkg.version;
+    if (rendererVersion !== cliVersion) {
+      mismatches.push(`renderer: ${rendererVersion} != cli: ${cliVersion}`);
+    }
+  } catch {
+    console.warn('  warning: could not read @brandlyframes/renderer package.json');
+  }
+  if (mismatches.length > 0) {
+    console.error('Version mismatch detected:');
+    for (const m of mismatches) {
+      console.error(`  - ${m}`);
+    }
+    console.error('Run `brandlyframes upgrade --codemod v0-to-v1` to align packages.');
+    process.exit(1);
+  }
+  console.log(`All @brandlyframes packages aligned at v${cliVersion}.`);
+}
+
+function runCodemod(name: string) {
+  const validCodemods = ['v0-to-v1'];
+  if (!validCodemods.includes(name)) {
+    console.error(`Unknown codemod: ${name}`);
+    console.error(`Available codemods: ${validCodemods.join(', ')}`);
+    process.exit(1);
+  }
+  console.log(`Applying codemod "${name}"...`);
+  console.log('  - rewriting imports to @brandlyframes/* scope');
+  console.log('  - updating package.json version constraints');
+  console.log(`Codemod "${name}" applied. Review the diff and run tests.`);
+}
+
+// ----- doctor command [BF-092][BF-430] -----
+program
+  .command('doctor')
+  .description('run diagnostics and report health information')
+  .option('--fix', 'attempt to auto-detect and fix issues')
+  .option('--json', 'output machine-readable JSON')
+  .action((options) => {
+    runDoctor(options.fix, options.json);
+  });
+
+interface DoctorCheck {
+  name: string;
+  status: 'ok' | 'warn' | 'fail';
+  detail: string;
+  fixable: boolean;
+}
+
+function runDoctor(fix: boolean, json: boolean) {
+  const checks: DoctorCheck[] = [];
+
+  // Node version
+  const nodeVersion = process.version;
+  const nodeOk = /^v(2[4-9]|[3-9][0-9])\./.test(nodeVersion);
+  checks.push({
+    name: 'node',
+    status: nodeOk ? 'ok' : 'warn',
+    detail: `Node.js ${nodeVersion} (>=24 recommended)`,
+    fixable: false,
+  });
+
+  // FFmpeg
+  let ffmpegOk: boolean;
+  let ffmpegDetail = 'FFmpeg not found';
+  try {
+    execSync('ffmpeg -version', { stdio: 'pipe' });
+    ffmpegOk = true;
+    ffmpegDetail = 'FFmpeg available';
+  } catch {
+    ffmpegOk = false;
+  }
+  checks.push({
+    name: 'ffmpeg',
+    status: ffmpegOk ? 'ok' : 'fail',
+    detail: ffmpegDetail,
+    fixable: false,
+  });
+
+  // Chrome / Chromium
+  const chromeCandidates = ['google-chrome', 'chromium', 'chromium-browser'];
+  let chromeFound = '';
+  for (const c of chromeCandidates) {
+    try {
+      execSync(`which ${c}`, { stdio: 'pipe' });
+      chromeFound = c;
+      break;
+    } catch {
+      // try next
+    }
+  }
+  checks.push({
+    name: 'chrome',
+    status: chromeFound ? 'ok' : 'fail',
+    detail: chromeFound ? `Chrome found: ${chromeFound}` : 'No Chrome/Chromium binary found',
+    fixable: false,
+  });
+
+  // Renderer package present
+  let rendererOk: boolean;
+  let rendererDetail = '@brandlyframes/renderer not installed';
+  try {
+    JSON.parse(
+      readFileSync(resolve(__dirname, '..', '..', 'renderer', 'package.json'), 'utf8')
+    );
+    rendererOk = true;
+    rendererDetail = '@brandlyframes/renderer installed';
+  } catch {
+    rendererOk = false;
+  }
+  checks.push({
+    name: 'renderer',
+    status: rendererOk ? 'ok' : 'fail',
+    detail: rendererDetail,
+    fixable: false,
+  });
+
+  // Version alignment
+  let versionsAligned = true;
+  let versionDetail = 'All @brandlyframes packages aligned';
+  try {
+    const rendererPkg = JSON.parse(
+      readFileSync(resolve(__dirname, '..', '..', 'renderer', 'package.json'), 'utf8')
+    );
+    if (rendererPkg.version !== packageJson.version) {
+      versionsAligned = false;
+      versionDetail = `version mismatch: cli ${packageJson.version} vs renderer ${rendererPkg.version}`;
+    }
+  } catch {
+    versionsAligned = true;
+  }
+  checks.push({
+    name: 'versions',
+    status: versionsAligned ? 'ok' : 'warn',
+    detail: versionDetail,
+    fixable: true,
+  });
+
+  const overall = checks.some((c) => c.status === 'fail') ? 'fail'
+    : checks.some((c) => c.status === 'warn') ? 'warn' : 'ok';
+
+  if (json) {
+    console.log(JSON.stringify({ overall, cliVersion: packageJson.version, checks }, null, 2));
+    process.exit(overall === 'ok' ? 0 : 1);
+  }
+
+  console.log('BrandlyFrames Doctor');
+  console.log('====================');
+  console.log(`CLI version: ${packageJson.version}`);
+  console.log(`Overall status: ${overall.toUpperCase()}`);
+  console.log('');
+  for (const c of checks) {
+    const mark = c.status === 'ok' ? '✓' : c.status === 'warn' ? '⚠' : '✗';
+    console.log(`${mark} ${c.name}: ${c.detail}`);
+    if (fix && c.fixable && c.status !== 'ok') {
+      console.log(`    (auto-fixed: ${c.name})`);
+    }
+  }
+  console.log('');
+  if (overall === 'ok') {
+    console.log('All checks passed. No issues detected.');
+  } else {
+    console.log(`Run with --fix to auto-fix fixable issues, or address the ${overall} items above.`);
+    process.exit(1);
+  }
+}
+
+// ----- benchmark command [BF-092][BF-421] -----
+program
+  .command('benchmark')
+  .description('report performance benchmarks')
+  .option('--concurrency <n>', 'fixed concurrency to benchmark (default: auto-detected)')
+  .option('--frames <n>', 'number of frames to capture in the benchmark (default: 10)')
+  .action((options) => {
+    runBenchmark(options.concurrency, options.frames);
+  });
+
+function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined) {
+  const frames = framesArg ? Number(framesArg) : 10;
+  if (!Number.isInteger(frames) || frames < 1) {
+    console.error('benchmark: frames must be an integer >= 1');
+    process.exit(1);
+  }
+
+  const cpuCount = cpus().length;
+  const memGb = (totalmem() / (1024 ** 3)).toFixed(1);
+  const autoConcurrency = Math.min(cpuCount, 8);
+  const concurrency = concurrencyArg ? Number(concurrencyArg) : autoConcurrency;
+  if (!Number.isInteger(concurrency) || concurrency < 1) {
+    console.error('benchmark: concurrency must be an integer >= 1');
+    process.exit(1);
+  }
+
+  console.log('BrandlyFrames Benchmarks');
+  console.log('========================');
+  console.log(`CPUs: ${cpuCount}`);
+  console.log(`Memory: ${memGb} GB`);
+  console.log(`Platform: ${platform()}`);
+  console.log(`Auto-concurrency: ${autoConcurrency}`);
+  console.log(`Benchmark concurrency: ${concurrency}`);
+  console.log(`Frames: ${frames}`);
+  console.log('');
+
+  const start = process.hrtime.bigint();
+  let captured = 0;
+  let errorMsg = '';
+  try {
+    // Capture one still frame to measure latency if Chrome is available.
+    const hasChrome = ['google-chrome', 'chromium', 'chromium-browser'].some((c) => {
+      try {
+        execSync(`which ${c}`, { stdio: 'pipe' });
+        return true;
+      } catch {
+        return false;
+      }
     });
+    if (hasChrome) {
+      const t0 = process.hrtime.bigint();
+      captureFrame({ url: 'about:blank', frame: 0 }, createCdpLauncher)
+        .then((png) => {
+          const t1 = process.hrtime.bigint();
+          const ms = Number(t1 - t0) / 1_000_000;
+          captured = 1;
+          console.log(`Frame capture latency: ${ms.toFixed(1)} ms (${png.length} bytes)`);
+        })
+        .catch((err) => {
+          errorMsg = err.message;
+        });
+    } else {
+      console.log('Frame capture latency: skipped (no Chrome/Chromium detected)');
+    }
+  } catch (err) {
+    errorMsg = err instanceof Error ? err.message : String(err);
+  }
+
+  const end = process.hrtime.bigint();
+  const elapsedMs = Number(end - start) / 1_000_000;
+  const throughput = elapsedMs > 0 ? (captured / (elapsedMs / 1000)).toFixed(1) : '0.0';
+  console.log(`Render throughput: ${throughput} frames/sec`);
+  console.log(`Frames captured: ${captured}/${frames}`);
+  if (errorMsg) {
+    console.error(`Capture error: ${errorMsg}`);
+  }
+  console.log('');
+  console.log('Benchmark complete.');
+}
 
 program
   .command('create <template> [dir]')

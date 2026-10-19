@@ -1,0 +1,30 @@
+{
+  "name": "@brandlyframes/mcp",
+  "version": "1.0.0",
+  "description": "Agent-native MCP server for BrandlyFrames: list compositions, read/edit props, render still/video, inspect timeline and render status.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*",
+    "@brandlyframes/zod-types": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": ["brandlyframes", "mcp", "agent", "ai"],
+  "license": "MIT"
+}

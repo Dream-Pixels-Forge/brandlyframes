@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/bundler",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames bundler — asset bundling, code splitting, and output optimization",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -16,7 +16,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "prepare": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

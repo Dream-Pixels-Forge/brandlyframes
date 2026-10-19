@@ -1,18 +1,21 @@
 {
   "name": "@brandlyframes/design",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames design system — Cinema Black tokens (CSS + TS + JSON) and deterministic React UI components (BF-013).",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
-    "./tokens.css": "./src/tokens.css",
-    "./tokens.json": "./tokens.json"
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./dist/tokens.json"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "dev": "vitest"
