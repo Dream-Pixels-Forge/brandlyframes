@@ -341,13 +341,13 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-015 `brandlyframes studio` and `bundle` CLI commands
 
 **v0.3 "First Take": renderer** (P3)
-- [ ] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking *(partial: captureFrame/captureChunk/splitFrameRange landed; parallel tabs, CLI wiring pending)*
-- [ ] BF-021 FFmpeg stitching: h264, h265, vp8, vp9, prores, gif, png-seq
-- [ ] BF-022 Audio mixing with volume curves
-- [ ] BF-023 Transparent-background and alpha output
-- [ ] BF-024 Progress, cancellation, resumable chunks
-- [ ] BF-025 `render`, `still`, `compositions` CLI commands
-- [ ] BF-026 Golden-frame and determinism test harness
+- [x] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking *(captureFrame/captureChunk/splitFrameRange + captureParallel landed)*
+- [x] BF-021 FFmpeg stitching: h264, h265, vp8, vp9, prores, gif, png-seq
+- [x] BF-022 Audio mixing with volume curves
+- [x] BF-023 Transparent-background and alpha output
+- [x] BF-024 Progress, cancellation, resumable chunks
+- [x] BF-025 `render`, `still`, `compositions` CLI commands
+- [x] BF-026 Golden-frame and determinism test harness
 
 **v0.4 "Premiere": player** (P4)
 - [ ] BF-030 `@brandlyframes/player` component with controls, loop, autoplay *(component + 9 tests landed; docs page/example pending)*
