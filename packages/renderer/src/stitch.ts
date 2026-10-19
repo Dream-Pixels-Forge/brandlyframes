@@ -78,6 +78,15 @@ const isAlphaCodec = (codec: StitchCodec): codec is keyof typeof ALPHA_PIXEL_FOR
 /** Frame-file pattern assumed when the stitch input is a directory. */
 export const DEFAULT_FRAME_PATTERN = 'frame-%06d.png';
 
+/**
+ * On-disk file name for one captured frame — the concrete form of
+ * {@link DEFAULT_FRAME_PATTERN}. The render job (see `job.ts`) writes
+ * frames under these names, so `stitchFrames(outDir, ...)` consumes the
+ * capture output directly.
+ */
+export const frameFileName = (frame: number): string =>
+  `frame-${String(frame).padStart(6, '0')}.png`;
+
 /** Frames per second used when the `fps` option is omitted. */
 export const DEFAULT_STITCH_FPS = 30;
 

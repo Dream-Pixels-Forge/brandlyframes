@@ -34,6 +34,7 @@ export {
   buildStitchArgs,
   stitchFrames,
   resolveFramePattern,
+  frameFileName,
   CODEC_PROFILES,
   ALPHA_PIXEL_FORMATS,
   DEFAULT_FRAME_PATTERN,
@@ -52,3 +53,17 @@ export type {
   MixAudioOptions,
   MixAudioSpawnOptions,
 } from './audio';
+export {
+  runRenderJob,
+  readRenderManifest,
+  writeRenderManifest,
+  RenderJobAbortedError,
+  DEFAULT_MANIFEST_FILENAME,
+  MANIFEST_VERSION,
+} from './job';
+export type {
+  RenderManifest,
+  RenderJobOptions,
+  RenderJobResult,
+  RenderProgress,
+} from './job';
