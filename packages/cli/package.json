@@ -17,7 +17,8 @@
     "dev": "vitest"
   },
   "dependencies": {
-    "commander": "^12.0.0"
+    "commander": "^12.0.0",
+    "@brandlyframes/renderer": "workspace:*"
   },
   "devDependencies": {
     "@types/commander": "^2.12.5",

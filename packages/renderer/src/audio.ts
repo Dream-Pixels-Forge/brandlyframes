@@ -19,7 +19,7 @@
  * Clean-room implementation.
  */
 import { spawn } from 'node:child_process';
-import { FFmpegNotFoundError, type SpawnFn } from './ffmpeg-decode';
+import { FFmpegNotFoundError, type SpawnFn } from './ffmpeg-decode.js';
 
 /** Frames per second used when the `fps` option is omitted. */
 export const DEFAULT_MIX_FPS = 30;

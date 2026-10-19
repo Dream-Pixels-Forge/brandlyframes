@@ -81,4 +81,92 @@ describe('CLI', () => {
     expect(output).toContain('Frame Cache Statistics');
     expect(output).toContain('memory entries');
   });
+
+  // render subcommand [BF-025]
+  it('should render command reject an invalid frame range', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} render http://example.com /tmp/out 10 0`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    expect((error as Error & { status?: number }).status).not.toBe(0);
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('start and end must be integers');
+  });
+
+  it('should render command reject a negative start frame', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} render http://example.com /tmp/out -- -1 10`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('0 <= start < end');
+  });
+
+  // still subcommand [BF-025]
+  it('should still command reject a negative frame', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} still http://example.com -- -1 /tmp/out.png`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('frame must be a non-negative integer');
+  });
+
+  it('should still command reject a non-integer frame', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} still http://example.com abc /tmp/out.png`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('frame must be a non-negative integer');
+  });
+
+  // compositions subcommand [BF-025]
+  it('should compositions command reject an invalid codec', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} compositions /tmp/frames /tmp/out.mp4 -c av1`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('codec must be one of');
+  });
+
+  it('should compositions command reject fps below 1', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} compositions /tmp/frames /tmp/out.mp4 -f 0`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('fps must be an integer >= 1');
+  });
 });

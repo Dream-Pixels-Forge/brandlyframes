@@ -13,8 +13,8 @@
  */
 import { join } from 'node:path';
 import { spawn } from 'node:child_process';
-import type { FrameRange } from './capture';
-import { FFmpegNotFoundError, type SpawnFn } from './ffmpeg-decode';
+import type { FrameRange } from './capture.js';
+import { FFmpegNotFoundError, type SpawnFn } from './ffmpeg-decode.js';
 
 /** Output codecs supported by the stitcher [BF-021]. */
 export type StitchCodec = 'h264' | 'h265' | 'vp8' | 'vp9' | 'prores' | 'gif' | 'png-sequence';

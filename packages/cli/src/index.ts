@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import {
+  captureFrame,
+  runRenderJob,
+  stitchFrames,
+} from '@brandlyframes/renderer';
+import { createCdpLauncher } from './cdp-launcher.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -108,6 +114,103 @@ framesCmd
     } else {
       console.log('Frame cache management. Use --stats, --clear, or --max-entries.');
     }
+  });
+
+// render subcommand [BF-025]
+program
+  .command('render <url> <outDir> <start> <end>')
+  .description('render a composition URL to a frame sequence via headless capture')
+  .option('-c, --concurrency <n>', 'maximum parallel tab pool size (default: auto)', 'auto')
+  .option('--no-resume', 'reset manifest and capture every frame again')
+  .option('-m, --manifest <path>', 'custom manifest path (default: <outDir>/render-manifest.json)')
+  .action((url, outDir, start, end, options) => {
+    const startFrame = Number(start);
+    const endFrame = Number(end);
+    if (!Number.isInteger(startFrame) || !Number.isInteger(endFrame) || startFrame < 0 || endFrame <= startFrame) {
+      console.error('render: start and end must be integers with 0 <= start < end');
+      process.exit(1);
+    }
+    const concurrency = options.concurrency === 'auto' ? undefined : Number(options.concurrency);
+    if (concurrency !== undefined && (!Number.isInteger(concurrency) || concurrency < 1)) {
+      console.error('render: concurrency must be an integer >= 1');
+      process.exit(1);
+    }
+    console.log(`Rendering ${url} frames [${startFrame}, ${endFrame}) to ${outDir}`);
+    runRenderJob(
+      {
+        url,
+        start: startFrame,
+        end: endFrame,
+        outDir,
+        concurrency,
+        resume: options.resume !== false,
+        manifestPath: options.manifest,
+        onProgress: (progress) => {
+          if (progress.type === 'frame') {
+            console.log(`  frame ${progress.framesDone}/${progress.framesTotal} (chunk [${progress.chunk.start},${progress.chunk.end}))`);
+          }
+        },
+      },
+      createCdpLauncher,
+    )
+      .then((result) => {
+        console.log(`Render complete: ${result.framesRendered} rendered, ${result.framesResumed} resumed`);
+      })
+      .catch((error) => {
+        console.error(`Render failed: ${error.message}`);
+        process.exit(1);
+      });
+  });
+
+// still subcommand [BF-025]
+program
+  .command('still <url> <frame> <out>')
+  .description('capture a single still frame from a composition URL')
+  .action((url, frame, out) => {
+    const frameNumber = Number(frame);
+    if (!Number.isInteger(frameNumber) || frameNumber < 0) {
+      console.error('still: frame must be a non-negative integer');
+      process.exit(1);
+    }
+    console.log(`Capturing still frame ${frameNumber} from ${url} to ${out}`);
+    captureFrame({ url, frame: frameNumber }, createCdpLauncher)
+      .then((png) => {
+        writeFileSync(out, png);
+        console.log(`Still written: ${out} (${png.length} bytes)`);
+      })
+      .catch((error) => {
+        console.error(`Still failed: ${error.message}`);
+        process.exit(1);
+      });
+  });
+
+// compositions subcommand [BF-025]
+program
+  .command('compositions <inputDir> <output>')
+  .description('stitch a frame directory into a video composition')
+  .option('-f, --fps <number>', 'output frames per second (default: 30)', '30')
+  .option('-c, --codec <codec>', 'codec: h264, h265, vp8, vp9, prores, gif, png-sequence (default: h264)', 'h264')
+  .action((inputDir, output, options) => {
+    const fps = Number(options.fps);
+    if (!Number.isInteger(fps) || fps < 1) {
+      console.error('compositions: fps must be an integer >= 1');
+      process.exit(1);
+    }
+    const codec = options.codec;
+    const validCodecs = ['h264', 'h265', 'vp8', 'vp9', 'prores', 'gif', 'png-sequence'];
+    if (!validCodecs.includes(codec)) {
+      console.error(`compositions: codec must be one of ${validCodecs.join(', ')}`);
+      process.exit(1);
+    }
+    console.log(`Stitching ${inputDir} -> ${output} @ ${fps}fps (${codec})`);
+    stitchFrames(inputDir, { fps, codec, output })
+      .then(() => {
+        console.log('Composition stitched.');
+      })
+      .catch((error) => {
+        console.error(`Compositions failed: ${error.message}`);
+        process.exit(1);
+      });
   });
 
 program

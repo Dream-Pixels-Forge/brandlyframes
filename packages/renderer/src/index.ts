@@ -5,7 +5,7 @@
  * stitching used by `brandlyframes render`.
  */
 
-export { decodeFrameFFmpeg, FFmpegNotFoundError } from './ffmpeg-decode';
+export { decodeFrameFFmpeg, FFmpegNotFoundError } from './ffmpeg-decode.js';
 export type {
   DecodeFrameFFmpegOptions,
   SpawnedProcessHandle,
@@ -20,7 +20,7 @@ export {
   splitFrameRange,
   DEFAULT_CHROME_FLAGS,
   DEFAULT_CONCURRENCY,
-} from './capture';
+} from './capture.js';
 export type {
   BrowserTabLike,
   BrowserLauncherLike,
@@ -29,7 +29,7 @@ export type {
   CaptureFrameOptions,
   CaptureChunkOptions,
   CaptureParallelOptions,
-} from './capture';
+} from './capture.js';
 export {
   buildStitchArgs,
   stitchFrames,
@@ -39,20 +39,20 @@ export {
   ALPHA_PIXEL_FORMATS,
   DEFAULT_FRAME_PATTERN,
   DEFAULT_STITCH_FPS,
-} from './stitch';
+} from './stitch.js';
 export type {
   StitchCodec,
   StitchCodecProfile,
   StitchOptions,
   StitchFramesOptions,
-} from './stitch';
-export { mixAudio, buildMixArgs, DEFAULT_MIX_FPS } from './audio';
+} from './stitch.js';
+export { mixAudio, buildMixArgs, DEFAULT_MIX_FPS } from './audio.js';
 export type {
   AudioTrackInput,
   VolumeKeyframe,
   MixAudioOptions,
   MixAudioSpawnOptions,
-} from './audio';
+} from './audio.js';
 export {
   runRenderJob,
   readRenderManifest,
@@ -60,10 +60,10 @@ export {
   RenderJobAbortedError,
   DEFAULT_MANIFEST_FILENAME,
   MANIFEST_VERSION,
-} from './job';
+} from './job.js';
 export type {
   RenderManifest,
   RenderJobOptions,
   RenderJobResult,
   RenderProgress,
-} from './job';
+} from './job.js';

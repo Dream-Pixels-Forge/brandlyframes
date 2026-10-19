@@ -34,8 +34,8 @@ import {
   type BrowserTabLike,
   type FrameRange,
   type LauncherFn,
-} from './capture';
-import { frameFileName } from './stitch';
+} from './capture.js';
+import { frameFileName } from './stitch.js';
 
 /** Manifest file name created inside `outDir` unless overridden. */
 export const DEFAULT_MANIFEST_FILENAME = 'render-manifest.json';
