@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { Player } from '../src/index';
+import { Player, PlayerRef } from '../src/index';
 import React from 'react';
 import '@testing-library/jest-dom';
 
@@ -87,7 +87,7 @@ describe('Player', () => {
 
 describe('Player seek accuracy', () => {
   it('seeks to exact frame without drift via imperative API', () => {
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(
       <>
         <Player ref={player} compositionId="test-comp" />
@@ -105,7 +105,7 @@ describe('Player seek accuracy', () => {
   });
 
   it('clamps seek to duration - 1 when beyond range', () => {
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(<Player ref={player} compositionId="test-comp" />);
 
     act(() => {
@@ -117,7 +117,7 @@ describe('Player seek accuracy', () => {
   });
 
   it('clamps negative seek to 0', () => {
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(<Player ref={player} compositionId="test-comp" />);
 
     act(() => {
@@ -128,7 +128,7 @@ describe('Player seek accuracy', () => {
   });
 
   it('seeks frame-exactly across repeated seeks', () => {
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(<Player ref={player} compositionId="test-comp" />);
 
     for (const frame of [0, 1, 15, 50, 120, 299]) {
@@ -141,7 +141,7 @@ describe('Player seek accuracy', () => {
 
   it('emits onFrameChange on seek', () => {
     const onFrameChange = vi.fn();
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(
       <Player ref={player} compositionId="test-comp" onFrameChange={onFrameChange} />,
     );
@@ -154,7 +154,7 @@ describe('Player seek accuracy', () => {
   });
 
   it('exposes duration and playback rate via ref API', () => {
-    const player = { current: null as any };
+    const player = { current: null as PlayerRef | null };
     render(<Player ref={player} compositionId="test-comp" />);
 
     expect(player.current.getDurationInFrames()).toBe(300);

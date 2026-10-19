@@ -19,7 +19,7 @@ import {
   MANIFEST_VERSION,
   type RenderProgress,
 } from '../src/job';
-import { DEFAULT_CHROME_FLAGS, type BrowserLauncherLike, type BrowserTabLike, type LauncherFn } from '../src/capture';
+import { type BrowserLauncherLike, type BrowserTabLike, type LauncherFn } from '../src/capture';
 
 /** A fake tab that records seeks and screenshots the current frame as [frame]. */
 interface FakeTab extends BrowserTabLike {

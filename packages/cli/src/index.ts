@@ -59,7 +59,6 @@ program
   .option('-n, --name <name>', 'project name (defaults to directory name)')
   .action((template, dir, options) => {
     const projectDir = resolve(dir || template);
-    const name = options.name || dir || template;
     const scaffolderBin = resolve(
       __dirname,
       '..',

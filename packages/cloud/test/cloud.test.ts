@@ -13,6 +13,8 @@ import {
   CloudProvider,
   CloudRenderJob,
   DriftCheckResult,
+  EncodingPreset,
+  ProviderConfig,
 } from '../src/index';
 
 describe('Cloud package', () => {
@@ -313,7 +315,7 @@ describe('checkDrift / runDriftTest (BF-082)', () => {
   });
 
   it('runDriftTest returns a DriftCheckResult', async () => {
-    const result = await runDriftTest('aws-lambda', {} as any, { format: 'mp4', codec: 'h264', preset: 'medium' } as any);
+    const result = await runDriftTest('aws-lambda', {} as ProviderConfig, { format: 'mp4', codec: 'h264', preset: 'medium' } as EncodingPreset);
     expect(result).toMatchObject<DriftCheckResult>({
       hasDrift: false,
       maxDriftMs: 0,

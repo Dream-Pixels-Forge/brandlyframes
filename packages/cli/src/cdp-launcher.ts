@@ -10,7 +10,6 @@
  * Clean-room implementation.
  */
 import { spawn, ChildProcess } from 'node:child_process';
-import { join } from 'node:path';
 import type { BrowserLauncherLike, BrowserTabLike, LauncherFn } from '@brandlyframes/renderer';
 
 const CHROME_BIN = process.env.CHROME_BIN ?? '/usr/bin/google-chrome';
@@ -23,7 +22,7 @@ interface CdpMessage {
   result?: unknown;
 }
 
-interface CdpPage {
+interface _CdpPage {
   id: string;
   type: string;
   title: string;
@@ -177,7 +176,7 @@ class CdpLauncher implements BrowserLauncherLike {
     this.process = process;
   }
 
-  async launchTab(url: string, flags: readonly string[]): Promise<BrowserTabLike> {
+  async launchTab(url: string, _flags: readonly string[]): Promise<BrowserTabLike> {
     const client = new CdpClient(this.debugUrl);
     await client.ready();
 

@@ -417,7 +417,7 @@ export async function runRenderJob(
           try {
             const from = chunk.start + coveredPrefix(completed, chunk.start, chunk.end);
             await captureChunkOn(tab, chunk, from);
-          } catch (error) {
+          } catch {
             if (signal?.aborted) return;
             // Recycle once: fresh tab, retry from the completed offset; a
             // second failure is final for this worker.
