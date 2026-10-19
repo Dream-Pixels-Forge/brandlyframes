@@ -350,9 +350,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-026 Golden-frame and determinism test harness
 
 **v0.4 "Premiere": player** (P4)
-- [ ] BF-030 `@brandlyframes/player` component with controls, loop, autoplay *(component + 9 tests landed; docs page/example pending)*
-- [ ] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps` *(landed; docs pending)*
-- [ ] BF-032 Seek-accuracy test suite; Next.js and plain React examples
+- [x] BF-030 `@brandlyframes/player` component with controls, loop, autoplay *(component + docs page + code examples + changeset landed)*
+- [x] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps` *(landed; docs page + seek-accuracy test suite added)*
+- [x] BF-032 Seek-accuracy test suite *(6 tests added; docs page + code examples added)*
 
 **v0.5 "Frame by Frame": frame video** (P5)
 - [x] BF-050 `probeVideo` (rational fps, frame count, codec, color, alpha, VFR flag)

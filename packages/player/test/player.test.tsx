@@ -86,20 +86,79 @@ describe('Player', () => {
 });
 
 describe('Player seek accuracy', () => {
-  it('seeks to exact frame without drift via imperative API', async () => {
-    const onFrameChange = vi.fn();
-    render(<Player compositionId="test-comp" onFrameChange={onFrameChange} />);
-    
-    // For now, verify the component renders correctly with the right props
-    expect(screen.getByTestId('composition-frame')).toBeInTheDocument();
-    expect(onFrameChange).not.toHaveBeenCalled();
+  it('seeks to exact frame without drift via imperative API', () => {
+    const player = { current: null as any };
+    render(
+      <>
+        <Player ref={player} compositionId="test-comp" />
+        <button data-testid="seek-30" onClick={() => player.current.seekTo(30)}>
+          Seek 30
+        </button>
+      </>,
+    );
+
+    act(() => {
+      screen.getByTestId('seek-30').click();
+    });
+
+    expect(player.current.getCurrentFrame()).toBe(30);
   });
 
-  it('clamps seek values to valid range via imperative API', async () => {
+  it('clamps seek to duration - 1 when beyond range', () => {
+    const player = { current: null as any };
+    render(<Player ref={player} compositionId="test-comp" />);
+
+    act(() => {
+      player.current.seekTo(1000);
+    });
+
+    // durationInFrames mocked to 300, so clamped to 299
+    expect(player.current.getCurrentFrame()).toBe(299);
+  });
+
+  it('clamps negative seek to 0', () => {
+    const player = { current: null as any };
+    render(<Player ref={player} compositionId="test-comp" />);
+
+    act(() => {
+      player.current.seekTo(-5);
+    });
+
+    expect(player.current.getCurrentFrame()).toBe(0);
+  });
+
+  it('seeks frame-exactly across repeated seeks', () => {
+    const player = { current: null as any };
+    render(<Player ref={player} compositionId="test-comp" />);
+
+    for (const frame of [0, 1, 15, 50, 120, 299]) {
+      act(() => {
+        player.current.seekTo(frame);
+      });
+      expect(player.current.getCurrentFrame()).toBe(frame);
+    }
+  });
+
+  it('emits onFrameChange on seek', () => {
     const onFrameChange = vi.fn();
-    render(<Player compositionId="test-comp" onFrameChange={onFrameChange} />);
-    
-    expect(screen.getByTestId('composition-frame')).toBeInTheDocument();
-    expect(onFrameChange).not.toHaveBeenCalled();
+    const player = { current: null as any };
+    render(
+      <Player ref={player} compositionId="test-comp" onFrameChange={onFrameChange} />,
+    );
+
+    act(() => {
+      player.current.seekTo(42);
+    });
+
+    expect(onFrameChange).toHaveBeenCalledWith(42);
+  });
+
+  it('exposes duration and playback rate via ref API', () => {
+    const player = { current: null as any };
+    render(<Player ref={player} compositionId="test-comp" />);
+
+    expect(player.current.getDurationInFrames()).toBe(300);
+    expect(player.current.getPlaybackRate()).toBe(1);
+    expect(player.current.isPlaying()).toBe(false);
   });
 });
