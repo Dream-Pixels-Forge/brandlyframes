@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { execSync } from 'node:child_process';
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+import { tmpdir } from 'node:os';
 
 describe('CLI', () => {
   const cliBin = resolve('./dist/index.js');
@@ -168,5 +169,29 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('fps must be an integer >= 1');
+  });
+
+  // create subcommand [BF-090]
+  it('should create command scaffold a blank project', () => {
+    const projectDir = join(tmpdir(), `bf-cli-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const output = execSync(`node ${cliBin} create blank ${projectDir} -n my-project`, {
+      encoding: 'utf8',
+    });
+    expect(output).toContain('using the "blank" template');
+    expect(output).toContain(projectDir);
+  });
+
+  it('should create command reject an unknown template', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} create nonexistent-template /tmp/bf-cli-nonexistent`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('Unknown template: nonexistent-template');
   });
 });

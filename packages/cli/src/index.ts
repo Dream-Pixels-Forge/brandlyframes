@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { readFileSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import {
   captureFrame,
   runRenderJob,
@@ -51,6 +52,31 @@ program
     .action(() => {
       console.log('Checking for upgrades...');
     });
+
+program
+  .command('create <template> [dir]')
+  .description('scaffold a new BrandlyFrames project from a template')
+  .option('-n, --name <name>', 'project name (defaults to directory name)')
+  .action((template, dir, options) => {
+    const projectDir = resolve(dir || template);
+    const name = options.name || dir || template;
+    const scaffolderBin = resolve(
+      __dirname,
+      '..',
+      '..',
+      'create-brandlyframes',
+      'dist',
+      'index.js'
+    );
+    const result = spawnSync(
+      process.execPath,
+      [scaffolderBin, template, projectDir, ...(options.name ? ['-n', options.name] : [])],
+      { encoding: 'utf8', stdio: 'inherit' }
+    );
+    if (result.status !== 0) {
+      process.exit(result.status ?? 1);
+    }
+  });
 
 // frames subcommand group [BF-060]
 const framesCmd = program
