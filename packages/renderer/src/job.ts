@@ -382,14 +382,19 @@ export async function runRenderJob(
         const png = await tab.screenshotPng();
         await writeFile(join(outDir, frameFileName(frame)), png);
         framesRendered += 1;
+        // Capture framesDone synchronously right after the increment, before any
+        // await that could interleave with a parallel worker. Emitting the
+        // progress event here guarantees frame events are pushed in increment
+        // order and strictly increase, even with concurrent tabs.
+        const done = framesDone();
         completed = addCompleted(completed, { start: chunk.start, end: frame + 1 });
-        await writeRenderManifest(manifestPath, currentManifest());
         options.onProgress?.({
           type: 'frame',
           chunk,
-          framesDone: framesDone(),
+          framesDone: done,
           framesTotal,
         });
+        await writeRenderManifest(manifestPath, currentManifest());
       }
       options.onProgress?.({
         type: 'chunk-done',
