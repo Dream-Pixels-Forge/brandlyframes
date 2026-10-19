@@ -1,13 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   splitFrameRange,
   createChunkRequests,
   estimateJobCost,
   checkCostBudget,
+  generateConcatFileList,
   createDefaultCloudJob,
   getCloudAdapter,
+  sendWebhook,
+  checkDrift,
+  runDriftTest,
   CloudProvider,
   CloudRenderJob,
+  DriftCheckResult,
 } from '../src/index';
 
 describe('Cloud package', () => {
@@ -212,7 +217,7 @@ describe('Cloud package', () => {
         memoryMb: 1024,
         timeoutSeconds: 300,
       });
-      
+
       expect(deployment.name).toContain('brandlyframes-renderer');
       expect(deployment.url).toContain('run.app');
       expect(deployment.version).toBe('1');
@@ -221,7 +226,7 @@ describe('Cloud package', () => {
     it('can invoke a chunk', async () => {
       const adapter = getCloudAdapter('gcp-cloudrun');
       await adapter.deployFunction({ region: 'us-central1', memoryMb: 1024, timeoutSeconds: 300 });
-      
+
       const result = await adapter.invokeChunk({
         jobId: 'test-job',
         chunkIndex: 0,
@@ -230,11 +235,90 @@ describe('Cloud package', () => {
         encoding: { format: 'mp4', codec: 'h264' },
         uploadTarget: { backend: 'gcs', bucket: 'test', key: 'chunk-0.mp4' },
       });
-      
+
       expect(result.jobId).toBe('test-job');
       expect(result.chunkIndex).toBe(0);
       expect(result.outputUrl).toContain('gcs://');
       expect(result.costUsd).toBeGreaterThan(0);
+    });
+  });
+});
+
+describe('generateConcatFileList (BF-080)', () => {
+  it('writes one file line per chunk URL', () => {
+    const chunkUrls = [
+      's3://bucket/job/chunk-0.mp4',
+      's3://bucket/job/chunk-1.mp4',
+      's3://bucket/job/chunk-2.mp4',
+    ];
+    const list = generateConcatFileList(chunkUrls);
+    const lines = list.split('\n').filter(Boolean);
+    expect(lines).toHaveLength(3);
+    expect(lines[0]).toBe("file 's3://bucket/job/chunk-0.mp4'");
+    expect(lines[1]).toBe("file 's3://bucket/job/chunk-1.mp4'");
+    expect(lines[2]).toBe("file 's3://bucket/job/chunk-2.mp4'");
+  });
+
+  it('handles empty chunk list', () => {
+    const list = generateConcatFileList([]);
+    expect(list).toBe('');
+  });
+});
+
+describe('sendWebhook (BF-080)', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('logs the payload and resolves on success', async () => {
+    const logMock = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await sendWebhook('https://example.com/webhook', { jobId: 'test' });
+    expect(logMock).toHaveBeenCalledWith(
+      'Webhook to https://example.com/webhook:',
+      { jobId: 'test' }
+    );
+    expect(logMock).toHaveBeenCalledTimes(1);
+    logMock.mockRestore();
+  });
+
+  it('retries on console error', async () => {
+    const logMock = vi.spyOn(console, 'log').mockImplementation(() => {
+      throw new Error('down');
+    });
+
+    await expect(sendWebhook('https://example.com/webhook', { jobId: 'test' }, 2)).rejects.toThrow();
+    expect(logMock).toHaveBeenCalledTimes(2); // retries=2 means 2 attempts
+    logMock.mockRestore();
+  });
+
+  it('respects custom retry count', async () => {
+    const logMock = vi.spyOn(console, 'log').mockImplementation(() => {
+      throw new Error('down');
+    });
+
+    await expect(sendWebhook('https://example.com/webhook', { jobId: 'test' }, 1)).rejects.toThrow();
+    expect(logMock).toHaveBeenCalledTimes(1);
+    logMock.mockRestore();
+  });
+});
+
+describe('checkDrift / runDriftTest (BF-082)', () => {
+  it('checkDrift reports no drift (mock result)', async () => {
+    const result = await checkDrift('/tmp/test-output.mp4', 30);
+    expect(result.hasDrift).toBe(false);
+    expect(result.maxDriftMs).toBe(0);
+    expect(result.driftedFrames).toEqual([]);
+    expect(result.comparisons).toEqual([]);
+  });
+
+  it('runDriftTest returns a DriftCheckResult', async () => {
+    const result = await runDriftTest('aws-lambda', {} as any, { format: 'mp4', codec: 'h264', preset: 'medium' } as any);
+    expect(result).toMatchObject<DriftCheckResult>({
+      hasDrift: false,
+      maxDriftMs: 0,
+      driftedFrames: [],
+      comparisons: [],
     });
   });
 });
