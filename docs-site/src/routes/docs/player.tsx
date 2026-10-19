@@ -3,7 +3,6 @@ import { Link } from '@tanstack/react-router';
 import {
   basicUsageCode,
   refApiCode,
-  seekAccuracyCode,
   controlledPlaybackCode,
   seekAccuracyPlayerCode,
   errorHandlingCode,
