@@ -137,3 +137,8 @@ export type {
   ExtractFramesToDiskResult,
   ExtractedFrame,
 } from './extract-frames';
+
+// --- test clip generator [BF-061] — CFR / VFR / alpha clips + perf benchmark ---
+
+export { TEST_CLIPS, generateFrameCounterText, createFrameCounterFrame, generateTestClipManifest, writeTestClipManifest, runPerfBenchmark } from './test-clips';
+export type { FrameCounterClipSpec, VFRPattern, PerfBenchmarkResult } from './test-clips';

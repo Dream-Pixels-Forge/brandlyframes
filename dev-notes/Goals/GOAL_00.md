@@ -366,7 +366,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
 - [x] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
 - [x] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
-- [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark
+- [x] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark *(code + tests + docs page + code examples + changeset landed)*
 
 **v0.6 "Reel": extras** (P6)
 - [x] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
