@@ -13,7 +13,7 @@ describe('CLI', () => {
 
   it('should output the version when called with --version', () => {
     const output = execSync(`node ${cliBin} --version`, { encoding: 'utf8' });
-    expect(output.trim()).toBe('0.1.0');
+    expect(output.trim()).toBe(packageJson.version);
   });
 
   it('should output help when called with --help', () => {

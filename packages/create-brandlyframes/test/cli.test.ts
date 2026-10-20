@@ -7,6 +7,9 @@ import { join } from 'node:path';
 
 describe('create-brandlyframes CLI', () => {
   const cliBin = resolve('./dist/index.js');
+  const packageJson = JSON.parse(
+    readFileSync(resolve('./package.json'), 'utf8')
+  ) as { version: string };
 
   afterEach(() => {
     // Clean up any leftover scaffolded dirs from tests
@@ -20,7 +23,7 @@ describe('create-brandlyframes CLI', () => {
 
   it('should output the version when called with --version', () => {
     const output = execSync(`node ${cliBin} --version`, { encoding: 'utf8' });
-    expect(output.trim()).toBe('0.1.0');
+    expect(output.trim()).toBe(packageJson.version);
   });
 
   it('should output help when called with --help', () => {
