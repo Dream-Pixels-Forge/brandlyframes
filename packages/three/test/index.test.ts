@@ -52,9 +52,7 @@ vi.mock('three', async () => {
       render: vi.fn(),
       autoClear: true,
     })),
-    Scene: vi.fn(),
     BoxGeometry: vi.fn(),
-    MeshNormalMaterial: vi.fn(),
     Mesh: vi.fn(() => ({
       rotation: { x: 0, y: 0, z: 0 },
       position: { x: 0, y: 0, z: 0 },
