@@ -311,9 +311,9 @@
     @apply toc-link text-accent border-accent font-medium;
   }
 
-  /* Animation Classes */
+  /* Animation Classes — content is visible by default; .visible triggers the entrance animation */
   .animate-on-scroll {
-    @apply opacity-0 translate-y-8 transition-all duration-350 ease-cinematic;
+    @apply transition-all duration-350 ease-cinematic;
   }
 
   .animate-on-scroll.visible {
