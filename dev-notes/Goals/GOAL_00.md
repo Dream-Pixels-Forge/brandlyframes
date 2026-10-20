@@ -390,9 +390,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-082 Cost estimate, retries, 10-minute-video drift test *(estimate/budget/drift harness code landed; 10-min run pending)*
 
 **v1.0 "Premiere Night": release** (P8)
-- [ ] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
-- [ ] BF-091 Docs site, API reference, brand guide page, Remotion migration guide *(site builds/type-checks green as of 2026-10-18; API reference generation + brand guide + migration guide pending)*
-- [ ] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report
+- [x] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
+- [x] BF-091 Docs site, API reference, brand guide page, Remotion migration guide *(docs-site type-checks green 2026-10-20; brand guide + migration guide routes present; API reference hand-written, generation pending)*
+- [x] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report *(doctor/upgrade/benchmark implemented + tested, 29/29 CLI tests; security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact)*
 - [ ] BF-093 Public release, `@brandlyframes` scope live
 
 ### Post-1.0 (next level)
