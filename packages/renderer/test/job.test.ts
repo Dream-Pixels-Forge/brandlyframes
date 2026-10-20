@@ -83,8 +83,6 @@ const healthyTab = (): FakeTab => {
   return tab;
 };
 
-const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
-
 const makeOutDir = async (): Promise<string> => mkdtemp(join(tmpdir(), 'bf-job-'));
 
 const readManifest = async (outDir: string) =>
@@ -304,13 +302,25 @@ describe('runRenderJob — cancellation via AbortSignal [BF-024]', () => {
     const outDir = await makeOutDir();
     try {
       const controller = new AbortController();
+      // Deterministic handshakes instead of wall-clock delays: the fake tab
+      // announces when frame 5 is in flight, then holds it open until the
+      // test releases it — so the abort always lands mid-frame, never before
+      // frame 5 or after the whole render.
+      let frame5Entered!: () => void;
+      const frame5Started = new Promise<void>((resolve) => {
+        frame5Entered = resolve;
+      });
+      let releaseFrame5!: () => void;
+      const frame5Gate = new Promise<void>((resolve) => {
+        releaseFrame5 = resolve;
+      });
       const pool = makePool(() => {
         const tab = healthyTab();
         const gotoFrame = tab.gotoFrame;
-        // Frame 5 stalls long enough for the abort to close the tab.
         tab.gotoFrame = async (frame: number) => {
           if (frame === 5) {
-            await delay(25);
+            frame5Entered();
+            await frame5Gate;
             if (tab.closed || controller.signal.aborted) throw new Error('interrupted');
           }
           await gotoFrame(frame);
@@ -330,8 +340,9 @@ describe('runRenderJob — cancellation via AbortSignal [BF-024]', () => {
         },
         () => Promise.resolve(pool.launcher),
       );
-      await delay(5);
+      await frame5Started;
       controller.abort();
+      releaseFrame5();
 
       const error = typedError(await job.then(
         () => {
@@ -360,12 +371,23 @@ describe('runRenderJob — cancellation via AbortSignal [BF-024]', () => {
     const outDir = await makeOutDir();
     try {
       const controller = new AbortController();
+      // Deterministic handshake: the abort lands while frame 1 is provably in
+      // flight, before the worker can finish chunk [0,2) or claim [2,4).
+      let frame1Entered!: () => void;
+      const frame1Started = new Promise<void>((resolve) => {
+        frame1Entered = resolve;
+      });
+      let releaseFrame1!: () => void;
+      const frame1Gate = new Promise<void>((resolve) => {
+        releaseFrame1 = resolve;
+      });
       const pool = makePool(() => {
         const tab = healthyTab();
         const gotoFrame = tab.gotoFrame;
         tab.gotoFrame = async (frame: number) => {
           if (frame === 1) {
-            await delay(25);
+            frame1Entered();
+            await frame1Gate;
             if (tab.closed || controller.signal.aborted) throw new Error('interrupted');
           }
           await gotoFrame(frame);
@@ -385,8 +407,9 @@ describe('runRenderJob — cancellation via AbortSignal [BF-024]', () => {
         },
         () => Promise.resolve(pool.launcher),
       );
-      await delay(5);
+      await frame1Started;
       controller.abort();
+      releaseFrame1();
 
       await job.then(
         () => {
