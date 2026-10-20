@@ -81,10 +81,14 @@ function HomePage() {
                 <span>TypeScript native</span>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Code anchor — supporting focal element for the hero (composition-language:
-                one code window on the page, framed as a physical artifact) */}
-            <div className="mt-14 max-w-2xl mx-auto text-left animate-slide-up stagger-5">
+        {/* Code + rendered output side by side — breaks out of container-narrow for width */}
+        <div className="mx-auto px-4 md:px-6 lg:px-8 pt-16">
+          <div className="max-w-[1200px] grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Code column */}
+            <div className="animate-slide-up stagger-5">
               <div className="card overflow-hidden shadow-[0_0_80px_rgba(255,106,0,0.07)]">
                 <div className="bg-surface-elevated border-b border-border-primary px-4 py-3 flex items-center gap-3">
                   <span className="flex gap-1.5" aria-hidden="true">
@@ -97,6 +101,33 @@ function HomePage() {
                   <span className="badge-muted">TypeScript</span>
                 </div>
                 <pre className="code-block rounded-none border-0 max-h-[480px] overflow-y-auto"><code>{helloVideoCode}</code></pre>
+              </div>
+            </div>
+
+            {/* Result column — what the code produces when rendered */}
+            <div className="animate-slide-up stagger-6">
+              <div className="card overflow-hidden shadow-[0_0_80px_rgba(255,106,0,0.07)] bg-bg-primary">
+                <div className="relative aspect-video rounded-xl overflow-hidden border border-border-primary bg-black flex items-center justify-center">
+                  <div className="text-center p-8">
+                    <div className="relative">
+                      <div className="animate-pulse absolute inset-0 bg-accent/10 rounded-full blur-[20px]" />
+                      <span className="relative z-10 font-display text-display-lg text-accent tracking-wide uppercase leading-none">
+                        HELLO<br />
+                        BRANDLYFRAMES
+                      </span>
+                    </div>
+                    <div className="mt-6 flex items-center justify-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-accent animate-bounce" />
+                      <span className="text-caption text-text-muted font-mono">frame 42 / 120</span>
+                      <div className="w-2 h-2 rounded-full bg-accent/50" />
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-surface-elevated border-t border-border-primary px-4 py-3 flex items-center gap-3">
+                  <span className="text-caption text-text-muted font-mono">Render Output</span>
+                  <span className="flex-1" />
+                  <span className="badge-muted">60 fps • 1080p</span>
+                </div>
               </div>
             </div>
           </div>
