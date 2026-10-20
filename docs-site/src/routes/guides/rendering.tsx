@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
+import { RootLayout } from '@/components/Layout/RootLayout';
 import { 
   basicUsageCode,
   platformPresetsCode,
@@ -20,7 +21,8 @@ export const Route = createFileRoute('/guides/rendering')({
 
 function RenderingGuidePage() {
   return (
-    <article className="animate-on-scroll">
+    <RootLayout>
+      <article className="animate-on-scroll">
       <header className="mb-12 pb-8 border-b border-border-primary">
         <nav className="flex items-center gap-2 text-caption text-text-muted mb-4" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-text-primary">Guides</Link>
@@ -302,6 +304,7 @@ function RenderingGuidePage() {
         <Link to="/api" className="link">← API Reference</Link>
         <Link to="/" className="link">Home →</Link>
       </footer>
-    </article>
+      </article>
+    </RootLayout>
   );
 }

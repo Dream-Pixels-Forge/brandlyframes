@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
+import { RootLayout } from '@/components/Layout/RootLayout';
 
 export const Route = createFileRoute('/docs/getting-started')({
   component: GettingStartedPage,
@@ -7,7 +8,8 @@ export const Route = createFileRoute('/docs/getting-started')({
 
 function GettingStartedPage() {
   return (
-    <article className="animate-on-scroll">
+    <RootLayout>
+      <article className="animate-on-scroll">
       <header className="mb-12 pb-8 border-b border-border-primary">
         <nav className="flex items-center gap-2 text-caption text-text-muted mb-4" aria-label="Breadcrumb">
           <Link to="/docs/getting-started" className="hover:text-text-primary">Docs</Link>
@@ -311,6 +313,7 @@ pnpm brandlyframes cloud render hello-video \\
           Edit this page on GitHub
         </a>
       </footer>
-    </article>
+      </article>
+    </RootLayout>
   );
 }

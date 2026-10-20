@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
+import { RootLayout } from '@/components/Layout/RootLayout';
 import {
   basicUsageCode,
   refApiCode,
@@ -22,7 +23,8 @@ export const Route = createFileRoute('/docs/player')({
 
 function PlayerPage() {
   return (
-    <article className="animate-on-scroll">
+    <RootLayout>
+      <article className="animate-on-scroll">
       <header className="mb-12 pb-8 border-b border-border-primary">
         <nav className="flex items-center gap-2 text-caption text-text-muted mb-4" aria-label="Breadcrumb">
           <Link to="/docs/getting-started" className="hover:text-text-primary">Docs</Link>
@@ -216,6 +218,7 @@ function PlayerPage() {
           Frame Video →
         </Link>
       </footer>
-    </article>
+      </article>
+    </RootLayout>
   );
 }

@@ -18,5 +18,8 @@ coverage/
 # Generated route tree (tsr generate)
 docs-site/src/routeTree.gen.ts
 
+# TanStack Router cache
+docs-site/.tanstack/
+
 # OS
 .DS_Store
