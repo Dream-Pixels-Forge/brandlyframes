@@ -212,9 +212,17 @@
 
 }
 
-/* Card base — utility so .card-hover can @apply it */
+  /* Card base — utility so .card-hover can @apply it */
 @utility card {
     @apply bg-surface rounded-xl border border-border-primary overflow-hidden transition-all duration-250 hover:border-accent-dim;
+}
+
+/* Internal docs pages: root <article> gets a centered reading container.
+   Scoped to main > article so the home page's full-bleed sections are untouched. */
+@layer components {
+  main > article {
+    @apply mx-auto w-full max-w-content-wide px-4 py-8 md:px-6 lg:px-8 lg:py-12;
+  }
 }
 
 @layer components {
@@ -290,8 +298,9 @@
   }
 
   /* Sidebar */
+  /* Sidebar — fixed at every breakpoint so it spans full height; main/footer carry the lg:ml-72 offset */
   .sidebar {
-    @apply fixed inset-y-0 left-0 z-50 w-72 bg-surface border-r border-border-primary transform transition-transform duration-250 ease-cinematic lg:relative lg:translate-x-0;
+    @apply fixed inset-y-0 left-0 z-50 w-72 bg-surface border-r border-border-primary transform transition-transform duration-250 ease-cinematic lg:translate-x-0;
   }
 
   .sidebar-collapsed {

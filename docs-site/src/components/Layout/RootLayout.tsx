@@ -110,7 +110,8 @@ export function RootLayout({ children }: { children: ReactNode }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <Link to="/" className="hidden lg:flex items-center gap-3">
+            {/* Logo only on mobile — the sidebar shows it on desktop */}
+            <Link to="/" className="lg:hidden flex items-center gap-3">
               <span className="font-display text-display-sm text-accent">BRANDLYFRAMES</span>
             </Link>
           </div>
