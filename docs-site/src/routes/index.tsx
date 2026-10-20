@@ -11,17 +11,19 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   return (
-    <RootLayout>
-      {/* Hero Section */}
-      <section className="section pt-24 lg:pt-32" aria-labelledby="hero-heading">
-        <div className="container-narrow">
+    <RootLayout variant="landing">
+      {/* Hero Section — focal hierarchy: badge → headline → CTA → code anchor.
+          Grain + anamorphic flare are Cinema Black marketing-surface motifs (§5b). */}
+      <section className="section pt-20 lg:pt-28 grain overflow-hidden" aria-labelledby="hero-heading">
+        <div className="hero-flare" aria-hidden="true" />
+        <div className="container-narrow relative">
           <div className="max-w-3xl mx-auto text-center">
             <span className="inline-flex items-center gap-2 badge-accent mb-6 animate-fade-in">
               <span className="relative flex h-2 w-2">
                 <span className="animate-pulse-orange absolute inset-0 h-full w-full rounded-full bg-accent opacity-75" />
                 <span className="relative block h-full w-full rounded-full bg-accent" />
               </span>
-              <span className="text-caption">v0.1.0 — Public Beta</span>
+              <span className="text-caption">v1.0.0 — Premiere Night</span>
             </span>
             
             <h1 
@@ -61,7 +63,7 @@ function HomePage() {
             </div>
 
             {/* Trust indicators */}
-            <div className="mt-16 flex flex-wrap items-center justify-center gap-8 text-text-muted animate-fade-in stagger-4">
+            <div className="mt-14 flex flex-wrap items-center justify-center gap-8 text-text-muted animate-fade-in stagger-4">
               <div className="flex items-center gap-2 text-caption">
                 <svg className="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
                 <span>MIT Licensed</span>
@@ -79,6 +81,24 @@ function HomePage() {
                 <span>TypeScript native</span>
               </div>
             </div>
+
+            {/* Code anchor — supporting focal element for the hero (composition-language:
+                one code window on the page, framed as a physical artifact) */}
+            <div className="mt-14 max-w-2xl mx-auto text-left animate-slide-up stagger-5">
+              <div className="card overflow-hidden shadow-[0_0_80px_rgba(255,106,0,0.07)]">
+                <div className="bg-surface-elevated border-b border-border-primary px-4 py-3 flex items-center gap-3">
+                  <span className="flex gap-1.5" aria-hidden="true">
+                    <span className="w-2.5 h-2.5 rounded-full bg-border-primary" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-border-primary" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent/60" />
+                  </span>
+                  <span className="text-caption text-text-muted font-mono">App.tsx</span>
+                  <span className="flex-1" />
+                  <span className="badge-muted">TypeScript</span>
+                </div>
+                <pre className="code-block rounded-none border-0 max-h-[480px] overflow-y-auto"><code>{helloVideoCode}</code></pre>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -87,6 +107,7 @@ function HomePage() {
       <section className="section bg-surface/50" aria-labelledby="features-heading">
         <div className="container">
           <header className="text-center mb-16">
+            <p className="eyebrow justify-center">Determinism first</p>
             <h2 id="features-heading" className="text-heading-xl mb-4">Why BrandlyFrames?</h2>
             <p className="text-body-lg text-text-muted max-w-2xl mx-auto">
               Built from the ground up for determinism, performance, and developer experience.
@@ -111,33 +132,12 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Code Example */}
-      <section className="section" aria-labelledby="example-heading">
-        <div className="container">
-          <header className="text-center mb-12">
-            <h2 id="example-heading" className="text-heading-xl mb-4">Your First Composition</h2>
-            <p className="text-body-lg text-text-muted max-w-2xl mx-auto">
-              Write videos as React components. Every frame is a pure render.
-            </p>
-          </header>
-
-          <div className="card overflow-hidden">
-            <div className="bg-surface-elevated border-b border-border-primary px-4 py-3 flex items-center gap-2">
-              <span className="text-caption text-text-muted">App.tsx</span>
-              <span className="flex-1" />
-              <span className="badge-muted">TypeScript</span>
-            </div>
-            <pre className="code-block p-6"><code>{helloVideoCode}</code></pre>
-          </div>
-        </div>
-      </section>
-
       {/* Frame Video Feature */}
       <section className="section bg-surface/50" aria-labelledby="frame-video-heading">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="badge-accent mb-4">New in v0.1</span>
+              <p className="eyebrow">The headline feature</p>
               <h2 id="frame-video-heading" className="text-heading-xl mb-4">First-Class Frame Video</h2>
               <p className="text-body-lg text-text-muted mb-6">
                 BrandlyFrames introduces <strong>&lt;FrameVideo&gt;</strong> — the first frame-exact video component in any React video SDK. 
@@ -189,6 +189,7 @@ function HomePage() {
       <section className="section" aria-labelledby="ecosystem-heading">
         <div className="container">
           <header className="text-center mb-16">
+            <p className="eyebrow justify-center">One job per package</p>
             <h2 id="ecosystem-heading" className="text-heading-xl mb-4">Modular Ecosystem</h2>
             <p className="text-body-lg text-text-muted max-w-2xl mx-auto">
               Pick only what you need. Each package has a single responsibility.
@@ -222,6 +223,7 @@ function HomePage() {
       {/* CTA */}
       <section className="section bg-gradient-to-b from-surface/50 to-transparent" aria-labelledby="cta-heading">
         <div className="container-narrow text-center">
+          <p className="eyebrow justify-center">Under five minutes</p>
           <h2 id="cta-heading" className="text-heading-xl mb-4">Ready to start creating?</h2>
           <p className="text-body-lg text-text-muted mb-8 max-w-xl mx-auto">
             Install BrandlyFrames and render your first video in under 5 minutes.
