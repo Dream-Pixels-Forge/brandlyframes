@@ -273,13 +273,7 @@ pnpm add brandlyframes @brandlyframes/player @brandlyframes/renderer @brandlyfra
   }
 }`}</code></pre>
         </div>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/docs/frame-video" className="link">← Frame Video</Link>
-        <Link to="/guides/rendering" className="link">Rendering Guide →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

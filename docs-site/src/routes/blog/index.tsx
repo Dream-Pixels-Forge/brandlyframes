@@ -60,13 +60,7 @@ function BlogPage() {
               </article>
             ))}
           </div>
-        </section>
-
-        <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-          <Link to="/" className="link">← Home</Link>
-          <Link to="/examples" className="link">Examples →</Link>
-        </footer>
-      </article>
+        </section>      </article>
     </RootLayout>
   );
 }

@@ -301,19 +301,7 @@ pnpm brandlyframes cloud render hello-video \\
         </div>
       </section>
 
-      {/* Edit on GitHub */}
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <p className="text-body-sm text-text-muted">Found an issue?</p>
-        <a 
-          href="https://github.com/brandlyframes/brandlyframes/edit/main/docs-site/src/routes/docs/getting-started.tsx" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="link"
-        >
-          Edit this page on GitHub
-        </a>
-      </footer>
-      </article>
+      {/* Edit on GitHub */}      </article>
     </RootLayout>
   );
 }

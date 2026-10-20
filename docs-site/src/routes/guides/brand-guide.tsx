@@ -155,13 +155,7 @@ function BrandGuidePage() {
             <span className="text-accent">✓</span> <strong>Templates & `create-brandlyframes`:</strong> default compositions use the black/white/orange palette.
           </li>
         </ul>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/guides/rendering" className="link">← Rendering Guide</Link>
-        <Link to="/" className="link">Home →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

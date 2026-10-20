@@ -111,17 +111,7 @@ function TestClipsPage() {
         </p>
         <pre className="mb-8"><code className="language-tsx">{perfBenchmarkCode}</code></pre>
         <pre className="mb-0"><code className="language-tsx">{perf4kCode}</code></pre>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/docs/core-concepts" className="text-body text-text-muted hover:text-text-primary">
-          ← Back to Core Concepts
-        </Link>
-        <Link to="/docs/player" className="text-body text-accent hover:text-text-primary">
-          Player →
-        </Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

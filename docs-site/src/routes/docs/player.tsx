@@ -208,17 +208,7 @@ function PlayerPage() {
         <h2 className="text-heading-lg mb-6">Error Handling</h2>
         <p className="text-body-lg text-text-muted mb-6">Use <code>onError</code> to surface or recover from playback errors.</p>
         <pre className="mb-0"><code className="language-tsx">{errorHandlingCode}</code></pre>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/docs/core-concepts" className="text-body text-text-muted hover:text-text-primary">
-          ← Back to Core Concepts
-        </Link>
-        <Link to="/docs/frame-video" className="text-body text-accent hover:text-text-primary">
-          Frame Video →
-        </Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

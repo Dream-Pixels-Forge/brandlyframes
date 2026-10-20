@@ -8,6 +8,21 @@ interface TocItem { id: string; text: string; }
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+// Canonical reading order — drives the prev/next cards and "Edit this page" links
+const ROUTE_ORDER: Array<{ href: string; label: string; file: string }> = [
+  { href: '/docs/getting-started', label: 'Getting Started', file: 'docs/getting-started.tsx' },
+  { href: '/docs/core-concepts', label: 'Core Concepts', file: 'docs/core-concepts.tsx' },
+  { href: '/docs/frame-video', label: 'Frame Video', file: 'docs/frame-video.tsx' },
+  { href: '/docs/player', label: 'Player', file: 'docs/player.tsx' },
+  { href: '/docs/test-clips', label: 'Test Clips', file: 'docs/test-clips.tsx' },
+  { href: '/guides/rendering', label: 'Rendering Videos', file: 'guides/rendering.tsx' },
+  { href: '/guides/brand-guide', label: 'Brand Guide', file: 'guides/brand-guide.tsx' },
+  { href: '/guides/migration', label: 'Remotion Migration', file: 'guides/migration.tsx' },
+  { href: '/api/', label: 'API Reference', file: 'api/index.tsx' },
+  { href: '/examples', label: 'Examples', file: 'examples/index.tsx' },
+  { href: '/blog', label: 'Blog', file: 'blog/index.tsx' },
+];
+
 // Section groups — children are the "subcontain" nav shown under each group
 const NAV_GROUPS: Array<{
   label: string;
@@ -180,6 +195,14 @@ export function RootLayout({ children, variant = 'docs' }: { children: ReactNode
 
   const isDocs = variant === 'docs';
   const shellMargin = isDocs ? 'lg:ml-72' : '';
+  const normalizedPath = pathname.replace(/\/$/, '') || '/';
+  const routeIdx = ROUTE_ORDER.findIndex((r) => r.href.replace(/\/$/, '') === normalizedPath);
+  const prevRoute = routeIdx > 0 ? ROUTE_ORDER[routeIdx - 1] : null;
+  const nextRoute = routeIdx >= 0 && routeIdx < ROUTE_ORDER.length - 1 ? ROUTE_ORDER[routeIdx + 1] : null;
+  const editUrl =
+    routeIdx >= 0
+      ? `https://github.com/brandlyframes/brandlyframes/edit/main/docs-site/src/routes/${ROUTE_ORDER[routeIdx].file}`
+      : null;
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary font-ui">
@@ -347,6 +370,41 @@ export function RootLayout({ children, variant = 'docs' }: { children: ReactNode
         </header>
 
         {children}
+
+        {/* Prev / next navigation — ordered centrally so links stay correct as pages move */}
+        {isDocs && routeIdx >= 0 && (
+          <div
+            className={`mx-auto w-full max-w-content-wide px-4 pb-16 md:px-6 lg:px-8 ${
+              toc.length >= 4 ? 'xl:w-auto xl:mr-[17rem]' : ''
+            }`}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-8 border-t border-border-primary">
+              {prevRoute ? (
+                <Link to={prevRoute.href} className="card-hover p-5 group">
+                  <p className="text-caption text-text-muted mb-1">← Previous</p>
+                  <p className="text-body font-medium text-text-primary group-hover:text-accent transition-colors">{prevRoute.label}</p>
+                </Link>
+              ) : (
+                <div aria-hidden="true" />
+              )}
+              {nextRoute ? (
+                <Link to={nextRoute.href} className="card-hover p-5 group text-right">
+                  <p className="text-caption text-text-muted mb-1">Next →</p>
+                  <p className="text-body font-medium text-text-primary group-hover:text-accent transition-colors">{nextRoute.label}</p>
+                </Link>
+              ) : (
+                <div aria-hidden="true" />
+              )}
+            </div>
+            {editUrl && (
+              <p className="mt-6 text-center">
+                <a href={editUrl} target="_blank" rel="noopener noreferrer" className="link text-body-sm">
+                  Edit this page on GitHub
+                </a>
+              </p>
+            )}
+          </div>
+        )}
 
         {/* On this page — auto TOC rail, xl screens only, section pages with >= 4 h2s */}
         {isDocs && toc.length >= 4 && (

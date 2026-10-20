@@ -380,13 +380,7 @@ function FrameVideoPage() {
             </div>
           </details>
         </div>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/docs/core-concepts" className="link">← Core Concepts</Link>
-        <Link to="/guides/rendering" className="link">Rendering Guide →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

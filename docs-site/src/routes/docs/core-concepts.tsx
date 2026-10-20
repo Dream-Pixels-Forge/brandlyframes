@@ -244,13 +244,7 @@ function CoreConceptsPage() {
           </div>
           <pre className="code-block p-6"><code>{asyncReadinessCode}</code></pre>
         </div>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/docs/getting-started" className="link">← Getting Started</Link>
-        <Link to="/docs/frame-video" className="link">Frame Video →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

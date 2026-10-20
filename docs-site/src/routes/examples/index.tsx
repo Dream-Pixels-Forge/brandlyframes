@@ -59,13 +59,7 @@ npx brandlyframes dev`}</code></pre>
               Full example gallery (cloud rendering, captions toolkit, audio-reactive) lands with the v1.1 "Director's Cut" release. Track progress in the roadmap.
             </p>
           </div>
-        </section>
-
-        <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-          <Link to="/docs/getting-started" className="link">← Getting Started</Link>
-          <Link to="/api" className="link">API Reference →</Link>
-        </footer>
-      </article>
+        </section>      </article>
     </RootLayout>
   );
 }

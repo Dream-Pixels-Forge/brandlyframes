@@ -214,13 +214,7 @@ const MyComp = () => {
             </div>
           </li>
         </ul>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/guides/rendering" className="link">← Rendering Guide</Link>
-        <Link to="/api" className="link">API Reference →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }

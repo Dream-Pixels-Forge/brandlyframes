@@ -298,13 +298,7 @@ function RenderingGuidePage() {
             </div>
           </details>
         </div>
-      </section>
-
-      <footer className="pt-8 border-t border-border-primary flex items-center justify-between">
-        <Link to="/api" className="link">← API Reference</Link>
-        <Link to="/" className="link">Home →</Link>
-      </footer>
-      </article>
+      </section>      </article>
     </RootLayout>
   );
 }
