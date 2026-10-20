@@ -3,6 +3,11 @@ import { useState, useEffect, type ReactNode } from 'react';
 
 type Variant = 'landing' | 'docs';
 
+interface TocItem { id: string; text: string; }
+
+const slugify = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
 // Section groups — children are the "subcontain" nav shown under each group
 const NAV_GROUPS: Array<{
   label: string;
@@ -79,6 +84,8 @@ export function RootLayout({ children, variant = 'docs' }: { children: ReactNode
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
+  const [toc, setToc] = useState<TocItem[]>([]);
+  const [activeId, setActiveId] = useState('');
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -128,6 +135,48 @@ export function RootLayout({ children, variant = 'docs' }: { children: ReactNode
     mo.observe(main, { childList: true, subtree: true });
     return () => mo.disconnect();
   }, []);
+
+  // "On this page" TOC — harvested from the article's h2s after each navigation.
+  // Shown only when the page has enough sections (>= 4) to justify a rail.
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const article = document.querySelector('#main-content > article');
+      if (!article) {
+        setToc([]);
+        return;
+      }
+      const items: TocItem[] = [];
+      article.querySelectorAll('h2').forEach((h, i) => {
+        const text = (h.textContent || '').trim();
+        if (!text) return;
+        let id = h.id || slugify(text);
+        if (items.some((t) => t.id === id)) id = `${id}-${i}`;
+        h.id = id;
+        items.push({ id, text });
+      });
+      setToc(items.length >= 4 ? items : []);
+      setActiveId(items[0]?.id ?? '');
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [pathname]);
+
+  // Track which heading is currently in view
+  useEffect(() => {
+    if (toc.length === 0) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveId(entry.target.id);
+        }
+      },
+      { rootMargin: '-80px 0px -65% 0px', threshold: 0 }
+    );
+    toc.forEach((t) => {
+      const el = document.getElementById(t.id);
+      if (el) io.observe(el);
+    });
+    return () => io.disconnect();
+  }, [toc]);
 
   const isDocs = variant === 'docs';
   const shellMargin = isDocs ? 'lg:ml-72' : '';
@@ -298,6 +347,29 @@ export function RootLayout({ children, variant = 'docs' }: { children: ReactNode
         </header>
 
         {children}
+
+        {/* On this page — auto TOC rail, xl screens only, section pages with >= 4 h2s */}
+        {isDocs && toc.length >= 4 && (
+          <nav
+            className="toc-rail hidden xl:block fixed right-8 top-24 w-56 max-h-[calc(100vh-8rem)] overflow-y-auto"
+            aria-label="On this page"
+          >
+            <p className="text-caption uppercase tracking-wider text-text-muted mb-3 px-3">On this page</p>
+            <ul className="space-y-0.5" role="list">
+              {toc.map((item) => (
+                <li key={item.id}>
+                  <a
+                    href={`#${item.id}`}
+                    className={`toc-link block rounded-md ${activeId === item.id ? 'toc-link-active' : ''}`}
+                    onClick={() => setActiveId(item.id)}
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </main>
 
       {/* Footer */}

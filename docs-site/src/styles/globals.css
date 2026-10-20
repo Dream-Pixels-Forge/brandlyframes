@@ -224,6 +224,32 @@
   main > article {
     @apply mx-auto w-full max-w-content-wide px-4 py-8 md:px-6 lg:px-8 lg:py-12;
   }
+
+  /* Reading measure: direct prose paragraphs only — paragraphs inside cards,
+     grids and tables keep their natural width */
+  main > article section > p,
+  main > article header > p {
+    max-width: 70ch;
+  }
+
+  /* Anchor jumps must clear the sticky header */
+  main > article h2 {
+    scroll-margin-top: 96px;
+  }
+
+  main > article h1 {
+    text-wrap: balance;
+  }
+
+  /* When the TOC rail is present, shift the reading column left of it.
+     width:auto is required — the base rule's w-full (width:100%) would ignore
+     the margin and overflow under the rail. */
+  @media (min-width: 1280px) {
+    main:has(.toc-rail) > article {
+      width: auto;
+      margin-right: 17rem;
+    }
+  }
 }
 
 @layer components {
