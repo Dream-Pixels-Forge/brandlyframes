@@ -44,12 +44,16 @@ export function RootLayout({ children }: { children: ReactNode }) {
       >
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-border-primary">
-            <Link to="/" className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
-              <span className="font-display text-display-sm text-accent">BRANDLYFRAMES</span>
+          <div className="flex items-center justify-between h-16 px-5 border-b border-border-primary">
+            <Link to="/" className="flex items-center gap-2.5 min-w-0" onClick={() => setSidebarOpen(false)}>
+              <span className="w-6 h-6 rounded bg-accent grid place-items-center flex-shrink-0" aria-hidden="true">
+                <span className="w-2.5 h-2.5 border-2 border-bg-primary rounded-[2px]" />
+              </span>
+              <span className="font-display text-xl text-accent tracking-wide truncate">BRANDLYFRAMES</span>
+              <span className="badge-accent hidden sm:inline-flex flex-shrink-0">v1.0.0</span>
             </Link>
             <button
-              className="lg:hidden p-2 rounded-lg hover:bg-surface-elevated transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-surface-elevated transition-colors flex-shrink-0"
               onClick={() => setSidebarOpen(false)}
               aria-label="Close sidebar"
             >
@@ -60,13 +64,14 @@ export function RootLayout({ children }: { children: ReactNode }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Documentation sections">
+          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5" aria-label="Documentation sections">
             {navigation.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
-                className="nav-link px-3 py-2 rounded-lg"
+                className="nav-link block px-3 py-2.5 rounded-lg"
                 activeProps={{ className: 'nav-link-active' }}
+                activeOptions={{ exact: item.href === '/' }}
                 onClick={() => setSidebarOpen(false)}
               >
                 {item.label}
