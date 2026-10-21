@@ -17,21 +17,23 @@ This session completes BF-091 (docs) and BF-092 (CLI commands) for the BrandlyFr
 | ID | Scope | Status |
 |----|-------|--------|
 | BF-090 | `create-brandlyframes` + 5 templates (incl. `frame-video-demo`) | **Complete** — verified committed |
-| BF-091 | Docs site, API reference, brand guide page, Remotion migration guide | **Complete** — brand guide + migration guide added; docs site builds/type-checks green |
-| BF-092 | `brandlyframes doctor`, `upgrade`, security review, perf report | **Complete** — `doctor`, `benchmark`, `upgrade` all implemented + tested (29/29 CLI tests pass) |
+| BF-091 | Docs site, API reference, brand guide page, Remotion migration guide | **Complete** — brand guide + migration guide added; docs site builds/type-checks green; API reference hand-written, generation pending |
+| BF-092 | `brandlyframes doctor`, `upgrade`, security review, perf report | **Complete** — `doctor`, `benchmark`, `upgrade` all implemented + tested (29/29 CLI tests pass); security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact |
 | BF-093 | Public release, `@brandlyframes` scope live | **Pending** — not started |
 
-### BF-091 — complete
+### BF-091 — complete (caveat: API reference hand-written, generation pending)
 - `docs-site/src/routes/guides/brand-guide.tsx` — Cinema Black design system: color tokens, typography, cinema motifs, motion, components, applied-to
 - `docs-site/src/routes/guides/migration.tsx` — Remotion → BrandlyFrames core API + package + CLI name mapping table, before/after code, key differences
 - `docs-site/src/routeTree.gen.ts` — regenerated with new routes
 - Docs site builds and type-checks green (verified 2026-10-19)
 - `docs/API.md` and `docs/getting-started.md` exist
+- API reference is hand-written; generation pending (no generated API-ref artifact)
 
-### BF-092 — complete
+### BF-092 — complete (caveats: no security review report; no written perf report)
 - `packages/cli/src/index.ts` — `upgrade` (--check, --codemod v0-to-v1), `doctor` (--fix, --json with 6 checks: node, ffmpeg, chrome, renderer, versions), `benchmark` (--concurrency, --frames with CPU/mem/auto-concurrency reporting)
 - `packages/cli/test/cli.test.ts` — 29 tests passing (was 21, added upgrade/doctor/benchmark tests)
 - All CLI command tests pass
+- Security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact
 
 ### BF-093 — public release
 Pending. Requires `@brandlyframes` npm scope availability check and reservation (GOAL_00 §9 risk #6), then publish all packages under `@brandlyframes/*` plus `brandlyframes` core.
