@@ -15,7 +15,7 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "paths": {
-      "@brandlyframes/webcodecs": ["./packages/webcodecs/dist/index.ts"],
+      "@brandlyframes/webcodecs": ["./packages/webcodecs/src/index.ts"],
       "@brandlyframes/zod-types": ["./packages/zod-types/src/index.ts"],
       "@brandlyframes/brand": ["./packages/brand/src/index.ts"],
       "@brandlyframes/mcp": ["./packages/mcp/src/index.ts"],

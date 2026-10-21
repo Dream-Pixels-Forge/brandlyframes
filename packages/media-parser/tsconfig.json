@@ -2,12 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@brandlyframes/webcodecs": ["../webcodecs/dist/index.ts"]
+      "@brandlyframes/webcodecs": ["../webcodecs/src/index.ts"]
     }
   },
   "include": [
