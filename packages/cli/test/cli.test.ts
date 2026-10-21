@@ -18,6 +18,21 @@ describe('CLI', () => {
   // and logic are unchanged.
   const TEST_TIMEOUT = 15_000;
 
+  // `doctor` is a health check: it exits non-zero when any check fails (e.g.
+  // ffmpeg missing on CI runners), which makes `execSync` throw even though the
+  // command produced its full diagnostics output. These tests assert doctor's
+  // *output contract*, not machine health, so capture stdout from the thrown
+  // error and assert exit-code semantics separately.
+  function runDoctorCli(args: string): { stdout: string; exitCode: number } {
+    try {
+      const stdout = execSync(`node ${cliBin} doctor ${args}`, { encoding: 'utf8' });
+      return { stdout, exitCode: 0 };
+    } catch (err) {
+      const e = err as { status?: number; stdout?: string };
+      return { stdout: e.stdout ?? '', exitCode: e.status ?? 1 };
+    }
+  }
+
   it('should output the version when called with --version', () => {
     const output = execSync(`node ${cliBin} --version`, { encoding: 'utf8' });
     expect(output.trim()).toBe(packageJson.version);
@@ -51,10 +66,12 @@ describe('CLI', () => {
   }, TEST_TIMEOUT);
 
   it('should output usage when called with doctor command', () => {
-    const output = execSync(`node ${cliBin} doctor`, { encoding: 'utf8' });
+    const { stdout: output, exitCode } = runDoctorCli('');
     expect(output).toContain('BrandlyFrames Doctor');
     expect(output).toContain('Overall status:');
     expect(output).toContain(`CLI version: ${packageJson.version}`);
+    if (output.includes('Overall status: OK')) expect(exitCode).toBe(0);
+    else expect(exitCode).toBe(1);
   }, TEST_TIMEOUT);
 
   it('should output usage when called with benchmark command', () => {
@@ -244,20 +261,23 @@ describe('CLI', () => {
 
   // doctor command [BF-092][BF-430]
   it('should doctor output diagnostics summary', () => {
-    const output = execSync(`node ${cliBin} doctor`, { encoding: 'utf8' });
+    const { stdout: output, exitCode } = runDoctorCli('');
     expect(output).toContain('BrandlyFrames Doctor');
     expect(output).toContain('Overall status:');
     expect(output).toContain(`CLI version: ${packageJson.version}`);
+    if (output.includes('Overall status: OK')) expect(exitCode).toBe(0);
+    else expect(exitCode).toBe(1);
   }, TEST_TIMEOUT);
 
   it('should doctor --json output valid JSON', () => {
-    const output = execSync(`node ${cliBin} doctor --json`, { encoding: 'utf8' });
+    const { stdout: output, exitCode } = runDoctorCli('--json');
     const parsed = JSON.parse(output);
     expect(parsed).toHaveProperty('overall');
     expect(parsed).toHaveProperty('checks');
     expect(Array.isArray(parsed.checks)).toBe(true);
     expect(parsed.checks.some((c: { name: string }) => c.name === 'ffmpeg')).toBe(true);
     expect(parsed.checks.some((c: { name: string }) => c.name === 'chrome')).toBe(true);
+    expect(parsed.overall === 'ok' ? 0 : 1).toBe(exitCode);
   }, TEST_TIMEOUT);
 
   // benchmark command [BF-092][BF-421]
