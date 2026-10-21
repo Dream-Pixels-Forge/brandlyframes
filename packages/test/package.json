@@ -1,0 +1,27 @@
+{
+  "name": "@brandlyframes/test",
+  "version": "1.0.0",
+  "description": "Visual regression testing for BrandlyFrames: golden-frame diff, drift detection, CI action.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": ["brandlyframes", "test", "visual-regression", "golden-frame"],
+  "license": "MIT"
+}

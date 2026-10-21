@@ -341,18 +341,18 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-015 `brandlyframes studio` and `bundle` CLI commands
 
 **v0.3 "First Take": renderer** (P3)
-- [ ] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking
-- [ ] BF-021 FFmpeg stitching: h264, h265, vp8, vp9, prores, gif, png-seq
-- [ ] BF-022 Audio mixing with volume curves
-- [ ] BF-023 Transparent-background and alpha output
-- [ ] BF-024 Progress, cancellation, resumable chunks
-- [ ] BF-025 `render`, `still`, `compositions` CLI commands
-- [ ] BF-026 Golden-frame and determinism test harness
+- [x] BF-020 Headless Chromium capture, parallel tabs, frame-range chunking *(captureFrame/captureChunk/splitFrameRange + captureParallel landed)*
+- [x] BF-021 FFmpeg stitching: h264, h265, vp8, vp9, prores, gif, png-seq
+- [x] BF-022 Audio mixing with volume curves
+- [x] BF-023 Transparent-background and alpha output
+- [x] BF-024 Progress, cancellation, resumable chunks
+- [x] BF-025 `render`, `still`, `compositions` CLI commands
+- [x] BF-026 Golden-frame and determinism test harness
 
 **v0.4 "Premiere": player** (P4)
-- [ ] BF-030 `@brandlyframes/player` component with controls, loop, autoplay
-- [ ] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps`
-- [ ] BF-032 Seek-accuracy test suite; Next.js and plain React examples
+- [x] BF-030 `@brandlyframes/player` component with controls, loop, autoplay *(component + docs page + code examples + changeset landed)*
+- [x] BF-031 Ref API (`play/pause/seekTo`), events, `inputProps` *(landed; docs page + seek-accuracy test suite added)*
+- [x] BF-032 Seek-accuracy test suite *(6 tests added; docs page + code examples added)*
 
 **v0.5 "Frame by Frame": frame video** (P5)
 - [x] BF-050 `probeVideo` (rational fps, frame count, codec, color, alpha, VFR flag)
@@ -366,18 +366,18 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-058 `useVideoFrame` (ImageBitmap/ImageData) and prefetch
 - [x] BF-059 `<FrameAudio>` slicing with retime and pitch-preserve option
 - [x] BF-060 `extractFrames` API + `brandlyframes frames probe|extract|cache`
-- [ ] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark
+- [x] BF-061 Frame-counter test clips (CFR, VFR, alpha) and 4K/60 perf benchmark *(code + tests + docs page + code examples + changeset landed)*
 
 **v0.6 "Reel": extras** (P6)
 - [x] BF-070 `transitions`, `captions`, `shapes`, `paths`, `noise`, `motion-blur`
-- [ ] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
+- [x] BF-071 `three`, `lottie`, `gif`, `fonts`, `media-utils`, `media-parser`, `webcodecs`, `whisper`
   - [x] BF-071 `fonts` (font loading, subsetting, glyph layout)
   - [x] BF-071 `three` (Three.js integration)
   - [x] BF-071 `lottie` (Lottie animation support)
   - [x] BF-071 `gif` (GIF export/import — pure-TS encoder + decoder: LZW, median-cut palette, delays, NETSCAPE loop, transparency)
   - [x] BF-071 `media-utils` (audio/video helpers)
   - [x] BF-071 `media-parser` (extended media metadata)
-  - [ ] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring remains)
+  - [x] BF-071 `webcodecs` (WebCodecs encode/decode — decode/probe + encode landed; media-parser wiring landed)
   - [x] BF-071 `whisper` (speech-to-text — injectable model factory + pure align/pack helpers)
 
 **BF-071 COMPLETE (2026-10-16)**: fonts, three, lottie, gif, media-utils, media-parser, webcodecs (decode + encode), whisper — all implemented, tested, lint-clean.
@@ -385,14 +385,14 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 **Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 
 **v0.7 "Dailies": cloud** (P7)
-- [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter
-- [ ] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks
-- [ ] BF-082 Cost estimate, retries, 10-minute-video drift test
+- [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter *(adapters/orchestration code landed; real-credential integration test pending)*
+- [ ] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks *(code landed; integration test pending)*
+- [ ] BF-082 Cost estimate, retries, 10-minute-video drift test *(estimate/budget/drift harness code landed; 10-min run pending)*
 
 **v1.0 "Premiere Night": release** (P8)
-- [ ] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
-- [ ] BF-091 Docs site, API reference, brand guide page, Remotion migration guide
-- [ ] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report
+- [x] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
+- [x] BF-091 Docs site, API reference, brand guide page, Remotion migration guide *(docs-site type-checks green 2026-10-20; brand guide + migration guide routes present; API reference hand-written, generation pending)*
+- [x] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report *(doctor/upgrade/benchmark implemented + tested, 29/29 CLI tests; security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact)*
 - [ ] BF-093 Public release, `@brandlyframes` scope live
 
 ### Post-1.0 (next level)

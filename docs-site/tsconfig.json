@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "@tanstack/router-plugin",
+        "config": {
+          "routesDirectory": "./src/routes",
+          "generatedRouteTree": "./src/routeTree.gen.ts"
+        }
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/routeTree.gen.ts", "vite.config.ts"]
+}

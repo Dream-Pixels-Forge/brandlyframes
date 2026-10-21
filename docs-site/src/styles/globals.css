@@ -1,0 +1,572 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cinema Black Color Tokens */
+  --color-bf-black: #0A0A0A;
+  --color-bf-surface-1: #111111;
+  --color-bf-surface-2: #1A1A1A;
+  --color-bf-border: #2A2A2A;
+  --color-bf-text-muted: #8A8A8A;
+  --color-bf-white: #FAFAFA;
+  --color-bf-orange: #FF6A00;
+  --color-bf-orange-hover: #FF8533;
+  --color-bf-orange-dim: #FF6A0026;
+
+  /* Semantic Color Aliases */
+  --color-bg-primary: var(--color-bf-black);
+  --color-bg-surface: var(--color-bf-surface-1);
+  --color-bg-surface-elevated: var(--color-bf-surface-2);
+  --color-border-primary: var(--color-bf-border);
+  --color-text-primary: var(--color-bf-white);
+  --color-text-muted: var(--color-bf-text-muted);
+  --color-accent: var(--color-bf-orange);
+  --color-accent-hover: var(--color-bf-orange-hover);
+  --color-accent-dim: var(--color-bf-orange-dim);
+  --color-surface: var(--color-bf-surface-1);
+  --color-surface-elevated: var(--color-bf-surface-2);
+
+  /* Typography */
+  --font-display: "Bebas Neue", Oswald, sans-serif;
+  --font-ui: Inter, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Fira Code, monospace;
+
+  /* Spacing Scale */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Max Widths */
+  --max-content: 720px;
+  --max-content-wide: 960px;
+  --max-content-full: 1200px;
+  --container-content: 720px;
+  --container-content-wide: 960px;
+  --container-content-full: 1200px;
+
+  /* Type scale (generates text-* utilities) */
+  --text-display-xl: 4.5rem;
+  --text-display-xl--line-height: 1;
+  --text-display-lg: 3.75rem;
+  --text-display-lg--line-height: 1;
+  --text-display-md: 3rem;
+  --text-display-md--line-height: 1.1;
+  --text-display-sm: 2.25rem;
+  --text-display-sm--line-height: 1.2;
+  --text-heading-xl: 2rem;
+  --text-heading-xl--line-height: 1.2;
+  --text-heading-lg: 1.5rem;
+  --text-heading-lg--line-height: 1.3;
+  --text-heading-md: 1.25rem;
+  --text-heading-md--line-height: 1.4;
+  --text-heading-sm: 1rem;
+  --text-heading-sm--line-height: 1.4;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.7;
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.6;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+  --text-timecode: 0.875rem;
+  --text-timecode--line-height: 1.4;
+
+  /* Transitions */
+  --transition-duration-150: 150ms;
+  --transition-duration-250: 250ms;
+  --transition-duration-350: 350ms;
+  --ease-cinematic: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    font-family: var(--font-ui);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-bg-primary text-text-primary;
+  }
+
+  /* Typography Utilities */
+  .font-display { font-family: var(--font-display); }
+  .font-ui { font-family: var(--font-ui); }
+  .font-mono { font-family: var(--font-mono); }
+
+  .text-display-xl { @apply font-display text-display-xl; }
+  .text-display-lg { @apply font-display text-display-lg; }
+  .text-display-md { @apply font-display text-display-md; }
+  .text-display-sm { @apply font-display text-display-sm; }
+  .text-heading-xl { @apply font-ui text-heading-xl; }
+  .text-heading-lg { @apply font-ui text-heading-lg; }
+  .text-heading-md { @apply font-ui text-heading-md; }
+  .text-heading-sm { @apply font-ui text-heading-sm; }
+  .text-body-lg { @apply font-ui text-body-lg; }
+  .text-body { @apply font-ui text-body; }
+  .text-body-sm { @apply font-ui text-body-sm; }
+  .text-caption { @apply font-ui text-caption; }
+  .text-timecode { @apply font-mono text-timecode; }
+
+  /* Selection */
+  ::selection {
+    background-color: var(--color-accent-dim);
+    color: var(--color-text-primary);
+  }
+
+  ::-moz-selection {
+    background-color: var(--color-accent-dim);
+    color: var(--color-text-primary);
+  }
+
+  /* Focus visible */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-bg-primary;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-primary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-primary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Button base — a utility so variants can @apply it */
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 font-ui font-medium text-body-sm rounded-lg px-4 py-2.5 transition-all duration-150 ease-cinematic focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg-primary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+@layer components {
+  .btn-primary {
+    @apply btn bg-accent text-bg-primary hover:bg-accent-hover active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface-elevated text-text-primary border border-border-primary hover:bg-border-primary hover:border-text-muted active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-text-primary hover:bg-accent-dim hover:text-accent active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-500 active:scale-[0.98];
+  }
+
+}
+
+/* Input Styles — utility so .textarea can @apply it */
+@utility input {
+    @apply w-full bg-surface-elevated border border-border-primary text-text-primary placeholder-text-muted rounded-lg px-4 py-2.5 text-body transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:border-transparent;
+}
+
+@layer components {
+  .textarea {
+    @apply input resize-y min-h-[100px];
+  }
+
+  .label {
+    @apply block text-body-sm font-medium text-text-primary mb-2;
+  }
+
+}
+
+  /* Card base — utility so .card-hover can @apply it */
+@utility card {
+    @apply bg-surface rounded-xl border border-border-primary overflow-hidden transition-all duration-250 hover:border-accent-dim;
+}
+
+/* Internal docs pages: root <article> gets a centered reading container.
+   Scoped to main > article so the home page's full-bleed sections are untouched. */
+@layer components {
+  main > article {
+    @apply mx-auto w-full max-w-content-wide px-4 py-8 md:px-6 lg:px-8 lg:py-12;
+  }
+
+  /* Reading measure: direct prose paragraphs only — paragraphs inside cards,
+     grids and tables keep their natural width */
+  main > article section > p,
+  main > article header > p {
+    max-width: 70ch;
+  }
+
+  /* Anchor jumps must clear the sticky header */
+  main > article h2 {
+    scroll-margin-top: 96px;
+  }
+
+  main > article h1 {
+    text-wrap: balance;
+  }
+
+  /* When the TOC rail is present, shift the reading column left of it.
+     width:auto is required — the base rule's w-full (width:100%) would ignore
+     the margin and overflow under the rail. */
+  @media (min-width: 1280px) {
+    main:has(.toc-rail) > article {
+      width: auto;
+      margin-right: 17rem;
+    }
+  }
+}
+
+@layer components {
+
+  .card-hover {
+    @apply card hover:shadow-[0_0_40px_rgba(255,106,0,0.08)] hover:border-accent/30;
+  }
+
+  /* Link */
+  .link {
+    @apply text-accent hover:text-accent-hover transition-colors duration-150 underline-offset-2 hover:underline;
+  }
+
+  .link-muted {
+    @apply text-text-muted hover:text-text-primary transition-colors duration-150;
+  }
+
+  /* Code */
+  .code-inline {
+    @apply font-mono text-body-sm bg-surface-elevated px-1.5 py-0.5 rounded text-accent;
+  }
+
+  .code-block {
+    @apply font-mono text-body-sm bg-bg-primary border border-border-primary rounded-xl p-6 overflow-x-auto;
+  }
+
+  /* Copy button injected into every <pre.code-block> by the layout */
+  pre.code-block {
+    position: relative;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-primary);
+    opacity: 0.75;
+    transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
+    cursor: pointer;
+  }
+
+  pre.code-block:hover .copy-btn,
+  .copy-btn:focus-visible {
+    opacity: 1;
+  }
+
+  .copy-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .copy-btn.copied {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  .copy-btn .copy-icon {
+    flex-shrink: 0;
+  }
+
+  .copy-btn.copied .copy-icon {
+    display: none;
+  }
+
+  .copy-btn.copied::before {
+    content: '✓';
+    font-size: 0.7rem;
+  }
+
+}
+
+/* Badge — utility so .badge-accent can @apply it */
+@utility badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-caption font-medium;
+}
+
+@layer components {
+
+  .badge-accent {
+    @apply badge bg-accent-dim text-accent;
+  }
+
+  .badge-muted {
+    @apply badge bg-surface-elevated text-text-muted;
+  }
+
+  /* Divider */
+  .divider {
+    @apply h-px bg-border-primary w-full;
+  }
+
+  /* Section */
+  .section {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .container {
+    @apply mx-auto px-4 md:px-6 lg:px-8 max-w-content-wide;
+  }
+
+  .container-narrow {
+    @apply mx-auto px-4 md:px-6 lg:px-8 max-w-content;
+  }
+
+}
+
+/* Nav Link — utility so .nav-link-active can @apply it.
+   Active variants live at the end of this file as UNLAYERED rules: Tailwind's
+   utility-layer sort emitted the base class after the active variant, so the
+   base's muted color always won the cascade. Unlayered rules beat all layers. */
+@utility nav-link {
+    @apply text-body text-text-muted hover:text-text-primary transition-colors duration-150;
+}
+
+@layer components {
+
+  /* Sidebar */
+  /* Sidebar — fixed at every breakpoint so it spans full height; main/footer carry the lg:ml-72 offset */
+  .sidebar {
+    @apply fixed inset-y-0 left-0 z-50 w-72 bg-surface border-r border-border-primary transform transition-transform duration-250 ease-cinematic lg:translate-x-0;
+  }
+
+  .sidebar-collapsed {
+    @apply -translate-x-full;
+  }
+
+}
+
+/* Table of Contents — utility (active variant is unlayered at end of file) */
+@utility toc-link {
+    @apply block text-body-sm text-text-muted hover:text-text-primary transition-colors duration-150 pl-3 border-l-2 border-transparent hover:border-accent;
+}
+
+@layer components {
+
+  /* Animation Classes — reveal-on-scroll, gated on a `.js` class added by the
+     layout's IntersectionObserver. Without JS the `.js` class never lands and
+     content stays fully visible (no repeat of the black-screen bug). */
+  .animate-on-scroll {
+    @apply transition-all duration-350 ease-cinematic;
+  }
+
+  html.js .animate-on-scroll:not(.visible) {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .animate-on-scroll.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  .stagger-1 { transition-delay: 50ms; }
+  .stagger-2 { transition-delay: 100ms; }
+  .stagger-3 { transition-delay: 150ms; }
+  .stagger-4 { transition-delay: 200ms; }
+  .stagger-5 { transition-delay: 250ms; }
+  .stagger-6 { transition-delay: 300ms; }
+}
+
+@layer utilities {
+  /* Text Gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-accent to-accent-hover bg-clip-text text-transparent;
+  }
+
+  .text-gradient-orange {
+    @apply bg-gradient-to-r from-accent to-orange-400 bg-clip-text text-transparent;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-surface/80 backdrop-blur-xl border border-border-primary/50;
+  }
+
+  .glass-strong {
+    @apply bg-surface/90 backdrop-blur-2xl border border-border-primary/30;
+  }
+
+  /* Gradient Borders */
+  .gradient-border {
+    @apply relative before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-r before:from-accent/50 before:to-transparent before:-z-10;
+  }
+
+  /* Clamp Text */
+  .clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Section eyebrow — repeated section-header pattern (CRAP: repetition) */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-caption uppercase tracking-wider text-accent font-medium mb-3;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--color-accent);
+    display: inline-block;
+  }
+
+  /* Anamorphic flare — Cinema Black hero motif (marketing surfaces only) */
+  .hero-flare {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    width: min(680px, 70vw);
+    height: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--color-accent) 30%, var(--color-accent) 70%, transparent);
+    filter: blur(1px);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .hero-flare::after {
+    content: '';
+    position: absolute;
+    inset: -14px 0;
+    background: radial-gradient(ellipse 60% 100% at 50% 50%, var(--color-accent-dim), transparent 70%);
+    filter: blur(8px);
+  }
+
+  /* Film grain — subtle noise overlay, marketing surfaces only (§5b) */
+  .grain {
+    position: relative;
+  }
+
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Aspect Ratios */
+  .aspect-video { aspect-ratio: 16/9; }
+  .aspect-square { aspect-ratio: 1/1; }
+  .aspect-cinema { aspect-ratio: 2.39/1; }
+  .aspect-portrait { aspect-ratio: 9/16; }
+
+  /* Visually Hidden */
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+/* Page Transitions */
+.page-enter {
+  @apply animate-fade-in animate-slide-up;
+}
+
+.page-exit {
+  @apply animate-fade-in animate-slide-down;
+}
+
+/* Loading States */
+/* Animations (were in the removed tailwind.config.js keyframes) */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slide-down { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+
+@utility animate-fade-in {
+  animation: fade-in 0.5s var(--ease-cinematic) both;
+}
+@utility animate-slide-up {
+  animation: slide-up 0.5s var(--ease-cinematic) both;
+}
+@utility animate-slide-down {
+  animation: slide-down 0.5s var(--ease-cinematic) both;
+}
+
+@utility skeleton {
+  @apply bg-surface-elevated animate-pulse rounded;
+}
+
+.skeleton-text {
+  @apply skeleton h-4 w-full mb-2;
+}
+
+.skeleton-title {
+  @apply skeleton h-8 w-3/4 mb-4;
+}
+
+.skeleton-card {
+  @apply skeleton h-48 w-full rounded-xl;
+}
+
+/* Print Styles */
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  
+  body { background: white; color: black; }
+  .btn, .nav-link, .sidebar { display: none !important; }
+}
+/* Active nav states — UNLAYERED on purpose: Tailwind's utility-layer sort can
+   emit the base class after the active variant, letting the base's muted color
+   win the cascade. Unlayered author rules take priority over every layer. */
+.nav-link-active {
+  @apply nav-link text-accent font-medium bg-accent-dim;
+}
+
+.toc-link-active {
+  @apply toc-link text-accent border-accent font-medium;
+}

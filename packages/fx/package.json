@@ -1,0 +1,27 @@
+{
+  "name": "@brandlyframes/fx",
+  "version": "1.0.0",
+  "description": "Cinematic effects for BrandlyFrames: LUT color grading, film grain, lens distortion, bloom, blend modes, shader layer API.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": ["brandlyframes", "fx", "effects", "lut", "color-grading", "shader"],
+  "license": "MIT"
+}

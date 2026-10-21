@@ -1,5 +1,9 @@
 packages:
   - packages/*
+  - docs-site
+
+allowBuilds:
+  esbuild: true
 
 # esbuild ships platform binaries via optionalDependencies; its postinstall
 # only validates the binary. Approved so installs stay warning-free.

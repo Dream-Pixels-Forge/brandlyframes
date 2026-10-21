@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/cli",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames CLI — command-line interface for the BrandlyFrames SDK",
   "type": "module",
   "bin": {
@@ -11,16 +11,18 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "dev": "vitest"
   },
   "dependencies": {
+    "@brandlyframes/renderer": "workspace:*",
     "commander": "^12.0.0"
   },
   "devDependencies": {
     "@types/commander": "^2.12.5",
+    "@types/node": "^24.19.2",
     "@vitest/coverage-v8": "^5.0.4",
     "typescript": "^5.9.3",
     "vitest": "^5.0.4"

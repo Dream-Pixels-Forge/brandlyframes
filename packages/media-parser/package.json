@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/media-parser",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "BrandlyFrames media parser — audio/video parsing capabilities",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -16,8 +16,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepare": "npm run build",
+    "build": "tsc && tsc -p tsconfig.build.json && node -e \"require('fs').copyFileSync('dist/index.js','dist/index.mjs')\"",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
@@ -28,12 +28,13 @@
   },
   "devDependencies": {
     "@brandlyframes/design": "workspace:*",
-    "@brandlyframes/frames": "workspace:*",
     "@brandlyframes/fonts": "workspace:*",
+    "@brandlyframes/frames": "workspace:*",
     "@brandlyframes/three": "workspace:*",
+    "@brandlyframes/webcodecs": "workspace:*",
     "@types/node": "^20.0.0",
+    "@vitest/coverage-v8": "^5.0.4",
     "typescript": "^5.9.3",
-    "vitest": "^5.0.4",
-    "@vitest/coverage-v8": "^5.0.4"
+    "vitest": "^5.0.4"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/whisper",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "speech-to-text transcription for BrandlyFrames",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "tsc && tsc -p tsconfig.build.json",
-    "prepare": "npm run build",
+    "prepack": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",

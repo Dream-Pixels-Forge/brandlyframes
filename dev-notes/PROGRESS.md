@@ -65,3 +65,12 @@
 - pnpm 11.5.1 + Node 24 only (DPF standard); no npm/yarn/bun.
 - TS pinned ^5.9.3 (typescript-eslint requires <6.1).
 - vitest 5.0.4: coverage glob thresholds sit flat under `thresholds` (no `overrides` sub-object).
+
+## 2026-10-18 session 5 — docs-site repair + honest reconciliation
+- Resumed from HANDOFF.md; found last session's work (renderer capture, player, cloud, docs-site) uncommitted on feature/bf-020-headless-capture and ALL gates red (lint 164 errors, tsc fail, build fail).
+- Root cause class: docs-site was written but never compiled — stale tsc CJS artifacts (.js) shadowed sources; `createFileRoute('/')` misuse in __root; NavLink (React Router API) used with TanStack; raw `<Component>` inline-code in JSX text; CSS authored for Tailwind v4 while v3 was installed; @/ alias missing in vite config; docs-site missing from pnpm workspace.
+- Fixes: root/index route split, Link+activeProps, entity escaping, @tanstack/router-cli (tsr generate) wired into build/type-check + gitignore, Tailwind v4 (@tailwindcss/vite) with --text-*/--container tokens and @utility hoisting (btn/input/card/badge/nav-link/toc-link/skeleton) + keyframes restored, workspace member added, esbuild allowBuilds:true, broken links remapped.
+- **All gates green: lint 0 / type-check 0 / build 24 of 24 / test 1069.**
+- Committed in BF-referenced commits: BF-020 (capture), BF-030/031 (player), BF-080..082 (cloud, code-only), BF-091 (docs-site repair).
+- Reconciled GOAL_00 §7c annotations: P3/P4/P7 remain OPEN (previous "P3 ✅ / P4 ✅ / P7 ✅" handoff claims were aspirational — renderer has capture only; player/cloud have code+tests but no docs/integration verification).
+- Next: P3 completion (BF-020 parallel tabs + BF-021 stitch + BF-022 audio + BF-023 alpha + BF-024 progress/resume + BF-025 CLI + BF-026 golden-frame harness) via subagent workflow, then P4/P7 verification, then P8.
