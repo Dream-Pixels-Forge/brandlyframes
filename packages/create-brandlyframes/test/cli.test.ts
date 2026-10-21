@@ -11,6 +11,13 @@ describe('create-brandlyframes CLI', () => {
     readFileSync(resolve('./package.json'), 'utf8')
   ) as { version: string };
 
+  // Every test below subprocess-spawns the CLI binary via `execSync`. On a cold
+  // filesystem (fresh install / CI runner) individual spawns have been measured
+  // at 2.9–3.6s — close to vitest's default 5s per-test timeout — so each
+  // subprocess test gets an explicit 15s timeout. Assertions and logic are
+  // unchanged.
+  const TEST_TIMEOUT = 15_000;
+
   afterEach(() => {
     // Clean up any leftover scaffolded dirs from tests
     const leftover = resolve('./test-output');
@@ -24,7 +31,7 @@ describe('create-brandlyframes CLI', () => {
   it('should output the version when called with --version', () => {
     const output = execSync(`node ${cliBin} --version`, { encoding: 'utf8' });
     expect(output.trim()).toBe(packageJson.version);
-  });
+  }, TEST_TIMEOUT);
 
   it('should output help when called with --help', () => {
     const output = execSync(`node ${cliBin} --help`, { encoding: 'utf8' });
@@ -32,21 +39,21 @@ describe('create-brandlyframes CLI', () => {
     expect(output).toContain('Options:');
     expect(output).toContain('--list');
     expect(output).toContain('--name');
-  });
+  }, TEST_TIMEOUT);
 
   it('should list available templates with -l/--list', () => {
     const output = execSync(`node ${cliBin} -l`, { encoding: 'utf8' });
     for (const tpl of ['blank', 'hello-world', 'captions', 'product-promo', 'frame-video-demo']) {
       expect(output).toContain(tpl);
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should list available templates with --list', () => {
     const output = execSync(`node ${cliBin} --list`, { encoding: 'utf8' });
     for (const tpl of ['blank', 'hello-world', 'captions', 'product-promo', 'frame-video-demo']) {
       expect(output).toContain(tpl);
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should scaffold a blank project into a temp dir', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -61,7 +68,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should scaffold hello-world project', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -73,7 +80,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should scaffold captions project', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -85,7 +92,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should scaffold product-promo project', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -97,7 +104,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should scaffold frame-video-demo project', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -109,7 +116,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should use --name option for project name', () => {
     const projectDir = join(tmpdir(), `bf-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -123,7 +130,7 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 
   it('should reject an unknown template', () => {
     let error: Error | null = null;
@@ -137,7 +144,7 @@ describe('create-brandlyframes CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('Unknown template: nonexistent-template');
-  });
+  }, TEST_TIMEOUT);
 
   it('should reject scaffolding into an existing directory', () => {
     const projectDir = mkdtempSync(join(tmpdir(), 'bf-test-'));
@@ -156,5 +163,5 @@ describe('create-brandlyframes CLI', () => {
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }
-  });
+  }, TEST_TIMEOUT);
 });

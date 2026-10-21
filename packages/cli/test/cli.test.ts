@@ -11,96 +11,103 @@ const packageJson = JSON.parse(
 describe('CLI', () => {
   const cliBin = resolve('./dist/index.js');
 
+  // Every test below subprocess-spawns the CLI binary via `execSync`. On a cold
+  // filesystem (fresh install / CI runner) the first spawn alone can exceed
+  // vitest's default 5s per-test timeout (~6.5s observed for the benchmark
+  // command), so each subprocess test gets an explicit 15s timeout. Assertions
+  // and logic are unchanged.
+  const TEST_TIMEOUT = 15_000;
+
   it('should output the version when called with --version', () => {
     const output = execSync(`node ${cliBin} --version`, { encoding: 'utf8' });
     expect(output.trim()).toBe(packageJson.version);
-  });
+  }, TEST_TIMEOUT);
 
   it('should output help when called with --help', () => {
     const output = execSync(`node ${cliBin} --help`, { encoding: 'utf8' });
     expect(output).toContain('Usage:');
     expect(output).toContain('Options:');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with dev command', () => {
     const output = execSync(`node ${cliBin} dev`, { encoding: 'utf8' });
     expect(output).toContain('Starting development server...');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with build command', () => {
     const output = execSync(`node ${cliBin} build`, { encoding: 'utf8' });
     expect(output).toContain('Building composition...');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with export command', () => {
     const output = execSync(`node ${cliBin} export`, { encoding: 'utf8' });
     expect(output).toContain('Exporting to platform-specific formats...');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with upgrade command', () => {
     const output = execSync(`node ${cliBin} upgrade`, { encoding: 'utf8' });
     expect(output).toContain('BrandlyFrames SDK Upgrade');
     expect(output).toContain('Usage:');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with doctor command', () => {
     const output = execSync(`node ${cliBin} doctor`, { encoding: 'utf8' });
     expect(output).toContain('BrandlyFrames Doctor');
     expect(output).toContain('Overall status:');
     expect(output).toContain(`CLI version: ${packageJson.version}`);
-  });
+  }, TEST_TIMEOUT);
 
   it('should output usage when called with benchmark command', () => {
     const output = execSync(`node ${cliBin} benchmark`, { encoding: 'utf8' });
     expect(output).toContain('BrandlyFrames Benchmarks');
     expect(output).toContain('Render throughput');
-  });
+  }, TEST_TIMEOUT);
 
   // frames subcommands [BF-060]
   it('should output frames probe help', () => {
     const output = execSync(`node ${cliBin} frames probe --help`, { encoding: 'utf8' });
     expect(output).toContain('probe a video file for metadata');
     expect(output).toContain('--json');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output frames extract help', () => {
     const output = execSync(`node ${cliBin} frames extract --help`, { encoding: 'utf8' });
     expect(output).toContain('extract frames from a video to image files');
     expect(output).toContain('--output');
     expect(output).toContain('--format');
-  });
+  }, TEST_TIMEOUT);
 
   it('should output frames cache help', () => {
     const output = execSync(`node ${cliBin} frames cache --help`, { encoding: 'utf8' });
     expect(output).toContain('manage the frame cache');
     expect(output).toContain('--stats');
     expect(output).toContain('--clear');
-  });
+  }, TEST_TIMEOUT);
 
   it('should run frames probe command', () => {
     const output = execSync(`node ${cliBin} frames probe test.mp4`, { encoding: 'utf8' });
     expect(output).toContain('Probing video: test.mp4');
     expect(output).toContain('fps: 30/1');
     expect(output).toContain('frameCount: 900');
-  });
+  }, TEST_TIMEOUT);
 
   it('should run frames probe with --json', () => {
     const output = execSync(`node ${cliBin} frames probe test.mp4 --json`, { encoding: 'utf8' });
     expect(output).toContain('"fps": "30/1"');
     expect(output).toContain('"frameCount": 900');
-  });
+  }, TEST_TIMEOUT);
 
   it('should run frames extract command', () => {
     const output = execSync(`node ${cliBin} frames extract test.mp4 -o /tmp/output`, { encoding: 'utf8' });
     expect(output).toContain('Extracting frames from: test.mp4');
     expect(output).toContain('output: /tmp/output');
-  });
+  }, TEST_TIMEOUT);
 
   it('should run frames cache --stats', () => {
     const output = execSync(`node ${cliBin} frames cache --stats`, { encoding: 'utf8' });
     expect(output).toContain('Frame Cache Statistics');
     expect(output).toContain('memory entries');
-  });
+  }, TEST_TIMEOUT);
 
   // render subcommand [BF-025]
   it('should render command reject an invalid frame range', () => {
@@ -116,7 +123,7 @@ describe('CLI', () => {
     expect((error as Error & { status?: number }).status).not.toBe(0);
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('start and end must be integers');
-  });
+  }, TEST_TIMEOUT);
 
   it('should render command reject a negative start frame', () => {
     let error: Error | null = null;
@@ -130,7 +137,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('0 <= start < end');
-  });
+  }, TEST_TIMEOUT);
 
   // still subcommand [BF-025]
   it('should still command reject a negative frame', () => {
@@ -145,7 +152,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('frame must be a non-negative integer');
-  });
+  }, TEST_TIMEOUT);
 
   it('should still command reject a non-integer frame', () => {
     let error: Error | null = null;
@@ -159,7 +166,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('frame must be a non-negative integer');
-  });
+  }, TEST_TIMEOUT);
 
   // compositions subcommand [BF-025]
   it('should compositions command reject an invalid codec', () => {
@@ -174,7 +181,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('codec must be one of');
-  });
+  }, TEST_TIMEOUT);
 
   it('should compositions command reject fps below 1', () => {
     let error: Error | null = null;
@@ -188,7 +195,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('fps must be an integer >= 1');
-  });
+  }, TEST_TIMEOUT);
 
   // create subcommand [BF-090]
   it('should create command scaffold a blank project', () => {
@@ -198,7 +205,7 @@ describe('CLI', () => {
     });
     expect(output).toContain('using the "blank" template');
     expect(output).toContain(projectDir);
-  });
+  }, TEST_TIMEOUT);
 
   it('should create command reject an unknown template', () => {
     let error: Error | null = null;
@@ -212,14 +219,14 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('Unknown template: nonexistent-template');
-  });
+  }, TEST_TIMEOUT);
 
   // upgrade command [BF-092][BF-480]
   it('should upgrade --check report aligned versions', () => {
     const output = execSync(`node ${cliBin} upgrade --check`, { encoding: 'utf8' });
     expect(output).toContain('Checking for version mismatches');
     expect(output).toContain('All @brandlyframes packages aligned');
-  });
+  }, TEST_TIMEOUT);
 
   it('should upgrade with unknown codemod fail', () => {
     let error: Error | null = null;
@@ -233,7 +240,7 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('Unknown codemod');
-  });
+  }, TEST_TIMEOUT);
 
   // doctor command [BF-092][BF-430]
   it('should doctor output diagnostics summary', () => {
@@ -241,7 +248,7 @@ describe('CLI', () => {
     expect(output).toContain('BrandlyFrames Doctor');
     expect(output).toContain('Overall status:');
     expect(output).toContain(`CLI version: ${packageJson.version}`);
-  });
+  }, TEST_TIMEOUT);
 
   it('should doctor --json output valid JSON', () => {
     const output = execSync(`node ${cliBin} doctor --json`, { encoding: 'utf8' });
@@ -251,7 +258,7 @@ describe('CLI', () => {
     expect(Array.isArray(parsed.checks)).toBe(true);
     expect(parsed.checks.some((c: { name: string }) => c.name === 'ffmpeg')).toBe(true);
     expect(parsed.checks.some((c: { name: string }) => c.name === 'chrome')).toBe(true);
-  });
+  }, TEST_TIMEOUT);
 
   // benchmark command [BF-092][BF-421]
   it('should benchmark output report', () => {
@@ -262,7 +269,7 @@ describe('CLI', () => {
     expect(output).toContain('Benchmark concurrency:');
     expect(output).toContain('Render throughput:');
     expect(output).toContain('Benchmark complete.');
-  });
+  }, TEST_TIMEOUT);
 
   it('should benchmark reject invalid frames', () => {
     let error: Error | null = null;
@@ -276,5 +283,5 @@ describe('CLI', () => {
     expect(error).not.toBeNull();
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('frames must be an integer >= 1');
-  });
+  }, TEST_TIMEOUT);
 });
