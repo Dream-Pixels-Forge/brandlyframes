@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react';
 import { FrameContextProvider } from '../../context/frame-context-provider';
+import { FreezeContextProvider } from '../../context/freeze-context';
 import { useCurrentFrame } from '../../hooks/use-current-frame';
 import { resolveFreezeFrame, type FreezeFrameOverride } from '../../timing';
 
@@ -21,5 +22,9 @@ export type FreezeProps = {
 export const Freeze: FC<FreezeProps> = ({ frame, children }) => {
   const parentFrame = useCurrentFrame();
   const frozenFrame = resolveFreezeFrame(parentFrame, frame);
-  return <FrameContextProvider currentFrame={frozenFrame}>{children}</FrameContextProvider>;
+  return (
+    <FreezeContextProvider>
+      <FrameContextProvider currentFrame={frozenFrame}>{children}</FrameContextProvider>
+    </FreezeContextProvider>
+  );
 };
