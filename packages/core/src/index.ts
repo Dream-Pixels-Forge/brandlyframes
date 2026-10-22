@@ -56,11 +56,12 @@ export {
 } from './context';
 
 /**
- * Frame hooks (BF-006, context half): the two inputs every visual component
- * needs — the current frame and the composition config. Both throw a
- * helpful error when used outside a {@link FrameContextProvider}.
+ * Frame hooks (BF-006, context half): the inputs every visual component
+ * needs — the current frame, the composition config and the device pixel
+ * ratio. All throw a helpful error when used outside a
+ * {@link FrameContextProvider}.
  */
-export { useCurrentFrame, useVideoConfig } from './hooks';
+export { useCurrentFrame, useVideoConfig, usePixelDensity } from './hooks';
 
 /**
  * Timeline components (BF-003, BF-004): frame-scoping building blocks.
@@ -146,10 +147,18 @@ export {
   type HoldFrameOptions,
   Audio,
   type AudioProps,
+  AudioForPreview,
+  type AudioPreviewProps,
+  AudioForRendering,
+  type AudioRenderingProps,
   Img,
   type ImgProps,
   Video,
   type VideoProps,
+  VideoForPreview,
+  type VideoPreviewProps,
+  VideoForRendering,
+  type VideoRenderingProps,
   CompositionMarkersProvider,
   MarkerContext,
   useMarker,
@@ -171,6 +180,7 @@ export {
   random,
   type RandomSeed,
   staticFile,
+  watchStaticFile,
   ms,
   sec,
   tc,
