@@ -106,6 +106,15 @@ export type { FpsConversionMode } from './fps-conversion';
 export { mapFrameVideoIndex, FrameVideo } from './frame-video';
 export type { FrameVideoOptions, FrameVideoProps } from './frame-video';
 
+// --- <OffthreadVideo> — off-main-thread frame decode [BF-053 equivalent] ---
+
+export {
+  OffthreadVideo,
+  type OffthreadVideoProps,
+  type OffthreadVideoDecoder,
+  type DecodedFrame,
+} from './offthread-video';
+
 // --- <FrameAudio> [BF-059] — slicing + pitch-preserve ---
 
 export { mapFrameAudioIndex, FrameAudio } from './frame-audio';
