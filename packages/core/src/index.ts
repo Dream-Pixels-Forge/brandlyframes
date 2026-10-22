@@ -172,6 +172,7 @@ export {
   random,
   type RandomSeed,
   staticFile,
+  watchStaticFile,
   ms,
   sec,
   tc,
