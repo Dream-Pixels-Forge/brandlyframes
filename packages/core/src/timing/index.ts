@@ -7,6 +7,7 @@ export { isSequenceVisible, resolveSequenceFrame } from './sequence-frames';
 export { computeSeriesStarts, totalSeriesDuration } from './series-frames';
 export { isLoopActive, resolveLoopFrame } from './loop-frames';
 export { resolveFreezeFrame, type FreezeFrameOverride } from './freeze-frames';
+export { formatSequenceTrace, type SequenceScope } from './sequence-stack-traces';
 export {
   formatInvalidValue,
   validateFrame,

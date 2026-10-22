@@ -39,6 +39,8 @@ export {
   validateLayout,
   validatePositiveInteger,
   validateVideoConfig,
+  formatSequenceTrace,
+  type SequenceScope,
 } from './timing';
 
 /**
@@ -61,7 +63,7 @@ export {
  * ratio. All throw a helpful error when used outside a
  * {@link FrameContextProvider}.
  */
-export { useCurrentFrame, useVideoConfig, usePixelDensity } from './hooks';
+export { useCurrentFrame, useVideoConfig, usePixelDensity, useCurrentScale, useIsInsideNonPremountFreeze } from './hooks';
 
 /**
  * Timeline components (BF-003, BF-004): frame-scoping building blocks.
@@ -183,6 +185,7 @@ export {
   type RandomSeed,
   staticFile,
   watchStaticFile,
+  MediaCache,
   ms,
   sec,
   tc,

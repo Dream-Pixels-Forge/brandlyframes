@@ -23,19 +23,33 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] `watchStaticFile(src, onChange)` in `packages/core/src/utils/` — watches a static file path and invokes `onChange` when it changes; injectable filesystem (defaults to `node:fs`); exported from core index alongside `staticFile`; unit-tested with a fake fs watcher.
 - [x] `HtmlInCanvas` component in `packages/core/src/components/html-in-canvas/` — renders children into an offscreen `<canvas>` sized to width/height, requires DOM (`document`) and throws a helpful error outside a browser; exported from core index; unit-tested (canvas output, determinism, no-DOM error).
 - [x] Split media into preview- and render-optimized variants: `VideoForPreview` / `VideoForRendering` and `AudioForPreview` / `AudioForRendering` — rendering forces frame-derived `data-current-time` (deterministic), preview leaves the native element to manage its own time (responsive scrubbing); exported from core index; unit-tested.
-- [ ] Bounded media cache (`maxVideoCacheSize`) — **DEFERRED**. Core has no frame-decoding consumer yet (lands in P3 renderer / P5 `<FrameVideo>`), so a cache would be unused "for later" code, which ponytail forbids. Wire it in once frames are decoded in core.
-- [x] Changeset added for `brandlyframes` (lockstep release group).
+- [x] Bounded media cache (`maxVideoCacheSize`) — LRU cache in `packages/core/src/utils/media-cache.ts` with `get`/`set`/`has`/`delete`/`size`/`maxSize`; evicts least-recently-used entry when over cap; unbounded when `maxSize` omitted; exported from core index; unit-tested (8 tests).
+- [x] Sequence stack traces (`formatSequenceTrace`, `SequenceScope`) in `packages/core/src/timing/sequence-stack-traces.ts` — formats nested `<Sequence>` scopes into a readable trace naming each sequence and its frame range; deterministic, no React/DOM/wall-clock; exported from core index; unit-tested (6 tests).
+- [x] `useCurrentScale()` hook in `packages/core/src/hooks/use-current-scale.ts` — returns the current device-pixel scale (builds on `usePixelDensity`: browser DPR, else `1`); environmental, not frame-scoped; exported from core index; unit-tested (2 tests).
+- [x] `useIsInsideNonPremountFreeze()` hook in `packages/core/src/hooks/use-is-inside-non-premount-freeze.ts` — returns `true` inside a `<Freeze>` subtree via a new `FreezeContext`; `<Freeze>` now provides the context; exported from core index; unit-tested (4 tests).
+- [x] Changesets added for `brandlyframes` (lockstep release group, one per feature).
 
 ## Definition of Done
 - [x] `pnpm --filter brandlyframes type-check` passes (zero errors)
 - [x] `pnpm --filter brandlyframes test` passes (all tests green; new hooks/components covered)
 - [x] `pnpm lint` passes from root (zero warnings)
+- [x] `pnpm --filter brandlyframes build` passes
 - [x] `usePixelDensity` returns `1` outside a browser and `devicePixelRatio` in a browser (vitest + mocked `window`)
 - [x] `watchStaticFile` fires `onChange` when the watched file changes (fake fs watcher); `close()` releases the watcher
 - [x] `HtmlInCanvas` — renders `<canvas>` output, deterministic, throws without `document` (unit-tested)
 - [x] `VideoForPreview`/`VideoForRendering` and `AudioForPreview`/`AudioForRendering` importable from `brandlyframes` core; rendering sets `data-current-time`, preview does not
-- [ ] Media cache — deferred (no frame-decoding consumer in core yet)
-- [x] Changeset present in `.changeset/`
+- [x] Media cache — LRU eviction under cap, unbounded when no maxSize, deterministic across instances (unit-tested)
+- [x] Sequence stack traces — formats single/nested/empty scopes deterministically (unit-tested)
+- [x] `useCurrentScale` — returns `1` outside a browser, DPR in browser (unit-tested)
+- [x] `useIsInsideNonPremountFreeze` — `false` outside Freeze, `true` inside/nested, `false` after subtree ends (unit-tested)
+- [x] Changesets present in `.changeset/`
+
+## Deferred (blocked on missing infrastructure — not premature code)
+- `useBufferState` — needs media buffering infra (doesn't exist in core yet; lands with P3 renderer/P5 frame decoding)
+- `OffthreadVideo` — needs a video-decoding consumer; no decode backend in core
+- `AnimatedImage` — needs GIF/APNG decoding; no image-decoding backend in core
+- Effects/GPU system — separate roadmap (GOAL_00 §7b P14/P15), large system
+
 
 ## Verification Steps
 1. `cd /home/dimona/Dream-Pixels-Forge/Dev/Packages/brandlyframes`
