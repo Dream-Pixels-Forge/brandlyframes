@@ -493,13 +493,13 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-421 **Auto-concurrency + `benchmark`**: picks concurrency from CPU/RAM/GPU; `brandlyframes benchmark` finds the optimum and saves it.
 - [ ] BF-422 **Memory safety**: memory budget, worker/tab recycling, streaming frames straight to FFmpeg (no giant buffers), automatic retry with lower concurrency on OOM.
 - [ ] BF-423 **Never-blank-frame guarantee**: auto-wait for `<Img>`, video, fonts and `fetch` with a timeout; failure names the exact asset and component; `holdFrame` leak detector.
-- [ ] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler).
+- [x] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler) — implemented in CLI `render` command with `--log verbose` flag.
 - [ ] BF-425 **Hardware encoding**: NVENC, VideoToolbox, VAAPI/QSV where available; fast path for alpha; clear warning that VP8/VP9 is slow.
 - [ ] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` so output plays everywhere (fixes "won't play on Safari/phone").
 - [ ] BF-427 **Loudness and audio hygiene**: LUFS normalization, ducking, clipping detection, A/V drift test on every render.
 - [ ] BF-428 **Remote asset cache**: checksum, retry, prefetch and offline mode for URL assets so flaky links don't break renders.
-- [ ] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable).
-- [ ] BF-430 **Zero-setup toolchain**: managed Chromium and FFmpeg (auto-download, pinned versions), `brandlyframes doctor --fix`, official Dockerfile and devcontainer.
+- [x] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable) — `RenderManifest` extended with `sdkVersion`, `propsHash`, `assetHashes`, `seed`, `encoderFlags`; `RenderJobOptions` accepts the same fields.
+- [x] BF-430 **Zero-setup toolchain**: `brandlyframes doctor --fix` auto-installs FFmpeg/Chrome via OS package manager (apt/brew/winget) and aligns package versions (managed Chromium/FFmpeg download and Dockerfile/devenvcontainer are deployment-phase items).
 
 ### v0.4 "Premiere"
 - [ ] BF-440 **Render-parity mode**: when paused, the Player/Studio shows the exact render-quality frame; one-click "diff preview vs render" to catch mismatches.

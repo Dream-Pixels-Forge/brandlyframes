@@ -55,6 +55,16 @@ export interface RenderManifest {
   readonly end: number;
   /** Completed frame ranges, sorted and merged (adjacent ranges joined). */
   readonly completed: readonly FrameRange[];
+  /** BrandlyFrames SDK version used for this render (reproducibility). */
+  readonly sdkVersion?: string;
+  /** Hash of the composition props — detects prop changes between runs. */
+  readonly propsHash?: string;
+  /** Hashes of referenced assets (fonts, videos, images) by URL. */
+  readonly assetHashes?: readonly { readonly url: string; readonly hash: string }[];
+  /** Seed used for any randomized values (determinism audit). */
+  readonly seed?: number | string;
+  /** Encoder flags used (codec, CRF, preset, etc.). */
+  readonly encoderFlags?: Record<string, unknown>;
 }
 
 /** Progress event emitted by a render job [BF-024]. */
@@ -125,6 +135,16 @@ export interface RenderJobOptions {
   signal?: AbortSignal;
   /** Chrome flags (defaults to {@link DEFAULT_CHROME_FLAGS}). */
   flags?: readonly string[];
+  /** BrandlyFrames SDK version (reproducibility [BF-429]). */
+  readonly sdkVersion?: string;
+  /** Hash of the composition props (reproducibility [BF-429]). */
+  readonly propsHash?: string;
+  /** Hashes of referenced assets by URL (reproducibility [BF-429]). */
+  readonly assetHashes?: readonly { readonly url: string; readonly hash: string }[];
+  /** Seed used for any randomized values (determinism audit [BF-429]). */
+  readonly seed?: number | string;
+  /** Encoder flags used (codec, CRF, preset, etc.) [BF-429]. */
+  readonly encoderFlags?: Record<string, unknown>;
 }
 
 /** Result of a completed (or aborted — see the error) render job. */
@@ -320,16 +340,26 @@ export async function runRenderJob(
   await mkdir(outDir, { recursive: true });
 
   let completed: FrameRange[] = [];
+  // currentManifest reads `completed` via closure — its value is captured at
+  // call time, so it reflects resume-loaded or freshly-reset ranges.
+  const currentManifest = (): RenderManifest => ({
+    version: MANIFEST_VERSION,
+    url,
+    start,
+    end,
+    completed,
+    ...(options.sdkVersion !== undefined ? { sdkVersion: options.sdkVersion } : {}),
+    ...(options.propsHash !== undefined ? { propsHash: options.propsHash } : {}),
+    ...(options.assetHashes !== undefined ? { assetHashes: options.assetHashes } : {}),
+    ...(options.seed !== undefined ? { seed: options.seed } : {}),
+    ...(options.encoderFlags !== undefined ? { encoderFlags: options.encoderFlags } : {}),
+  });
+
   if (options.resume === false) {
     // Fresh render: reset the manifest up front so a crash mid-render cannot
     // resurrect stale completed ranges on the next resume.
-    await writeRenderManifest(manifestPath, {
-      version: MANIFEST_VERSION,
-      url,
-      start,
-      end,
-      completed: [],
-    });
+    await writeRenderManifest(manifestPath, currentManifest());
+    completed = [];
   } else {
     const stored = await readRenderManifest(manifestPath);
     if (stored !== null && stored.url === url && stored.start === start && stored.end === end) {
@@ -344,13 +374,6 @@ export async function runRenderJob(
   if (signal?.aborted) throw new RenderJobAbortedError(framesResumed, framesTotal);
 
   const framesDone = (): number => framesResumed + framesRendered;
-  const currentManifest = (): RenderManifest => ({
-    version: MANIFEST_VERSION,
-    url,
-    start,
-    end,
-    completed,
-  });
 
   const chunkSize = options.chunkSize ?? Math.max(1, Math.ceil(framesTotal / concurrency));
   const chunks = splitFrameRange(start, end, chunkSize).filter(
