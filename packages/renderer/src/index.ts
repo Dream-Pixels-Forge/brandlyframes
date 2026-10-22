@@ -13,6 +13,7 @@ export type {
   SpawnError,
   SpawnFn,
 } from './ffmpeg-decode';
+export { detectVideoUsage } from './video-usage.js';
 export {
   captureFrame,
   captureChunk,
