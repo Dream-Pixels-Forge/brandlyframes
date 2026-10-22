@@ -43,11 +43,14 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] Sequence stack traces — formats single/nested/empty scopes deterministically (unit-tested)
 - [x] `useCurrentScale` — returns `1` outside a browser, DPR in browser (unit-tested)
 - [x] `useIsInsideNonPremountFreeze` — `false` outside Freeze, `true` inside/nested, `false` after subtree ends (unit-tested)
-- [x] `AnimatedImage` / `mapGifFrameIndex` — frame mapping by delay+fps+looping, component renders `data-gif-frame` (unit-tested)
-- [x] Changesets present in `.changeset/` (brandlyframes + gif groups)
+- [x] `AnimatedImage` / `mapGifFrameIndex` — frame mapping by delay+fps+looping, component renders `data-gif-frame` (unit-tested).
+- [x] useBufferState + computeBufferState — media buffering state driven by the frame clock; pure computation dependency-free and Node-testable; hook subscribes to progress/waiting/playing (unit-tested).
+- [x] OffthreadVideo + OffthreadVideoDecoder — renders decoded frames into a canvas driven by the frame clock, reuses mapFrameVideoIndex; injectable decode backend (unit-tested).
+- [x] @brandlyframes/fx effects — applyFilmGrain, applyLensDistortion, applyBloom, applyBlendMode, loadLut/applyLut, compose shader-layer API; pure deterministic RGBA pixel functions (unit-tested).
+- [x] Changesets present in `.changeset/` (brandlyframes + gif + fx groups).
 
 ## Deferred (blocked on missing infrastructure — not premature code)
-- Effects/GPU system — separate roadmap (GOAL_00 §7b P14/P15), large system
+- WebGPU/WebGL render path (BF-200, P14) — new render path bypassing Chrome screenshots; separate roadmap item (GOAL_00 §7b P14 "v2.0 Real Time"), large infrastructure build. The fx effects layer (BF-210, P15) is implemented in `@brandlyframes/fx`.
 
 
 ## Verification Steps
@@ -56,7 +59,7 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 3. `pnpm test` — all packages green
 4. `pnpm lint` — root clean
 5. `pnpm build` — all packages build
-6. Confirm `.changeset/` contains changesets for `brandlyframes` and `@brandlyframes/gif`
+6. Confirm `.changeset/` contains changesets for `brandlyframes`, `@brandlyframes/gif`, and `@brandlyframes/fx`
 7. Confirm REA evidence still at `/tmp/rea-remotion-core.json` (subject digest `ev_061eb036…`)
 
 ## Anti-Drift Rules
@@ -66,4 +69,4 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - No `any` in public APIs; full TSDoc on exports (matches project standard).
 
 ## Scoping note (deferred)
-The remaining REA-identified gap (`effects/GPU system`) is intentionally deferred to later versions — see GOAL_00 §7b/c roadmap. `useBufferState` is implemented in `packages/core`; `OffthreadVideo` is implemented in `packages/frames`; `AnimatedImage` is implemented in `packages/gif/`.
+The remaining REA-identified gap is the WebGPU/WebGL render path (BF-200, P14) — see GOAL_00 §7b/c roadmap. The effects layer (BF-210, P15) is implemented in `@brandlyframes/fx`; `useBufferState` is implemented in `packages/core`; `OffthreadVideo` is implemented in `packages/frames`; `AnimatedImage` is implemented in `packages/gif/`.
