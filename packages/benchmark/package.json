@@ -1,0 +1,30 @@
+{
+  "name": "@brandlyframes/benchmark",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "BrandlyFrames benchmark suite — compares render paths, measures speedup, verifies output within tolerance [BF-203]",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "dependencies": {
+    "@brandlyframes/profiler": "workspace:*",
+    "@brandlyframes/renderer-webgpu": "workspace:*",
+    "@brandlyframes/renderer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^5.0.4"
+  },
+  "keywords": ["brandlyframes", "benchmark", "performance", "speedup", "render-path"],
+  "license": "MIT"
+}

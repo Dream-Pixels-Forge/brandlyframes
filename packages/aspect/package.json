@@ -1,0 +1,29 @@
+{
+  "name": "@brandlyframes/aspect",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "BrandlyFrames aspect-ratio presets (2.39:1, 16:9, 9:16, 1:1) with auto-reframe [BF-212]",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^5.0.4"
+  },
+  "keywords": ["brandlyframes", "aspect", "ratio", "reframe", "preset", "safe-area"],
+  "license": "MIT"
+}

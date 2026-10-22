@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "paths": {
+      "@brandlyframes/fx": ["../../fx/src/index.ts"],
+      "brandlyframes": ["../../core/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "test", "**/*.test.ts", "**/*.test.tsx"]
+}
