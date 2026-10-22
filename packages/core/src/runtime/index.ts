@@ -16,10 +16,18 @@ export {
 export {
   Audio,
   type AudioProps,
+  AudioForPreview,
+  type AudioPreviewProps,
+  AudioForRendering,
+  type AudioRenderingProps,
   Img,
   type ImgProps,
   Video,
   type VideoProps,
+  VideoForPreview,
+  type VideoPreviewProps,
+  VideoForRendering,
+  type VideoRenderingProps,
 } from './media';
 export {
   CompositionMarkersProvider,
