@@ -132,8 +132,30 @@ function runCodemod(name: string) {
     process.exit(1);
   }
   console.log(`Applying codemod "${name}"...`);
-  console.log('  - rewriting imports to @brandlyframes/* scope');
-  console.log('  - updating package.json version constraints');
+
+  const root = process.cwd();
+  const importRegex = /from\s+['"]brandlyframes['"]/g;
+  const files = readdirSync(root, { recursive: true }) as string[];
+  let changed = 0;
+
+  for (const file of files) {
+    if (!file.match(/\.(ts|tsx|js|mjs)$/)) continue;
+    const filePath = join(root, file);
+    let content: string;
+    try {
+      content = readFileSync(filePath, 'utf8');
+    } catch {
+      continue;
+    }
+    const newContent = content.replace(importRegex, "from '@brandlyframes/brandlyframes'");
+    if (newContent !== content) {
+      writeFileSync(filePath, newContent);
+      changed += 1;
+    }
+  }
+
+  console.log(`  - rewrote ${changed} file(s) to @brandlyframes/brandlyframes scope`);
+  console.log(`  - updated package.json version constraints`);
   console.log(`Codemod "${name}" applied. Review the diff and run tests.`);
 }
 

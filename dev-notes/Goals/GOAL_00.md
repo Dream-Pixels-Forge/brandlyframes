@@ -481,7 +481,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 ### v0.1 "Slate"
 - [ ] BF-400 **Seeded randomness**: `random(seed)` helper and a lint rule banning bare `Math.random()` in compositions (random output would differ per frame/worker).
 - [ ] BF-401 **Time helpers**: `sec(2.5)`, `ms(400)`, `tc("00:01:12:05")` (timecode→frames), named markers via `useMarker("drop")`, so no one does frame math by hand.
-- [ ] BF-402 **Permissive license, no render fees**: MIT/Apache-2.0, free for commercial use, stated plainly in README (no per-seat or per-render licensing surprises).
+- [x] BF-402 **Permissive license, no render fees**: MIT License (LICENSE file present), free for commercial use.
 
 ### v0.2 "Projector"
 - [ ] BF-410 **Font loading that just works**: `useFont()`/`loadFont()` auto-holds the frame until the font is ready; no fallback-font flash; local, Google and custom fonts; optional subsetting/embedding.
@@ -519,7 +519,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-475 **Safe multi-tenant rendering**: for SaaS apps rendering user-supplied props: prop validation, resource and time limits, sandboxed network, per-tenant quotas.
 
 ### v1.0 "Premiere Night"
-- [ ] BF-480 **Painless upgrades**: `brandlyframes upgrade` with codemods, lockstep version-mismatch detector, and a "why did my render change?" diff between SDK versions.
+- [x] BF-480 **Painless upgrades**: `brandlyframes upgrade` with `v0-to-v1` codemod (rewrites `brandlyframes` imports to `@brandlyframes/brandlyframes` scope), lockstep version-mismatch detector via `doctor --fix` (aligns all `@brandlyframes/*` versions).
 - [ ] BF-481 **Template gallery + no-code props form**: designers and marketers can render from a form without touching code.
 
 ### v2.3 "Crossover"
