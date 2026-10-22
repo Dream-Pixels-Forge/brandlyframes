@@ -47,8 +47,6 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] Changesets present in `.changeset/` (brandlyframes + gif groups)
 
 ## Deferred (blocked on missing infrastructure — not premature code)
-- `useBufferState` — needs media buffering infra (doesn't exist in core yet; lands with P3 renderer/P5 frame decoding)
-- `OffthreadVideo` — needs a video-decoding consumer; no decode backend in core
 - Effects/GPU system — separate roadmap (GOAL_00 §7b P14/P15), large system
 
 
@@ -68,4 +66,4 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - No `any` in public APIs; full TSDoc on exports (matches project standard).
 
 ## Scoping note (deferred)
-The remaining REA-identified gaps (`OffthreadVideo`, `useBufferState`, effects/GPU system) are intentionally deferred to later versions — see GOAL_00 §7b/c roadmap. `AnimatedImage` is now implemented in `packages/gif/`; `AnimatedImage` beyond GIF (APNG) and `OffthreadVideo` await their decode backends.
+The remaining REA-identified gap (`effects/GPU system`) is intentionally deferred to later versions — see GOAL_00 §7b/c roadmap. `useBufferState` is implemented in `packages/core`; `OffthreadVideo` is implemented in `packages/frames`; `AnimatedImage` is implemented in `packages/gif/`.

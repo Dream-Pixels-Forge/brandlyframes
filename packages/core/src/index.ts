@@ -63,7 +63,7 @@ export {
  * ratio. All throw a helpful error when used outside a
  * {@link FrameContextProvider}.
  */
-export { useCurrentFrame, useVideoConfig, usePixelDensity, useCurrentScale, useIsInsideNonPremountFreeze } from './hooks';
+export { useCurrentFrame, useVideoConfig, usePixelDensity, useCurrentScale, useIsInsideNonPremountFreeze, useBufferState, computeBufferState } from './hooks';
 
 /**
  * Timeline components (BF-003, BF-004): frame-scoping building blocks.
