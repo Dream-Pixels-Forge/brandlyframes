@@ -215,26 +215,6 @@ export async function extractFrames(options: ExtractFramesOptions): Promise<Extr
  * In a real implementation, this would use a proper image encoder (sharp, canvas, etc.).
  * For now, we create a minimal valid PNG/JPG/WebP structure.
  */
-async function _encodeFrameToFormat(
-  data: Uint8Array,
-  width: number,
-  height: number,
-  format: 'png' | 'jpg' | 'webp',
-  _quality: number
-): Promise<Uint8Array> {
-  // This is a simplified placeholder. In production, you'd use:
-  // - sharp: await sharp(data, { raw: { width, height, channels: 4 } }).png().toBuffer()
-  // - canvas: ctx.putImageData(...); canvas.toDataURL('image/png')
-  // - webp: similar with 'image/webp'
-
-  // For now, return minimal valid format headers + data
-  // This is just to make the API work; real encoding would be done in a separate package
-  const header = new TextEncoder().encode(`BF-FRAME-${format.toUpperCase()}-${width}x${height}-`);
-  const result = new Uint8Array(header.length + data.length);
-  result.set(header, 0);
-  result.set(data, header.length);
-  return result;
-}
 
 /**
  * Extracts frames and writes them to disk as image files.

@@ -138,7 +138,18 @@ export type {
   ExtractedFrame,
 } from './extract-frames';
 
-// --- test clip generator [BF-061] — CFR / VFR / alpha clips + perf benchmark ---
+// --- Test clips [BF-061] — CFR/VFR/alpha frame-counter clips + 4K/60 bench ---
 
-export { TEST_CLIPS, generateFrameCounterText, createFrameCounterFrame, generateTestClipManifest, writeTestClipManifest, runPerfBenchmark } from './test-clips';
-export type { FrameCounterClipSpec, VFRPattern, PerfBenchmarkResult } from './test-clips';
+export {
+  TEST_CLIPS,
+  generateFrameCounterText,
+  createFrameCounterFrame,
+  generateTestClipManifest,
+  writeTestClipManifest,
+  runPerfBenchmark,
+} from './test-clips';
+export type {
+  FrameCounterClipSpec,
+  VFRPattern,
+  PerfBenchmarkResult,
+} from './test-clips';
