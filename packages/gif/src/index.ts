@@ -10,5 +10,7 @@
 export type { GifFrameInput, EncodeGifOptions, GifFrame, DecodedGif } from './types';
 export { encodeGif } from './encode';
 export { parseGif, gifFrameToRgba } from './decode';
+export { mapGifFrameIndex } from './gif-frame-index';
+export { AnimatedImage, type AnimatedImageProps } from './AnimatedImage';
 export { lzwEncode, lzwDecode } from './lzw';
 export { buildPalette, paddedPalette, quantizeToPalette, rgbKey } from './palette';

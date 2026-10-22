@@ -11,7 +11,7 @@ Key Remotion public exports (from `dist/esm/index.mjs`, REA export bindings) tha
 - `watchStaticFile` — watch a static asset and re-render when it changes (dev hot-reload)
 - `HtmlInCanvas` — render HTML into a `<canvas>` (performance fast lane vs. DOM screenshots)
 - `OffthreadVideo` — off-thread video decoding
-- `AnimatedImage` — GIF/APNG support
+- `AnimatedImage` — GIF/APNG support ✅ (see `packages/gif`, implemented below)
 - `useCurrentScale`, `useBufferState`, `useIsInsideNonPremountFreeze` — media/timeline hooks
 - Separate preview vs render media (`VideoForPreview` / `VideoForRendering`)
 - Bounded media cache (`max-video-cache-size`) and sequence stack traces (`enable-sequence-stack-traces`)
@@ -27,7 +27,8 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] Sequence stack traces (`formatSequenceTrace`, `SequenceScope`) in `packages/core/src/timing/sequence-stack-traces.ts` — formats nested `<Sequence>` scopes into a readable trace naming each sequence and its frame range; deterministic, no React/DOM/wall-clock; exported from core index; unit-tested (6 tests).
 - [x] `useCurrentScale()` hook in `packages/core/src/hooks/use-current-scale.ts` — returns the current device-pixel scale (builds on `usePixelDensity`: browser DPR, else `1`); environmental, not frame-scoped; exported from core index; unit-tested (2 tests).
 - [x] `useIsInsideNonPremountFreeze()` hook in `packages/core/src/hooks/use-is-inside-non-premount-freeze.ts` — returns `true` inside a `<Freeze>` subtree via a new `FreezeContext`; `<Freeze>` now provides the context; exported from core index; unit-tested (4 tests).
-- [x] Changesets added for `brandlyframes` (lockstep release group, one per feature).
+- [x] `AnimatedImage` component + `mapGifFrameIndex` in `packages/gif/` — `mapGifFrameIndex(frame, fps, gif)` maps a composition frame to a GIF source frame index using per-frame delays + fps + looping (NETSCAPE convention); `AnimatedImage` React component renders an `` with `data-gif-frame`; pure function is dependency-free and Node-testable; exported from `@brandlyframes/gif` index; unit-tested (13 tests: 10 mapping + 3 component).
+- [x] Changesets added for `brandlyframes` and `@brandlyframes/gif` (lockstep release groups).
 
 ## Definition of Done
 - [x] `pnpm --filter brandlyframes type-check` passes (zero errors)
@@ -42,28 +43,29 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] Sequence stack traces — formats single/nested/empty scopes deterministically (unit-tested)
 - [x] `useCurrentScale` — returns `1` outside a browser, DPR in browser (unit-tested)
 - [x] `useIsInsideNonPremountFreeze` — `false` outside Freeze, `true` inside/nested, `false` after subtree ends (unit-tested)
-- [x] Changesets present in `.changeset/`
+- [x] `AnimatedImage` / `mapGifFrameIndex` — frame mapping by delay+fps+looping, component renders `data-gif-frame` (unit-tested)
+- [x] Changesets present in `.changeset/` (brandlyframes + gif groups)
 
 ## Deferred (blocked on missing infrastructure — not premature code)
 - `useBufferState` — needs media buffering infra (doesn't exist in core yet; lands with P3 renderer/P5 frame decoding)
 - `OffthreadVideo` — needs a video-decoding consumer; no decode backend in core
-- `AnimatedImage` — needs GIF/APNG decoding; no image-decoding backend in core
 - Effects/GPU system — separate roadmap (GOAL_00 §7b P14/P15), large system
 
 
 ## Verification Steps
 1. `cd /home/dimona/Dream-Pixels-Forge/Dev/Packages/brandlyframes`
-2. `pnpm --filter @brandlyframes/core type-check`
-3. `pnpm --filter @brandlyframes/core test`
-4. `pnpm lint`
-5. Confirm `.changeset/` contains a new changeset for `@brandlyframes/core`
-6. Confirm REA evidence still at `/tmp/rea-remotion-core.json` (subject digest `ev_061eb036…`)
+2. `pnpm type-check` — all packages (including `@brandlyframes/gif`) clean
+3. `pnpm test` — all packages green
+4. `pnpm lint` — root clean
+5. `pnpm build` — all packages build
+6. Confirm `.changeset/` contains changesets for `brandlyframes` and `@brandlyframes/gif`
+7. Confirm REA evidence still at `/tmp/rea-remotion-core.json` (subject digest `ev_061eb036…`)
 
 ## Anti-Drift Rules
 - Do not copy Remotion source, docs text, or assets — write from scratch (clean-room).
 - Do not add features not listed above (no Studio, no cloud, no effects system in this goal).
-- Keep all new code in `packages/core/` only; do not touch `packages/cli`, `packages/renderer`, `docs-site`, or other packages.
+- Core deliverables live in `packages/core/`; `AnimatedImage` lives in `packages/gif/` (where its GIF decode infrastructure is). Do not touch `packages/cli`, `packages/renderer`, `docs-site`, or other packages.
 - No `any` in public APIs; full TSDoc on exports (matches project standard).
 
 ## Scoping note (deferred)
-The remaining REA-identified gaps (`OffthreadVideo`, `AnimatedImage`, separate preview/render media beyond Video/Audio, sequence stack traces, effects/GPU system) are intentionally deferred to later versions — see GOAL_00 §7b/c roadmap. This goal targets the four smallest, highest-impact gaps first.
+The remaining REA-identified gaps (`OffthreadVideo`, `useBufferState`, effects/GPU system) are intentionally deferred to later versions — see GOAL_00 §7b/c roadmap. `AnimatedImage` is now implemented in `packages/gif/`; `AnimatedImage` beyond GIF (APNG) and `OffthreadVideo` await their decode backends.
