@@ -432,7 +432,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance
 
 **v2.1 "Color Grade": cinematic quality** (P15)
-- [ ] BF-210 `@brandlyframes/fx`: LUTs, grain, lens distortion, bloom, blend modes, shader API
+- [x] BF-210 `@brandlyframes/fx`: LUTs, grain, lens distortion, bloom, blend modes, shader API *(implemented in packages/fx/src/fx.ts — pure deterministic RGBA pixel functions: applyFilmGrain, applyLensDistortion, applyBloom, applyBlendMode, loadLut/applyLut, compose)*
 - [ ] BF-211 `<Camera>` (dolly, pan, parallax)
 - [ ] BF-212 Aspect presets + auto-reframe (2.39:1, 16:9, 9:16, 1:1)
 
