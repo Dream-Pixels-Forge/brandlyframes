@@ -186,7 +186,7 @@ export function generateFrameCounterText(frameIndex: number, totalFrames: number
  */
 export function createFrameCounterFrame(
   spec: FrameCounterClipSpec,
-  frameIndex: number
+  _frameIndex: number
 ): Uint8Array {
   const { width, height, hasAlpha } = spec;
   const channels = hasAlpha ? 4 : 3;

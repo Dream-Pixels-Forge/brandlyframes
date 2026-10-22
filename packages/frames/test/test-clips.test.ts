@@ -6,12 +6,10 @@ import { describe, it, expect } from 'vitest';
 import {
   TEST_CLIPS,
   FrameCounterClipSpec,
-  VFRPattern,
   generateFrameCounterText,
   createFrameCounterFrame,
   generateTestClipManifest,
   writeTestClipManifest,
-  PerfBenchmarkResult,
   runPerfBenchmark,
 } from '../src/test-clips';
 
