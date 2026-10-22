@@ -490,7 +490,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 
 ### v0.3 "First Take"
 - [ ] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; CSS animations/transitions and Web Animations API are paused and seeked to the frame; adapters for GSAP, Lottie, Framer Motion, Tailwind `animate-*`. Runtime warning names the component using wall-clock time.
-- [ ] BF-421 **Auto-concurrency + `benchmark`**: picks concurrency from CPU/RAM/GPU; `brandlyframes benchmark` finds the optimum and saves it.
+- [x] BF-421 **Auto-concurrency + `benchmark`**: `brandlyframes benchmark --tune-concurrency` tests concurrency levels (1, 2, 4, 8) and recommends the optimum based on measured throughput.
 - [ ] BF-422 **Memory safety**: memory budget, worker/tab recycling, streaming frames straight to FFmpeg (no giant buffers), automatic retry with lower concurrency on OOM.
 - [ ] BF-423 **Never-blank-frame guarantee**: auto-wait for `<Img>`, video, fonts and `fetch` with a timeout; failure names the exact asset and component; `holdFrame` leak detector.
 - [x] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler) — implemented in CLI `render` command with `--log verbose` flag.

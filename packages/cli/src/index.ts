@@ -401,11 +401,12 @@ program
   .description('report performance benchmarks')
   .option('--concurrency <n>', 'fixed concurrency to benchmark (default: auto-detected)')
   .option('--frames <n>', 'number of frames to capture in the benchmark (default: 10)')
-  .action((options) => {
-    runBenchmark(options.concurrency, options.frames);
+  .option('--tune-concurrency', 'test multiple concurrency levels and recommend the optimum [BF-421]')
+  .action(async (options) => {
+    await runBenchmark(options.concurrency, options.frames, options.tuneConcurrency);
   });
 
-function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined) {
+async function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined, tuneConcurrency: boolean = false) {
   const frames = framesArg ? Number(framesArg) : 10;
   if (!Number.isInteger(frames) || frames < 1) {
     console.error('benchmark: frames must be an integer >= 1');
@@ -415,6 +416,65 @@ function runBenchmark(concurrencyArg: string | undefined, framesArg: string | un
   const cpuCount = cpus().length;
   const memGb = (totalmem() / (1024 ** 3)).toFixed(1);
   const autoConcurrency = Math.min(cpuCount, 8);
+
+  if (tuneConcurrency) {
+    console.log('BrandlyFrames Concurrency Tuning');
+    console.log('================================');
+    console.log(`CPUs: ${cpuCount}`);
+    console.log(`Memory: ${memGb} GB`);
+    console.log(`Platform: ${platform()}`);
+    console.log(`Frames per level: ${frames}`);
+    console.log('');
+
+    // Candidate concurrency levels: 1, 2, 4, 8 (bounded by CPU count)
+    const candidates = [1, 2, 4, 8].filter((c) => c <= cpuCount);
+    const results: { concurrency: number; throughput: number; elapsedMs: number }[] = [];
+
+    const hasChrome = ['google-chrome', 'chromium', 'chromium-browser'].some((c) => {
+      try {
+        execSync(`which ${c}`, { stdio: 'pipe' });
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    if (!hasChrome) {
+      console.log('Skipping concurrency tuning: no Chrome/Chromium detected');
+      console.log(`Recommended concurrency: ${autoConcurrency} (CPU-based estimate)`);
+      return;
+    }
+
+    for (const concurrency of candidates) {
+      const start = process.hrtime.bigint();
+      let captured = 0;
+      try {
+        for (let frame = 0; frame < frames; frame++) {
+          await captureFrame({ url: 'about:blank', frame }, createCdpLauncher);
+          captured += 1;
+        }
+      } catch (err) {
+        console.error(`  concurrency ${concurrency}: failed - ${err instanceof Error ? err.message : String(err)}`);
+        continue;
+      }
+      const end = process.hrtime.bigint();
+      const elapsedMs = Number(end - start) / 1_000_000;
+      const throughput = elapsedMs > 0 ? (captured / (elapsedMs / 1000)).toFixed(1) : '0.0';
+      results.push({ concurrency, throughput: Number(throughput), elapsedMs });
+      console.log(`  concurrency ${concurrency}: ${throughput} fps (${elapsedMs.toFixed(0)} ms for ${captured} frames)`);
+    }
+
+    if (results.length > 0) {
+      const best = results.reduce((a, b) => (b.throughput > a.throughput ? b : a));
+      console.log('');
+      console.log(`Recommended concurrency: ${best.concurrency} (${best.throughput.toFixed(1)} fps)`);
+    } else {
+      console.log('');
+      console.log(`Recommended concurrency: ${autoConcurrency} (CPU-based estimate)`);
+    }
+    return;
+  }
+
   const concurrency = concurrencyArg ? Number(concurrencyArg) : autoConcurrency;
   if (!Number.isInteger(concurrency) || concurrency < 1) {
     console.error('benchmark: concurrency must be an integer >= 1');
