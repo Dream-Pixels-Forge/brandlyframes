@@ -21,7 +21,7 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 ## Deliverables
 - [x] `usePixelDensity()` hook in `packages/core/src/hooks/` — returns `window.devicePixelRatio` (or 1 in render workers/Node), re-renders on resize; exported from core index; unit-tested.
 - [x] `watchStaticFile(src, onChange)` in `packages/core/src/utils/` — watches a static file path and invokes `onChange` when it changes; injectable filesystem (defaults to `node:fs`); exported from core index alongside `staticFile`; unit-tested with a fake fs watcher.
-- [ ] `HtmlInCanvas` component — **DEFERRED**. Requires real DOM/canvas infrastructure (`canvas`/`jsdom` deps) that is not present in this node test environment; would be premature to add without a testable render path. Revisit when P3 renderer / canvas support lands.
+- [x] `HtmlInCanvas` component in `packages/core/src/components/html-in-canvas/` — renders children into an offscreen `<canvas>` sized to width/height, requires DOM (`document`) and throws a helpful error outside a browser; exported from core index; unit-tested (canvas output, determinism, no-DOM error).
 - [x] Split media into preview- and render-optimized variants: `VideoForPreview` / `VideoForRendering` and `AudioForPreview` / `AudioForRendering` — rendering forces frame-derived `data-current-time` (deterministic), preview leaves the native element to manage its own time (responsive scrubbing); exported from core index; unit-tested.
 - [ ] Bounded media cache (`maxVideoCacheSize`) — **DEFERRED**. Core has no frame-decoding consumer yet (lands in P3 renderer / P5 `<FrameVideo>`), so a cache would be unused "for later" code, which ponytail forbids. Wire it in once frames are decoded in core.
 - [x] Changeset added for `brandlyframes` (lockstep release group).
@@ -32,7 +32,7 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] `pnpm lint` passes from root (zero warnings)
 - [x] `usePixelDensity` returns `1` outside a browser and `devicePixelRatio` in a browser (vitest + mocked `window`)
 - [x] `watchStaticFile` fires `onChange` when the watched file changes (fake fs watcher); `close()` releases the watcher
-- [ ] `HtmlInCanvas` — deferred (no DOM/canvas test environment)
+- [x] `HtmlInCanvas` — renders `<canvas>` output, deterministic, throws without `document` (unit-tested)
 - [x] `VideoForPreview`/`VideoForRendering` and `AudioForPreview`/`AudioForRendering` importable from `brandlyframes` core; rendering sets `data-current-time`, preview does not
 - [ ] Media cache — deferred (no frame-decoding consumer in core yet)
 - [x] Changeset present in `.changeset/`
