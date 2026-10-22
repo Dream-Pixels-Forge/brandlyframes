@@ -1,0 +1,28 @@
+{
+  "name": "@brandlyframes/renderer-webgpu",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "BrandlyFrames WebGPU/WebGL render path — bypasses Chrome screenshots [BF-200]",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "dependencies": {
+    "@brandlyframes/renderer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^5.0.4"
+  },
+  "keywords": ["brandlyframes", "renderer", "webgpu", "webgl", "gpu", "render-path"],
+  "license": "MIT"
+}
