@@ -7,3 +7,4 @@ export { Loop, type LoopProps } from './loop';
 export { Freeze, type FreezeProps } from './freeze';
 export type { FreezeFrameOverride } from './freeze';
 export { AbsoluteFill, type AbsoluteFillProps } from './absolute-fill';
+export { HtmlInCanvas, type HtmlInCanvasProps } from './html-in-canvas';

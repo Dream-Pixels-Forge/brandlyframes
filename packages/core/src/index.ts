@@ -82,6 +82,8 @@ export {
   type FreezeProps,
   AbsoluteFill,
   type AbsoluteFillProps,
+  HtmlInCanvas,
+  type HtmlInCanvasProps,
 } from './components';
 
 /**
