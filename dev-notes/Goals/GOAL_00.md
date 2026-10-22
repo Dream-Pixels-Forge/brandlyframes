@@ -426,7 +426,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 ### Next generation
 
 **v2.0 "Real Time": performance** (P14, new render path; may include breaking changes)
-- [ ] BF-200 WebGPU/WebGL render path (no screenshots)
+- [x] BF-200 WebGPU/WebGL render path (no screenshots) *(implemented in packages/renderer-webgpu — RenderPath abstraction, ScreenshotRenderPath, GpuRenderPath with CPU fallback, GLSL shaders for fx effects)*
 - [ ] BF-201 Browser-side export via WebCodecs
 - [ ] BF-202 Frame profiler + Studio flame view
 - [ ] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance

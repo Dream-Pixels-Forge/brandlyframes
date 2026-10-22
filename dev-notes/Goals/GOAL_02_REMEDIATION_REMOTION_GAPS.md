@@ -50,7 +50,7 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - [x] Changesets present in `.changeset/` (brandlyframes + gif + fx groups).
 
 ## Deferred (blocked on missing infrastructure — not premature code)
-- WebGPU/WebGL render path (BF-200, P14) — new render path bypassing Chrome screenshots; separate roadmap item (GOAL_00 §7b P14 "v2.0 Real Time"), large infrastructure build. The fx effects layer (BF-210, P15) is implemented in `@brandlyframes/fx`.
+- None remaining — all REA-identified gaps are implemented.
 
 
 ## Verification Steps
@@ -69,4 +69,4 @@ Clean-room rule (GOAL_00 §1): replicate **architecture and concepts**, never co
 - No `any` in public APIs; full TSDoc on exports (matches project standard).
 
 ## Scoping note (deferred)
-The remaining REA-identified gap is the WebGPU/WebGL render path (BF-200, P14) — see GOAL_00 §7b/c roadmap. The effects layer (BF-210, P15) is implemented in `@brandlyframes/fx`; `useBufferState` is implemented in `packages/core`; `OffthreadVideo` is implemented in `packages/frames`; `AnimatedImage` is implemented in `packages/gif/`.
+All REA-identified gaps are implemented: `useBufferState` in `packages/core`, `OffthreadVideo` in `packages/frames`, `AnimatedImage` in `packages/gif`, `@brandlyframes/fx` effects in `packages/fx`, and WebGPU/WebGL render path in `packages/renderer-webgpu`.
