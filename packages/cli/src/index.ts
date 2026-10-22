@@ -8,6 +8,7 @@ import { cpus, platform, totalmem } from 'node:os';
 import { execSync } from 'node:child_process';
 import {
   captureFrame,
+  detectVideoUsage,
   runRenderJob,
   stitchFrames,
 } from '@brandlyframes/renderer';
@@ -37,8 +38,29 @@ program
 program
   .command('build')
   .description('render a composition to video/image sequence')
-  .action(() => {
+  .argument('[composition]', 'composition source file to render')
+  .option(
+    '--no-auto-promote-video',
+    'disable auto-promoting <Video> to the frame-exact FFmpeg decode path',
+  )
+  .action((composition, options) => {
+    const autoPromote = options.autoPromoteVideo !== false;
     console.log('Building composition...');
+    console.log(`  auto-promote <Video> to frame-exact decode: ${autoPromote}`);
+    if (composition) {
+      console.log(`  composition: ${composition}`);
+      try {
+        const source = readFileSync(composition, 'utf8');
+        const usesVideo = detectVideoUsage(source);
+        console.log(
+          `  <Video> usage detected: ${usesVideo} (${usesVideo ? 'would route to FFmpeg frame-exact decode' : 'no <Video> frames to promote'})`,
+        );
+      } catch (error) {
+        console.error(
+          `  could not read composition "${composition}": ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
   });
 
   program
