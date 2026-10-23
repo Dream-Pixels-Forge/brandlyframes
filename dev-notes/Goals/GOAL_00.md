@@ -419,7 +419,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-132 Beat-synced demo within ±1 frame
 
 **v1.5 "Brand Book": brand kits + batch** (P13)
-- [ ] BF-140 `brand.json` + `useBrand()`
+- [x] BF-140 `brand.json` + `useBrand()` — `@brandlyframes/brand` package: `useBrand()` loads from `brand.json`, validates against brandKitSchema, returns default kit if missing.
 - [ ] BF-141 Batch render from CSV/JSON/API with templating and manifest
 - [ ] BF-142 Crash-resume for 500-variant batch
 
