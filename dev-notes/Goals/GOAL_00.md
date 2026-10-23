@@ -497,7 +497,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-425 **Hardware encoding**: NVENC, VideoToolbox, VAAPI/QSV where available; fast path for alpha; clear warning that VP8/VP9 is slow.
 - [x] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` — implemented in `@brandlyframes/presets` package with 11 tests.
 - [ ] BF-427 **Loudness and audio hygiene**: LUFS normalization, ducking, clipping detection, A/V drift test on every render.
-- [ ] BF-428 **Remote asset cache**: checksum, retry, prefetch and offline mode for URL assets so flaky links don't break renders.
+- [x] BF-428 **Remote asset cache**: checksum, retry, prefetch and offline mode for URL assets so flaky links don't break renders.
 - [x] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable) — `RenderManifest` extended with `sdkVersion`, `propsHash`, `assetHashes`, `seed`, `encoderFlags`; `RenderJobOptions` accepts the same fields.
 - [x] BF-430 **Zero-setup toolchain**: `brandlyframes doctor --fix` auto-installs FFmpeg/Chrome via OS package manager (apt/brew/winget) and aligns package versions (managed Chromium/FFmpeg download and Dockerfile/devenvcontainer are deployment-phase items).
 
