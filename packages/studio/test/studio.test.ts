@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { StudioShell, PropsEditor, ErrorOverlay, FrameInspector } from '../src/index';
+import { StudioShell, PropsEditor, ErrorOverlay, FrameInspector, CacheCounters } from '../src/index';
 
 describe('StudioShell', () => {
   it('should be defined', () => {
@@ -51,6 +51,21 @@ describe('ErrorOverlay', () => {
     });
     expect(result).toBeDefined();
     // Note: We're not doing full rendering tests here, just checking the function returns something
+  });
+});
+
+describe('CacheCounters', () => {
+  it('should be defined', () => {
+    expect(CacheCounters).toBeDefined();
+  });
+
+  it('should be a function', () => {
+    expect(typeof CacheCounters).toBe('function');
+  });
+
+  it('should accept hit/miss stats props [BF-112]', () => {
+    const element = CacheCounters({ stats: { hits: 3, misses: 1, hitRate: 0.75 } });
+    expect(element).toBeDefined();
   });
 });
 
