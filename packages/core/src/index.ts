@@ -175,13 +175,15 @@ export {
 /**
  * Framework-free utilities — no React, no DOM (safe in render workers and
  * Node): input props bootstrap, static asset paths, seeded randomness
- * ({@link random}, BF-400) and time helpers ({@link sec}, {@link ms},
- * {@link tc}, BF-401).
+ * ({@link random}, {@link randomInt}, {@link randomPick}, BF-400) and time
+ * helpers ({@link sec}, {@link ms}, {@link tc}, BF-401).
  */
 export {
   getInputProps,
   setInputProps,
   random,
+  randomInt,
+  randomPick,
   type RandomSeed,
   staticFile,
   watchStaticFile,
