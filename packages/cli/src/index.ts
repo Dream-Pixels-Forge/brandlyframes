@@ -704,6 +704,7 @@ program
   .option('--no-resume', 'reset manifest and capture every frame again')
   .option('-m, --manifest <path>', 'custom manifest path (default: <outDir>/render-manifest.json)')
   .option('--log <level>', 'log level: normal | verbose (verbose prints slow-frame report) [BF-424]', 'normal')
+  .option('--cache <dir>', 'content-addressed frame cache directory; reuses frames across identical renders [BF-110][BF-111]')
   .action((url, outDir, start, end, options) => {
     const startFrame = Number(start);
     const endFrame = Number(end);
@@ -737,6 +738,7 @@ program
         concurrency,
         resume: options.resume !== false,
         manifestPath: options.manifest,
+        ...(options.cache !== undefined ? { cacheDir: options.cache } : {}),
         onProgress: (progress) => {
           if (progress.type === 'frame') {
             const now = performance.now();
@@ -752,6 +754,14 @@ program
     )
       .then((result) => {
         console.log(`Render complete: ${result.framesRendered} rendered, ${result.framesResumed} resumed`);
+        if (options.cache !== undefined) {
+          // Cache-hit counters surfaced in render output [BF-112].
+          const total = result.cacheHits + result.cacheMisses;
+          const hitRate = total > 0 ? ((result.cacheHits / total) * 100).toFixed(1) : '0.0';
+          console.log(
+            `Cache: ${result.cacheHits} hit(s), ${result.cacheMisses} miss(es) (${hitRate}% hit rate)`,
+          );
+        }
         if (verbose) {
           const slowThresholdMs = 33; // ~1 frame at 30 fps
           const entries = Object.entries(frameDurations).map(([frame, durationMs]) => ({

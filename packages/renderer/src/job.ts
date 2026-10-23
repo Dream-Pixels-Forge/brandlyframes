@@ -27,6 +27,7 @@
  */
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { ContentCache, FsStore, frameCacheKey } from '@brandlyframes/cache';
 import {
   DEFAULT_CHROME_FLAGS,
   DEFAULT_CONCURRENCY,
@@ -145,6 +146,13 @@ export interface RenderJobOptions {
   readonly seed?: number | string;
   /** Encoder flags used (codec, CRF, preset, etc.) [BF-429]. */
   readonly encoderFlags?: Record<string, unknown>;
+  /**
+   * Directory of the content-addressed frame cache [BF-111]: frames are
+   * keyed by (composition URL + propsHash + frame + chrome flags) and
+   * reused across renders into different outDirs; hit/miss counters are
+   * reported on {@link RenderJobResult}.
+   */
+  readonly cacheDir?: string;
 }
 
 /** Result of a completed (or aborted — see the error) render job. */
@@ -161,6 +169,10 @@ export interface RenderJobResult {
   readonly framesResumed: number;
   /** Final completed ranges (the manifest content). */
   readonly completed: readonly FrameRange[];
+  /** Frames served from the content-addressed frame cache [BF-112]. */
+  readonly cacheHits: number;
+  /** Frames rendered because the content-addressed cache missed [BF-112]. */
+  readonly cacheMisses: number;
 }
 
 /**
@@ -371,6 +383,13 @@ export async function runRenderJob(
   const framesResumed = countFrames(completed);
   let framesRendered = 0;
 
+  // Content-addressed frame cache [BF-110][BF-111]: one ContentCache per
+  // job so hit/miss counters accumulate across chunks and tabs.
+  const frameCache =
+    options.cacheDir === undefined
+      ? undefined
+      : new ContentCache({ store: new FsStore({ root: options.cacheDir }) });
+
   if (signal?.aborted) throw new RenderJobAbortedError(framesResumed, framesTotal);
 
   const framesDone = (): number => framesResumed + framesRendered;
@@ -401,8 +420,24 @@ export async function runRenderJob(
       });
       for (let frame = from; frame < chunk.end; frame++) {
         if (signal?.aborted) return;
-        await tab.gotoFrame(frame);
-        const png = await tab.screenshotPng();
+        let png: Uint8Array;
+        if (frameCache === undefined) {
+          await tab.gotoFrame(frame);
+          png = await tab.screenshotPng();
+        } else {
+          const key = frameCacheKey({
+            composition: url,
+            props: options.propsHash,
+            frame,
+            renderParams: { flags: [...flags] },
+          });
+          png = (
+            await frameCache.getOrCompute(key, async () => {
+              await tab.gotoFrame(frame);
+              return tab.screenshotPng();
+            })
+          ).data;
+        }
         await writeFile(join(outDir, frameFileName(frame)), png);
         framesRendered += 1;
         // Capture framesDone synchronously right after the increment, before any
@@ -507,5 +542,7 @@ export async function runRenderJob(
     framesRendered,
     framesResumed,
     completed,
+    cacheHits: frameCache?.stats.hits ?? 0,
+    cacheMisses: frameCache?.stats.misses ?? 0,
   };
 }

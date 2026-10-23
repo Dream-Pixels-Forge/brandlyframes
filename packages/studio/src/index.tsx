@@ -196,3 +196,21 @@ export function useFrameInspector(registry?: InspectorRegistry) {
 
   return { inspected, handlePreviewClick };
 }
+
+// Cache Counters - surfaces content-addressed cache hit/miss stats (BF-112)
+export const CacheCounters = ({
+  stats
+}: {
+  stats: { hits: number; misses: number; hitRate: number }
+}) => {
+  return (
+    <div className="cache-counters">
+      <div className="cache-counters-header">Frame Cache</div>
+      <div className="cache-counters-content">
+        <div className="cache-hits">hits: {stats.hits}</div>
+        <div className="cache-misses">misses: {stats.misses}</div>
+        <div className="cache-hit-rate">hit rate: {(stats.hitRate * 100).toFixed(1)}%</div>
+      </div>
+    </div>
+  );
+};
