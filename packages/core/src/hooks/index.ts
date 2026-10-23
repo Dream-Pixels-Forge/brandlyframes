@@ -5,3 +5,15 @@ export { useCurrentScale } from './use-current-scale';
 export { useIsInsideNonPremountFreeze } from './use-is-inside-non-premount-freeze';
 export { useBufferState, type BufferState, type BufferedRange, type MediaElementLike } from './use-buffer-state';
 export { computeBufferState } from './use-buffer-state';
+export { useAudioData, useBeat, useLoudness, useSpectrum, type AudioFrameData } from './use-audio-data';
+export {
+  analyzeAudioBuffer,
+  getAudioAnalysis,
+  getLoudnessAtFrame,
+  getSpectrumAtFrame,
+  getBeatAtFrame,
+  type AudioAnalysis,
+  type AnalyzeAudioOptions,
+  type AudioBufferLike,
+  type Beat,
+} from './audio-analysis';
