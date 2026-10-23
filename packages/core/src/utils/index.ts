@@ -4,7 +4,7 @@
  * (BF-400) and time helpers (BF-401).
  */
 export { getInputProps, setInputProps } from './input-props';
-export { random, type RandomSeed } from './random';
+export { random, randomInt, randomPick, type RandomSeed } from './random';
 export { staticFile } from './static-file';
 export { watchStaticFile } from './watch-static-file';
 export { MediaCache } from './media-cache';
