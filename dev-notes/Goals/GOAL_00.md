@@ -433,8 +433,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v2.1 "Color Grade": cinematic quality** (P15)
 - [x] BF-210 `@brandlyframes/fx`: LUTs, grain, lens distortion, bloom, blend modes, shader API *(implemented in packages/fx/src/fx.ts — pure deterministic RGBA pixel functions: applyFilmGrain, applyLensDistortion, applyBloom, applyBlendMode, loadLut/applyLut, compose)*
-- [ ] BF-211 `<Camera>` (dolly, pan, parallax)
-- [ ] BF-212 Aspect presets + auto-reframe (2.39:1, 16:9, 9:16, 1:1)
+- [x] BF-211 `<Camera>` (dolly, pan, parallax) *(implemented in packages/camera — `<Camera>` component + useCameraTransform hook + computeCameraTransform pure fn: dolly zoom, pan translate, parallax depth-scaled pan, all `frame -> transform` deterministic; 15 tests incl. SSR determinism)*
+- [x] BF-212 Aspect presets + auto-reframe (2.39:1, 16:9, 9:16, 1:1) *(implemented in packages/aspect — ASPECT_PRESETS with title/action-safe areas, getAspectPreset, autoReframe subject-centered crop, fitToPreset cover/contain/fill letterbox, useAspectPreset hook; deterministic pure functions; 15 tests)*
 
 **v2.2 "Generative": AI building blocks** (P16)
 - [ ] BF-220 `<AIVideo>`, `<AIImage>` with provider adapters (Seedance, Higgsfield, others)
