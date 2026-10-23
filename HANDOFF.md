@@ -1,68 +1,72 @@
-# BrandlyFrames Handoff Document
+# HANDOFF — BrandlyFrames: merge backlog + drive remaining GOAL_00 tasks
+> Status: **Wave 1 merged (3/4), 4 subagents in flight, 50/116 GOAL_00 tasks remaining** · For new session
+> Date: 2026-10-23 · Branch: `main` @ f8acf78
 
-**Date**: 2026-10-19
-**Author**: Pi coding agent (session 7)
-**Branch**: `feature/bf-020-headless-capture` (uncommitted changes: new docs pages, HANDOFF.md)
+## 1. Current state
 
----
+**DONE this session (all merged to `main`, verified):**
+- PR #40 — 9-commit branch `feat/bf-201-203-p14-performance` squash-merged (P14 perf, P15 grade, P11 agent-native, BF-200 WebGPU, BF-428 asset cache, BF-211/212 camera+aspect, BF-400/401 partial)
+- CI fixes: `@types/node` added to packages/core; frames perf-benchmark test timeout → 60s
+- PR #54 — doc closure: BF-211/212 were **already implemented** in PR #40 (worker verified 30+ tests); GOAL_00 ticked
+- PR #55 — BF-400/401 completed: `random(seed,min,max)`, `randomInt`, `randomPick`, ESLint `Math.random()` ban (core, 460 tests green)
+- PR #56 — BF-141/142: `brandlyframes batch` (CSV/JSON templating, manifest, crash-resume checkpoint, 44/44 CLI tests)
+- GOAL_00 doc commits: BF-428, BF-211/212, BF-400/401, BF-141/142 ticked → **50 unchecked remain**
+- **13 grouped issues filed** (#41–#53) + 5 pre-existing (#10–#14) = full work queue in GitHub
 
-## Summary
+**IN PROGRESS — 4 async `worker` subagents in isolated worktrees (all mid-task, near done):**
+| Issue | Task | Run ID (check with `subagent({action:"status"})` or `gh pr list`) |
+|---|---|---|
+| #47 | agent-native MCP server (BF-100..103) — 15/15 contract tests green, finishing e2e | `f3c259c6-e109-4d2c-be59-7a619944592a` |
+| #43 | audio hooks (BF-130/131/132) — wiring exports | `bbef8b32-d179-40fc-b791-7d524a0c8f6d` |
+| #45 | studio debug (BF-411/412/241) — fixing 2 test assertions | `1372f8f0-c703-4ea2-b2aa-4361b1fed7fa` |
+| #44 | content cache (BF-110/111/112) — mid-implementation | `fe6a051d-169a-4844-be8e-54daeebec079` |
 
-This session completes BF-091 (docs) and BF-092 (CLI commands) for the BrandlyFrames v1.0 release work (BF-090..093). BF-090 was already complete. BF-093 (public release) remains pending.
+Each was instructed: TDD, per-package gates only, changeset, branch push, PR ending `Closes #N`, **do not merge** — the parent (you) merges serially.
 
-## Current state
+## 2. Remaining work (in order)
+1. Wait for/collect the 4 in-flight children → review diffs → `gh pr merge N --squash --delete-branch` → tick GOAL_00 items in a `doc(goal)` commit (workers often don't tick it).
+2. Verify stale pre-existing issues #10–#14 (BF-058..061, BF-450) still unimplemented before their wave.
+3. Wave 3 (hold until core-touching waves land): **#42 fonts** (core+fonts), **#46 render-resilience** (core+renderer+player).
+4. Wave 4: **#50** profiler/benchmark/hw-encode/loudness, **#51** cloud hardening (mocked creds only — no credentials in CI), **#52** integrations (AI providers must be injectable/mocked — never network in tests), **#53** platform ecosystem.
+5. After each wave: merge serially, resolve conflicts (core/src/index.ts is the hot file), tick GOAL_00, keep issue labels flowing (`status:in-progress` → closed via `Closes #N`).
+6. When queue empties: run `pnpm type-check && pnpm lint && pnpm build && pnpm test` at root, then changesets version bump + BF-093 public release (npm scope check first).
+Next concrete action: `gh pr list --state open` — merge whatever the children already opened.
 
-### Task #27: v1.0 release work (BF-090..093)
+## 3. Verified ground truth (read this — saves hours)
+- **Subagent agent name is `worker`** — `general` does not exist (burned one wave learning this).
+- **`options: { timeoutMs }` must be set per subagent call** (resume) — parallel workflow launches silently fall back to 30-min default; a cold worktree (install+build) + implementation does NOT fit in 30 min. Resume timed-out children with `subagent({action:"resume", id, options:{timeoutMs:5400000}})` — do not restart, context is precious.
+- Children die on transient API errors ("Request timed out"/"Connection error") — just resume them; their worktree state persists.
+- **Double-merge hazard:** `gh pr merge` + ambiguous output → re-running can double-squash (harmless: identical tree, e.g. 46eabf7+7f93c50 on main), but verify with `gh pr view N --json state` after merging once.
+- `gh pr merge --delete-branch` always warns "cannot delete local branch … used by worktree" — harmless, worktree-managed branches.
+- Cold worktree setup eats the clock: instruct children `pnpm install --prefer-offline` + **per-package gates only** (`pnpm --filter <pkg>... build && test`), never repo-wide.
+- `packages/core/src/index.ts` is the conflict hotspot — waves touching core should not run simultaneously.
+- CI: pull_request trigger did not fire for our PRs; ran manually via `gh workflow run ci.yml --ref <branch>`. Repo-wide `tsc` type-check task depends on builds.
+- camera/aspect tests fail in fresh checkouts until `pnpm --filter @brandlyframes/camera... build` (core dist must exist).
+- BF-080/081/082 need real cloud credentials — issues #51 explicitly scope to mocked harnesses.
+- GOAL count: `grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md` (50 now).
 
-| ID | Scope | Status |
-|----|-------|--------|
-| BF-090 | `create-brandlyframes` + 5 templates (incl. `frame-video-demo`) | **Complete** — verified committed |
-| BF-091 | Docs site, API reference, brand guide page, Remotion migration guide | **Complete** — brand guide + migration guide added; docs site builds/type-checks green; API reference hand-written, generation pending |
-| BF-092 | `brandlyframes doctor`, `upgrade`, security review, perf report | **Complete** — `doctor`, `benchmark`, `upgrade` all implemented + tested (29/29 CLI tests pass); security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact |
-| BF-093 | Public release, `@brandlyframes` scope live | **Pending** — not started |
+## 4. Files changed this session (repo)
+- `packages/core/` — random helpers, @types/node devDep · `packages/frames/test/test-clips.test.ts` — timeout
+- `packages/cli/src/batch.ts` + tests (new) · `eslint.config.mjs` — Math.random ban
+- `dev-notes/Goals/GOAL_00.md` — 6 BF items ticked · `.changeset/*` — 3 new changesets
+- `HANDOFF.md` — this file (replaces stale session-7 version)
 
-### BF-091 — complete (caveat: API reference hand-written, generation pending)
-- `docs-site/src/routes/guides/brand-guide.tsx` — Cinema Black design system: color tokens, typography, cinema motifs, motion, components, applied-to
-- `docs-site/src/routes/guides/migration.tsx` — Remotion → BrandlyFrames core API + package + CLI name mapping table, before/after code, key differences
-- `docs-site/src/routeTree.gen.ts` — regenerated with new routes
-- Docs site builds and type-checks green (verified 2026-10-19)
-- `docs/API.md` and `docs/getting-started.md` exist
-- API reference is hand-written; generation pending (no generated API-ref artifact)
+## 5. How to verify when you land
+```bash
+cd /home/dimona/Dream-Pixels-Forge/Dev/Packages/brandlyframes
+git pull && git log --oneline -6          # expect: PR merges listed in §1
+gh pr list --state open                    # in-flight children's PRs
+gh issue list --label status:in-progress --state open   # unclaimed/abandoned work
+grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md           # 50 (or lower if children merged)
+pnpm --filter brandlyframes test && pnpm --filter @brandlyframes/cli test   # 460+ / 44+ green
+```
 
-### BF-092 — complete (caveats: no security review report; no written perf report)
-- `packages/cli/src/index.ts` — `upgrade` (--check, --codemod v0-to-v1), `doctor` (--fix, --json with 6 checks: node, ffmpeg, chrome, renderer, versions), `benchmark` (--concurrency, --frames with CPU/mem/auto-concurrency reporting)
-- `packages/cli/test/cli.test.ts` — 29 tests passing (was 21, added upgrade/doctor/benchmark tests)
-- All CLI command tests pass
-- Security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact
+## 6. Goal spec & verdict
+- Goal: commit green work → merge feature branch → drive all 54→50 remaining GOAL_00 tasks via git-driven subagent waves.
+- Verdict: **IN PROGRESS** — queue fully filed (issues #41–#53 + #10–#14), 3 of 4 wave-1 items merged, wave-2 + agent-native children finishing. No goal-met audit run yet.
 
-### BF-093 — public release
-Pending. Requires `@brandlyframes` npm scope availability check and reservation (GOAL_00 §9 risk #6), then publish all packages under `@brandlyframes/*` plus `brandlyframes` core.
-
-### Other state
-- Uncommitted changes: HANDOFF.md, docs-site/src/routes/guides/brand-guide.tsx, docs-site/src/routes/guides/migration.tsx, docs-site/src/routeTree.gen.ts
-- Untracked: CHANGELOG.md, docs/, packages/ai/, packages/audio-reactive/, packages/brand/, packages/cache/, packages/fx/, packages/interop/, packages/mcp/, packages/test/, packages/zod-types/, tsconfig.json, vitest.config.mjs
-- Renderer `test/job.test.ts` has 1 pre-existing AbortSignal cancellation failure (unrelated to this work; `framesDone` expects 5, gets 0)
-- Root scripts: `build`=`turbo run build`, `test`=`turbo run test`, `lint`=`eslint . --max-warnings 0`, `type-check`=`turbo run type-check`
-- pnpm monorepo + Turborepo, ESM (`"type": "module"`), TypeScript strict, vitest v5 per-package
-- Package convention: name `@brandlyframes/<pkg>`, version `0.1.0`, peerDependencies `react: ^18`, exports via `src/index.ts`
-
-## Next steps (in order)
-
-1. **BF-093 public release** — verify `@brandlyframes` scope availability on npm, publish all packages under `@brandlyframes/*` plus `brandlyframes` core
-2. Run `pnpm build` / `pnpm test` / `pnpm lint` / `pnpm type-check` from root to confirm all gates green before release
-3. Commit all changes and open PR
-
-## Files touched this session
-
-- `docs-site/src/routes/guides/brand-guide.tsx` (new)
-- `docs-site/src/routes/guides/migration.tsx` (new)
-- `docs-site/src/routeTree.gen.ts` (regenerated)
-- `HANDOFF.md` (updated)
-
-## Key references
-
-- `dev-notes/Goals/GOAL_00.md` — §7c v1.0 "Premiere Night" (lines 393-396), §7d BF-421/BF-430/BF-480, §10 final deliverables
-- `packages/cli/src/index.ts` — CLI command implementations (doctor, benchmark, upgrade)
-- `packages/cli/test/cli.test.ts` — CLI test suite (29 tests)
-- `docs-site/src/routes/guides/brand-guide.tsx` — Cinema Black design system docs
-- `docs-site/src/routes/guides/migration.tsx` — Remotion migration guide
+## 7. Environment facts
+- Node 24, pnpm 11.5.1 (`packageManager`-pinned), Turbo 2.11.7, repo: github.com/Dream-Pixels-Forge/brandlyframes
+- Subagent worktrees: `/home/dimona/Dream-Pixels-Forge/Dev/Packages/worktrees/brandlyframes/pi-worktree-<runid>-*`
+- Child artifacts: `~/.pi/agent/sessions/…/subagent-artifacts/<runid>_worker_output.md`
+- gh auth OK; internet hiccuped once ("error connecting to api.github.com") — retry works
