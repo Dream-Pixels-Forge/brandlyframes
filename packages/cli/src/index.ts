@@ -13,6 +13,10 @@ import {
   stitchFrames,
 } from '@brandlyframes/renderer';
 import { createCdpLauncher } from './cdp-launcher.js';
+import {
+  runBatch,
+  DEFAULT_MANIFEST_FILENAME,
+} from './batch.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -393,6 +397,75 @@ function runDoctor(fix: boolean, json: boolean) {
     console.log(`Run with --fix to auto-fix fixable issues, or address the ${overall} items above.`);
     process.exit(1);
   }
+}
+
+// ----- batch command [BF-141][BF-142] -----
+program
+  .command('batch <input> <outDir>')
+  .description('render N variants from CSV/JSON/API input with prop templating [BF-141]')
+  .requiredOption('-u, --url <template>', 'composition URL template with {{column}} placeholders')
+  .requiredOption('-e, --end <frame>', 'last frame per variant (exclusive)')
+  .option('-s, --start <frame>', 'first frame per variant (default: 0)', '0')
+  .option('-m, --manifest <path>', 'batch manifest path (default: <outDir>/batch-manifest.json)')
+  .option('--checkpoint <path>', 'checkpoint path (default: <outDir>/batch-checkpoint.json)')
+  .option('--no-resume', 'ignore the checkpoint and re-render every variant [BF-142]')
+  .action((input, outDir, options) => {
+    runBatchCli(input, outDir, options).catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+  });
+
+async function runBatchCli(
+  input: string,
+  outDir: string,
+  options: {
+    url: string;
+    start: string;
+    end: string;
+    manifest?: string;
+    checkpoint?: string;
+    resume: boolean;
+  }
+) {
+  const startFrame = Number(options.start);
+  const endFrame = Number(options.end);
+  if (!Number.isInteger(startFrame) || startFrame < 0) {
+    console.error('batch: start must be a non-negative integer');
+    process.exit(1);
+  }
+  if (!Number.isInteger(endFrame) || endFrame <= startFrame) {
+    console.error('batch: end must be an integer with end > start');
+    process.exit(1);
+  }
+  console.log(`Batch rendering ${input} -> ${outDir}`);
+  await runBatch(
+    {
+      input,
+      urlTemplate: options.url,
+      outDir,
+      start: startFrame,
+      end: endFrame,
+      manifestPath: options.manifest,
+      checkpointPath: options.checkpoint,
+      resume: options.resume !== false,
+      onVariantDone: (variant) =>
+        console.log(
+          `  ${variant.id}: ${variant.status}${variant.error ? ` (${variant.error})` : ''}`
+        ),
+    },
+    // Real renderer: one frame-exact render job per variant; its own render
+    // manifest keeps frame-level resume inside each variant.
+    async (variant) => {
+      await runRenderJob(
+        { url: variant.url, start: startFrame, end: endFrame, outDir: variant.outDir },
+        createCdpLauncher
+      );
+    }
+  );
+  console.log(
+    `Batch manifest: ${options.manifest ?? join(resolve(outDir), DEFAULT_MANIFEST_FILENAME)}`
+  );
 }
 
 // ----- benchmark command [BF-092][BF-421] -----
