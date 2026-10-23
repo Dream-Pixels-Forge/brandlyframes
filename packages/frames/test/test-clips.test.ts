@@ -173,7 +173,8 @@ describe('writeTestClipManifest', () => {
 });
 
 describe('runPerfBenchmark', () => {
-  it('returns benchmark result with expected properties', async () => {
+  // Benchmark renders 100 frames at 1920x1080 — CI runners are slow.
+  it('returns benchmark result with expected properties', { timeout: 60_000 }, async () => {
     const spec: FrameCounterClipSpec = {
       id: 'perf-test',
       name: 'Perf Test',

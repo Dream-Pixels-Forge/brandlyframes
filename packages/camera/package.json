@@ -1,0 +1,39 @@
+{
+  "name": "@brandlyframes/camera",
+  "version": "1.0.0",
+  "description": "Deterministic camera moves (dolly, pan, parallax) for BrandlyFrames 2D layers: a pure `frame -> transform` function, no randomness, no wall clock.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*",
+    "@brandlyframes/fx": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.4",
+    "@vitest/coverage-v8": "5.0.4"
+  },
+  "keywords": ["brandlyframes", "camera", "dolly", "pan", "parallax", "motion"],
+  "license": "MIT"
+}

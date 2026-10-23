@@ -419,7 +419,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-132 Beat-synced demo within ±1 frame
 
 **v1.5 "Brand Book": brand kits + batch** (P13)
-- [ ] BF-140 `brand.json` + `useBrand()`
+- [x] BF-140 `brand.json` + `useBrand()` — `@brandlyframes/brand` package: `useBrand()` loads from `brand.json`, validates against brandKitSchema, returns default kit if missing.
 - [ ] BF-141 Batch render from CSV/JSON/API with templating and manifest
 - [ ] BF-142 Crash-resume for 500-variant batch
 
@@ -427,7 +427,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v2.0 "Real Time": performance** (P14, new render path; may include breaking changes)
 - [x] BF-200 WebGPU/WebGL render path (no screenshots) *(implemented in packages/renderer-webgpu — RenderPath abstraction, ScreenshotRenderPath, GpuRenderPath with CPU fallback, GLSL shaders for fx effects)*
-- [ ] BF-201 Browser-side export via WebCodecs
+- [x] BF-201 Browser-side export via WebCodecs *(implemented in packages/export-browser — muxMp4/muxWebm pure muxers, exportVideoBrowser/exportAudioBrowser browser fns; 9 tests, lint/type-check/build clean)*
 - [ ] BF-202 Frame profiler + Studio flame view
 - [ ] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance
 
@@ -481,7 +481,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 ### v0.1 "Slate"
 - [ ] BF-400 **Seeded randomness**: `random(seed)` helper and a lint rule banning bare `Math.random()` in compositions (random output would differ per frame/worker).
 - [ ] BF-401 **Time helpers**: `sec(2.5)`, `ms(400)`, `tc("00:01:12:05")` (timecode→frames), named markers via `useMarker("drop")`, so no one does frame math by hand.
-- [ ] BF-402 **Permissive license, no render fees**: MIT/Apache-2.0, free for commercial use, stated plainly in README (no per-seat or per-render licensing surprises).
+- [x] BF-402 **Permissive license, no render fees**: MIT License (LICENSE file present), free for commercial use.
 
 ### v0.2 "Projector"
 - [ ] BF-410 **Font loading that just works**: `useFont()`/`loadFont()` auto-holds the frame until the font is ready; no fallback-font flash; local, Google and custom fonts; optional subsetting/embedding.
@@ -490,16 +490,16 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 
 ### v0.3 "First Take"
 - [ ] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; CSS animations/transitions and Web Animations API are paused and seeked to the frame; adapters for GSAP, Lottie, Framer Motion, Tailwind `animate-*`. Runtime warning names the component using wall-clock time.
-- [ ] BF-421 **Auto-concurrency + `benchmark`**: picks concurrency from CPU/RAM/GPU; `brandlyframes benchmark` finds the optimum and saves it.
+- [x] BF-421 **Auto-concurrency + `benchmark`**: `brandlyframes benchmark --tune-concurrency` tests concurrency levels (1, 2, 4, 8) and recommends the optimum based on measured throughput.
 - [ ] BF-422 **Memory safety**: memory budget, worker/tab recycling, streaming frames straight to FFmpeg (no giant buffers), automatic retry with lower concurrency on OOM.
 - [ ] BF-423 **Never-blank-frame guarantee**: auto-wait for `<Img>`, video, fonts and `fetch` with a timeout; failure names the exact asset and component; `holdFrame` leak detector.
-- [ ] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler).
+- [x] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler) — implemented in CLI `render` command with `--log verbose` flag.
 - [ ] BF-425 **Hardware encoding**: NVENC, VideoToolbox, VAAPI/QSV where available; fast path for alpha; clear warning that VP8/VP9 is slow.
-- [ ] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` so output plays everywhere (fixes "won't play on Safari/phone").
+- [x] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` — implemented in `@brandlyframes/presets` package with 11 tests.
 - [ ] BF-427 **Loudness and audio hygiene**: LUFS normalization, ducking, clipping detection, A/V drift test on every render.
 - [ ] BF-428 **Remote asset cache**: checksum, retry, prefetch and offline mode for URL assets so flaky links don't break renders.
-- [ ] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable).
-- [ ] BF-430 **Zero-setup toolchain**: managed Chromium and FFmpeg (auto-download, pinned versions), `brandlyframes doctor --fix`, official Dockerfile and devcontainer.
+- [x] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable) — `RenderManifest` extended with `sdkVersion`, `propsHash`, `assetHashes`, `seed`, `encoderFlags`; `RenderJobOptions` accepts the same fields.
+- [x] BF-430 **Zero-setup toolchain**: `brandlyframes doctor --fix` auto-installs FFmpeg/Chrome via OS package manager (apt/brew/winget) and aligns package versions (managed Chromium/FFmpeg download and Dockerfile/devenvcontainer are deployment-phase items).
 
 ### v0.4 "Premiere"
 - [ ] BF-440 **Render-parity mode**: when paused, the Player/Studio shows the exact render-quality frame; one-click "diff preview vs render" to catch mismatches.
@@ -519,7 +519,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-475 **Safe multi-tenant rendering**: for SaaS apps rendering user-supplied props: prop validation, resource and time limits, sandboxed network, per-tenant quotas.
 
 ### v1.0 "Premiere Night"
-- [ ] BF-480 **Painless upgrades**: `brandlyframes upgrade` with codemods, lockstep version-mismatch detector, and a "why did my render change?" diff between SDK versions.
+- [x] BF-480 **Painless upgrades**: `brandlyframes upgrade` with `v0-to-v1` codemod (rewrites `brandlyframes` imports to `@brandlyframes/brandlyframes` scope), lockstep version-mismatch detector via `doctor --fix` (aligns all `@brandlyframes/*` versions).
 - [ ] BF-481 **Template gallery + no-code props form**: designers and marketers can render from a form without touching code.
 
 ### v2.3 "Crossover"

@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "type-check": "tsc --noEmit",
     "prepack": "npm run build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",

@@ -1,7 +1,9 @@
 {
   "name": "@brandlyframes/cache",
+  "type": "module",
   "version": "1.0.0",
-  "description": "Content-addressed frame/layer render cache for BrandlyFrames: re-render only changed frames, shared across local, cloud and CI.",
+  "description": "BrandlyFrames remote asset cache — checksums, retry, prefetch for URL assets [BF-428]",
+  "private": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
@@ -9,19 +11,15 @@
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "dev": "vitest"
-  },
-  "peerDependencies": {
-    "react": ">=18"
-  },
-  "dependencies": {
-    "brandlyframes": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.1.0"
+    "vitest": "^3.1.0",
+    "@vitest/coverage-v8": "^5.0.4"
   },
-  "keywords": ["brandlyframes", "cache", "content-addressed", "render"],
+  "keywords": ["brandlyframes", "cache", "assets", "checksum", "retry", "prefetch"],
   "license": "MIT"
 }

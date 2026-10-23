@@ -9,6 +9,6 @@
     "noEmit": false,
     "allowImportingTsExtensions": false
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "test", "**/*.test.ts", "**/*.test.tsx"]
 }

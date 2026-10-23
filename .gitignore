@@ -8,6 +8,9 @@ coverage/
 # Turborepo
 .turbo/
 
+# TypeScript build info
+*.tsbuildinfo
+
 # Environment — never commit .env files (SECURITY.md §1); only .env.example is committed
 .env*
 !.env.example

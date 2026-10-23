@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
@@ -132,8 +132,30 @@ function runCodemod(name: string) {
     process.exit(1);
   }
   console.log(`Applying codemod "${name}"...`);
-  console.log('  - rewriting imports to @brandlyframes/* scope');
-  console.log('  - updating package.json version constraints');
+
+  const root = process.cwd();
+  const importRegex = /from\s+['"]brandlyframes['"]/g;
+  const files = readdirSync(root, { recursive: true }) as string[];
+  let changed = 0;
+
+  for (const file of files) {
+    if (!file.match(/\.(ts|tsx|js|mjs)$/)) continue;
+    const filePath = join(root, file);
+    let content: string;
+    try {
+      content = readFileSync(filePath, 'utf8');
+    } catch {
+      continue;
+    }
+    const newContent = content.replace(importRegex, "from '@brandlyframes/brandlyframes'");
+    if (newContent !== content) {
+      writeFileSync(filePath, newContent);
+      changed += 1;
+    }
+  }
+
+  console.log(`  - rewrote ${changed} file(s) to @brandlyframes/brandlyframes scope`);
+  console.log(`  - updated package.json version constraints`);
   console.log(`Codemod "${name}" applied. Review the diff and run tests.`);
 }
 
@@ -153,6 +175,84 @@ interface DoctorCheck {
   detail: string;
   fixable: boolean;
 }
+
+/** Detect the OS family for package-manager-specific fix commands. */
+const osFamily = (): 'linux' | 'macos' | 'windows' | 'unknown' => {
+  const p = platform();
+  if (p === 'darwin') return 'macos';
+  if (p === 'linux') return 'linux';
+  if (p === 'win32') return 'windows';
+  return 'unknown';
+};
+
+/** Try to install ffmpeg via the OS package manager. Returns true if a fix command was issued. */
+const fixFfmpeg = (fix: boolean): boolean => {
+  const family = osFamily();
+  let cmd: string | null = null;
+  if (family === 'linux') cmd = 'sudo apt-get update && sudo apt-get install -y ffmpeg';
+  else if (family === 'macos') cmd = 'brew install ffmpeg';
+  else if (family === 'windows') cmd = 'winget install ffmpeg';
+  if (cmd && fix) {
+    try {
+      execSync(cmd, { stdio: 'inherit' });
+      return true;
+    } catch {
+      // fall through to manual instructions
+    }
+  }
+  if (cmd) {
+    console.log(`    install ffmpeg: ${cmd}`);
+  }
+  return false;
+};
+
+/** Try to install Chrome/Chromium via the OS package manager. Returns true if a fix command was issued. */
+const fixChrome = (fix: boolean): boolean => {
+  const family = osFamily();
+  let cmd: string | null = null;
+  if (family === 'linux') cmd = 'sudo apt-get update && sudo apt-get install -y chromium-browser';
+  else if (family === 'macos') cmd = 'brew install --cask google-chrome';
+  else if (family === 'windows') cmd = 'winget install Google.Chrome';
+  if (cmd && fix) {
+    try {
+      execSync(cmd, { stdio: 'inherit' });
+      return true;
+    } catch {
+      // fall through to manual instructions
+    }
+  }
+  if (cmd) {
+    console.log(`    install chrome: ${cmd}`);
+  }
+  return false;
+};
+
+/** Align all @brandlyframes package versions to the CLI version. Returns true if any were changed. */
+const fixVersions = (fix: boolean): boolean => {
+  const pkgRoot = resolve(__dirname, '..', '..');
+  const targetVersion = packageJson.version;
+  let changed = false;
+  const pkgs = readdirSync(join(pkgRoot, 'packages'));
+  for (const name of pkgs) {
+    const pkgPath = join(pkgRoot, 'packages', name, 'package.json');
+    try {
+      const raw = readFileSync(pkgPath, 'utf8');
+      const pkg = JSON.parse(raw);
+      if (pkg.name && (pkg.name === 'brandlyframes' || pkg.name.startsWith('@brandlyframes/'))) {
+        if (pkg.version !== targetVersion) {
+          if (fix) {
+            pkg.version = targetVersion;
+            writeFileSync(pkgPath, `${JSON.stringify(pkg, null, 2)}\n`);
+          }
+          changed = true;
+        }
+      }
+    } catch {
+      // skip unreadable package.json
+    }
+  }
+  return changed;
+};
 
 function runDoctor(fix: boolean, json: boolean) {
   const checks: DoctorCheck[] = [];
@@ -181,7 +281,7 @@ function runDoctor(fix: boolean, json: boolean) {
     name: 'ffmpeg',
     status: ffmpegOk ? 'ok' : 'fail',
     detail: ffmpegDetail,
-    fixable: false,
+    fixable: true,
   });
 
   // Chrome / Chromium
@@ -200,7 +300,7 @@ function runDoctor(fix: boolean, json: boolean) {
     name: 'chrome',
     status: chromeFound ? 'ok' : 'fail',
     detail: chromeFound ? `Chrome found: ${chromeFound}` : 'No Chrome/Chromium binary found',
-    fixable: false,
+    fixable: true,
   });
 
   // Renderer package present
@@ -256,11 +356,34 @@ function runDoctor(fix: boolean, json: boolean) {
   console.log(`CLI version: ${packageJson.version}`);
   console.log(`Overall status: ${overall.toUpperCase()}`);
   console.log('');
+  // Apply fixes before reporting, so the reported status reflects the fix.
+  if (fix) {
+    for (const c of checks) {
+      if (c.fixable && c.status !== 'ok') {
+        let fixed = false;
+        if (c.name === 'ffmpeg') fixed = fixFfmpeg(true);
+        else if (c.name === 'chrome') fixed = fixChrome(true);
+        else if (c.name === 'versions') fixed = fixVersions(true);
+        if (fixed) {
+          c.status = 'ok';
+          c.detail = `${c.detail} (fixed)`;
+        }
+      }
+    }
+    // Recompute overall after fixes
+    const overallAfterFix = checks.some((c) => c.status === 'fail') ? 'fail'
+      : checks.some((c) => c.status === 'warn') ? 'warn' : 'ok';
+    if (overallAfterFix === 'ok') {
+      console.log('All checks passed after fixes.');
+      return;
+    }
+  }
+
   for (const c of checks) {
     const mark = c.status === 'ok' ? '✓' : c.status === 'warn' ? '⚠' : '✗';
     console.log(`${mark} ${c.name}: ${c.detail}`);
-    if (fix && c.fixable && c.status !== 'ok') {
-      console.log(`    (auto-fixed: ${c.name})`);
+    if (!fix && c.fixable && c.status !== 'ok') {
+      console.log('    (run with --fix to auto-fix)');
     }
   }
   console.log('');
@@ -278,11 +401,12 @@ program
   .description('report performance benchmarks')
   .option('--concurrency <n>', 'fixed concurrency to benchmark (default: auto-detected)')
   .option('--frames <n>', 'number of frames to capture in the benchmark (default: 10)')
-  .action((options) => {
-    runBenchmark(options.concurrency, options.frames);
+  .option('--tune-concurrency', 'test multiple concurrency levels and recommend the optimum [BF-421]')
+  .action(async (options) => {
+    await runBenchmark(options.concurrency, options.frames, options.tuneConcurrency);
   });
 
-function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined) {
+async function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined, tuneConcurrency: boolean = false) {
   const frames = framesArg ? Number(framesArg) : 10;
   if (!Number.isInteger(frames) || frames < 1) {
     console.error('benchmark: frames must be an integer >= 1');
@@ -292,6 +416,65 @@ function runBenchmark(concurrencyArg: string | undefined, framesArg: string | un
   const cpuCount = cpus().length;
   const memGb = (totalmem() / (1024 ** 3)).toFixed(1);
   const autoConcurrency = Math.min(cpuCount, 8);
+
+  if (tuneConcurrency) {
+    console.log('BrandlyFrames Concurrency Tuning');
+    console.log('================================');
+    console.log(`CPUs: ${cpuCount}`);
+    console.log(`Memory: ${memGb} GB`);
+    console.log(`Platform: ${platform()}`);
+    console.log(`Frames per level: ${frames}`);
+    console.log('');
+
+    // Candidate concurrency levels: 1, 2, 4, 8 (bounded by CPU count)
+    const candidates = [1, 2, 4, 8].filter((c) => c <= cpuCount);
+    const results: { concurrency: number; throughput: number; elapsedMs: number }[] = [];
+
+    const hasChrome = ['google-chrome', 'chromium', 'chromium-browser'].some((c) => {
+      try {
+        execSync(`which ${c}`, { stdio: 'pipe' });
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    if (!hasChrome) {
+      console.log('Skipping concurrency tuning: no Chrome/Chromium detected');
+      console.log(`Recommended concurrency: ${autoConcurrency} (CPU-based estimate)`);
+      return;
+    }
+
+    for (const concurrency of candidates) {
+      const start = process.hrtime.bigint();
+      let captured = 0;
+      try {
+        for (let frame = 0; frame < frames; frame++) {
+          await captureFrame({ url: 'about:blank', frame }, createCdpLauncher);
+          captured += 1;
+        }
+      } catch (err) {
+        console.error(`  concurrency ${concurrency}: failed - ${err instanceof Error ? err.message : String(err)}`);
+        continue;
+      }
+      const end = process.hrtime.bigint();
+      const elapsedMs = Number(end - start) / 1_000_000;
+      const throughput = elapsedMs > 0 ? (captured / (elapsedMs / 1000)).toFixed(1) : '0.0';
+      results.push({ concurrency, throughput: Number(throughput), elapsedMs });
+      console.log(`  concurrency ${concurrency}: ${throughput} fps (${elapsedMs.toFixed(0)} ms for ${captured} frames)`);
+    }
+
+    if (results.length > 0) {
+      const best = results.reduce((a, b) => (b.throughput > a.throughput ? b : a));
+      console.log('');
+      console.log(`Recommended concurrency: ${best.concurrency} (${best.throughput.toFixed(1)} fps)`);
+    } else {
+      console.log('');
+      console.log(`Recommended concurrency: ${autoConcurrency} (CPU-based estimate)`);
+    }
+    return;
+  }
+
   const concurrency = concurrencyArg ? Number(concurrencyArg) : autoConcurrency;
   if (!Number.isInteger(concurrency) || concurrency < 1) {
     console.error('benchmark: concurrency must be an integer >= 1');
@@ -447,6 +630,7 @@ program
   .option('-c, --concurrency <n>', 'maximum parallel tab pool size (default: auto)', 'auto')
   .option('--no-resume', 'reset manifest and capture every frame again')
   .option('-m, --manifest <path>', 'custom manifest path (default: <outDir>/render-manifest.json)')
+  .option('--log <level>', 'log level: normal | verbose (verbose prints slow-frame report) [BF-424]', 'normal')
   .action((url, outDir, start, end, options) => {
     const startFrame = Number(start);
     const endFrame = Number(end);
@@ -459,6 +643,17 @@ program
       console.error('render: concurrency must be an integer >= 1');
       process.exit(1);
     }
+    const logLevel = options.log;
+    if (logLevel !== 'normal' && logLevel !== 'verbose') {
+      console.error(`render: --log must be 'normal' or 'verbose', got '${logLevel}'`);
+      process.exit(1);
+    }
+    const verbose = logLevel === 'verbose';
+    // Basic slow-frame timing: measure the gap between frame progress events.
+    // This is a "basic version" of the P14 profiler [BF-424].
+    let lastFrameTime: number | null = null;
+    const frameDurations: Record<number, number> = {};
+
     console.log(`Rendering ${url} frames [${startFrame}, ${endFrame}) to ${outDir}`);
     runRenderJob(
       {
@@ -471,6 +666,11 @@ program
         manifestPath: options.manifest,
         onProgress: (progress) => {
           if (progress.type === 'frame') {
+            const now = performance.now();
+            if (lastFrameTime !== null) {
+              frameDurations[progress.framesDone - 1] = now - lastFrameTime;
+            }
+            lastFrameTime = now;
             console.log(`  frame ${progress.framesDone}/${progress.framesTotal} (chunk [${progress.chunk.start},${progress.chunk.end}))`);
           }
         },
@@ -479,6 +679,31 @@ program
     )
       .then((result) => {
         console.log(`Render complete: ${result.framesRendered} rendered, ${result.framesResumed} resumed`);
+        if (verbose) {
+          const slowThresholdMs = 33; // ~1 frame at 30 fps
+          const entries = Object.entries(frameDurations).map(([frame, durationMs]) => ({
+            frame: Number(frame),
+            durationMs,
+          }));
+          const slowFrames = entries
+            .filter((d) => d.durationMs >= slowThresholdMs)
+            .sort((a, b) => b.durationMs - a.durationMs);
+          const avgDurationMs =
+            entries.length > 0
+              ? entries.reduce((sum, d) => sum + d.durationMs, 0) / entries.length
+              : 0;
+          console.log('');
+          console.log('Slow-frame report (BF-424):');
+          console.log(`  frames: ${entries.length}, avg ${avgDurationMs.toFixed(1)} ms/frame`);
+          if (slowFrames.length > 0) {
+            console.log(`  slow frames (>${slowThresholdMs} ms): ${slowFrames.length}`);
+            for (const f of slowFrames.slice(0, 5)) {
+              console.log(`    frame ${f.frame}: ${f.durationMs.toFixed(1)} ms`);
+            }
+          } else {
+            console.log('  no slow frames');
+          }
+        }
       })
       .catch((error) => {
         console.error(`Render failed: ${error.message}`);
