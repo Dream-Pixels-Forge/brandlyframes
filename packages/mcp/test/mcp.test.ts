@@ -264,6 +264,8 @@ describe('MCP tool contract [BF-100]', () => {
           framesRendered: 2,
           framesResumed: 0,
           completed: [{ start: 0, end: 2 }],
+          cacheHits: 0,
+          cacheMisses: 2,
         };
       },
       stitch: async (input, options) => {
