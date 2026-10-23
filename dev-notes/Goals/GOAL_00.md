@@ -420,8 +420,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v1.5 "Brand Book": brand kits + batch** (P13)
 - [x] BF-140 `brand.json` + `useBrand()` — `@brandlyframes/brand` package: `useBrand()` loads from `brand.json`, validates against brandKitSchema, returns default kit if missing.
-- [ ] BF-141 Batch render from CSV/JSON/API with templating and manifest
-- [ ] BF-142 Crash-resume for 500-variant batch
+- [x] BF-141 Batch render from CSV/JSON/API with templating and manifest *(implemented in packages/cli/src/batch.ts — CSV/JSON/API input, {{column}} templating, batch-manifest.json; 15 fake-renderer tests)*
+- [x] BF-142 Crash-resume for 500-variant batch *(implemented via batch-checkpoint.json — rerun skips completed variants; simulated-crash test proves resume)*
 
 ### Next generation
 
@@ -479,8 +479,8 @@ Rule for the whole SDK: **every common failure should be prevented, detected, or
 Known pains this section targets (from how Remotion-style tools behave in practice): flicker/choppiness when animations don't run purely off the frame number; stutter with many embedded video tags; guesswork around render concurrency; memory crashes on heavy renders; slow VP8/VP9/alpha encodes; fonts and assets not loaded when a frame is captured; cloud setup/cost complexity and audio-chunk artifacts; ffmpeg/Chrome/Docker setup friction; videos that won't play on some platforms.
 
 ### v0.1 "Slate"
-- [ ] BF-400 **Seeded randomness**: `random(seed)` helper and a lint rule banning bare `Math.random()` in compositions (random output would differ per frame/worker).
-- [ ] BF-401 **Time helpers**: `sec(2.5)`, `ms(400)`, `tc("00:01:12:05")` (timecode→frames), named markers via `useMarker("drop")`, so no one does frame math by hand.
+- [x] BF-400 **Seeded randomness**: `random(seed)` helper and a lint rule banning bare `Math.random()` in compositions (random output would differ per frame/worker).
+- [x] BF-401 **Time helpers**: `sec(2.5)`, `ms(400)`, `tc("00:01:12:05")` (timecode→frames), named markers via `useMarker("drop")`, so no one does frame math by hand.
 - [x] BF-402 **Permissive license, no render fees**: MIT License (LICENSE file present), free for commercial use.
 
 ### v0.2 "Projector"
