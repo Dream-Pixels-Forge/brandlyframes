@@ -447,7 +447,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v2.4 "Quality Control": testing + debugging** (P18)
 - [ ] BF-240 `brandlyframes test` golden-frame diff + CI action
-- [ ] BF-241 Time-travel debugger in Studio
+- [x] BF-241 Time-travel debugger in Studio
 
 **v3.0 "Studio System": collaboration + ecosystem** (P19)
 - [ ] BF-300 Shareable cloud preview links with frame-accurate comments
@@ -485,8 +485,8 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 
 ### v0.2 "Projector"
 - [ ] BF-410 **Font loading that just works**: `useFont()`/`loadFont()` auto-holds the frame until the font is ready; no fallback-font flash; local, Google and custom fonts; optional subsetting/embedding.
-- [ ] BF-411 **Error overlay with component stack**: any render error in Studio shows the failing component, frame number, and props, plus a suggested fix.
-- [ ] BF-412 **Frame inspector**: click any element to see its computed props/styles at the current frame.
+- [x] BF-411 **Error overlay with component stack**: any render error in Studio shows the failing component, frame number, and props, plus a suggested fix.
+- [x] BF-412 **Frame inspector**: click any element to see its computed props/styles at the current frame.
 
 ### v0.3 "First Take"
 - [ ] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; CSS animations/transitions and Web Animations API are paused and seeked to the frame; adapters for GSAP, Lottie, Framer Motion, Tailwind `animate-*`. Runtime warning names the component using wall-clock time.
