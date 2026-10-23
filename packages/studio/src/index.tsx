@@ -1,4 +1,13 @@
-import { ReactNode } from 'react';
+import { ReactNode, useCallback, useState, MouseEvent } from 'react';
+import { suggestFix } from './errorCapture';
+import { FrameHistory } from './frameHistory';
+import { InspectorRegistry, inspectElement, InspectedElement } from './inspector';
+
+export { ErrorCapture, suggestFix, extractComponentName } from './errorCapture';
+export type { CapturedRenderError, RecordErrorInput } from './errorCapture';
+export { FrameHistory } from './frameHistory';
+export { InspectorRegistry, inspectElement, resolveElementProps, getElementStyles } from './inspector';
+export type { InspectedElement } from './inspector';
 
 // Studio Shell - Main container for the Studio interface
 // Includes: composition sidebar, canvas, scrubber, hot reload (BF-011)
@@ -40,34 +49,44 @@ export const PropsEditor = <T extends Record<string, unknown>>({
   );
 };
 
-// Error Overlay - shows failing component, frame number, and props, plus suggested fix (BF-411)
+// Error Overlay - shows failing component, frame number, props snapshot, and suggested fix (BF-411)
 export const ErrorOverlay = ({ 
   error, 
   frameNumber, 
   componentStack, 
-  suggestedFix 
+  suggestedFix,
+  componentName,
+  propsSnapshot
 }: { 
   error?: Error; 
   frameNumber: number; 
-  componentStack: string; 
-  suggestedFix?: string 
+  componentStack?: string; 
+  suggestedFix?: string;
+  componentName?: string;
+  propsSnapshot?: Record<string, unknown>;
 }) => {
   if (!error) {
     return null;
   }
   
   return (
-    <div className="error-overlay">
+    <div className="error-overlay" data-testid="error-overlay" role="alert">
       <div className="error-overlay-header">Render Error</div>
       <div className="error-overlay-content">
-        <div className="error-message">{error.message}</div>
-        <div className="error-frame">Frame: {frameNumber}</div>
-        <div className="error-component-stack">{componentStack}</div>
-        {suggestedFix && (
-          <div className="error-suggested-fix">
-            <strong>Suggested fix:</strong> {suggestedFix}
-          </div>
+        <div className="error-message" data-testid="error-message">{error.message}</div>
+        <div className="error-frame" data-testid="error-frame">Frame: {frameNumber}</div>
+        {componentName && (
+          <div className="error-component-name" data-testid="error-component-name">Component: {componentName}</div>
         )}
+        {propsSnapshot && (
+          <pre className="error-props-snapshot" data-testid="error-props-snapshot">
+            {JSON.stringify(propsSnapshot, null, 2)}
+          </pre>
+        )}
+        <div className="error-component-stack">{componentStack}</div>
+        <div className="error-suggested-fix" data-testid="error-suggested-fix">
+          <strong>Suggested fix:</strong> {suggestedFix ?? suggestFix(error)}
+        </div>
       </div>
     </div>
   );
@@ -107,3 +126,73 @@ export const FrameInspector = ({
     </div>
   );
 };
+// Time-Travel Debugger - scrub back/forward through already-rendered frames, jump to first error (BF-241)
+export const TimeTravelDebugger = ({
+  history,
+  firstErrorFrame,
+  onSeek,
+}: {
+  history: FrameHistory;
+  firstErrorFrame?: number | null;
+  onSeek?: (frame: number) => void;
+}) => {
+  const [frame, setFrame] = useState<number | null>(history.current);
+
+  const seek = (frame: number | null) => {
+    if (frame === null) return;
+    setFrame(frame);
+    onSeek?.(frame);
+  };
+
+  return (
+    <div className="time-travel-debugger" data-testid="time-travel-debugger">
+      <div className="time-travel-frame" data-testid="time-travel-frame">
+        Frame: {frame ?? '—'}
+      </div>
+      <button
+        className="time-travel-back"
+        data-testid="time-travel-back"
+        disabled={!history.canBack()}
+        onClick={() => seek(history.back())}
+      >
+        ◀ Back
+      </button>
+      <button
+        className="time-travel-forward"
+        data-testid="time-travel-forward"
+        disabled={!history.canForward()}
+        onClick={() => seek(history.forward())}
+      >
+        Forward ▶
+      </button>
+      {firstErrorFrame != null && (
+        <button
+          className="time-travel-jump-to-error"
+          data-testid="time-travel-jump-to-error"
+          onClick={() => {
+            history.jump(firstErrorFrame);
+            seek(firstErrorFrame);
+          }}
+        >
+          Jump to first error (frame {firstErrorFrame})
+        </button>
+      )}
+    </div>
+  );
+};
+
+// Frame Inspector hook - click any element in the preview to inspect it (BF-412)
+// Pair with <FrameInspector element={inspected.element} ... /> and the studio canvas onPointerDown.
+export function useFrameInspector(registry?: InspectorRegistry) {
+  const [inspected, setInspected] = useState<(InspectedElement & { element: Element }) | null>(null);
+
+  const handlePreviewClick = useCallback(
+    (event: MouseEvent<HTMLElement>) => {
+      const element = event.target as Element;
+      setInspected({ element, ...inspectElement(element, registry) });
+    },
+    [registry],
+  );
+
+  return { inspected, handlePreviewClick };
+}
