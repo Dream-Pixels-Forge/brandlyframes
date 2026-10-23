@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/studio",
   "version": "1.0.0",
-  "description": "BrandlyFrames studio — composition sidebar, canvas, scrubber, hot reload, props editor, error overlay, and frame inspector (BF-011/012/411/412).",
+  "description": "BrandlyFrames studio — composition sidebar, canvas, scrubber, hot reload, props editor, error overlay, frame inspector, and time-travel debugger (BF-011/012/411/412/241).",
   "type": "module",
   "exports": {
     ".": {
@@ -23,8 +23,12 @@
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "jsdom": "^30.1.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^5.9.3",
