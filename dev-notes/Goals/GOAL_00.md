@@ -414,9 +414,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-122 AST write-back to source code; lossless round-trip tests
 
 **v1.4 "Score": audio-reactive** (P12)
-- [ ] BF-130 `useAudioData`, `useBeat`, `useLoudness`, `useSpectrum`
-- [ ] BF-131 Pre-computed, cached per-frame audio analysis
-- [ ] BF-132 Beat-synced demo within ±1 frame
+- [x] BF-130 `useAudioData`, `useBeat`, `useLoudness`, `useSpectrum`
+- [x] BF-131 Pre-computed, cached per-frame audio analysis
+- [x] BF-132 Beat-synced demo within ±1 frame
 
 **v1.5 "Brand Book": brand kits + batch** (P13)
 - [x] BF-140 `brand.json` + `useBrand()` — `@brandlyframes/brand` package: `useBrand()` loads from `brand.json`, validates against brandKitSchema, returns default kit if missing.
