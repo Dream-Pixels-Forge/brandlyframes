@@ -65,6 +65,10 @@ describe('create-brandlyframes CLI', () => {
       const pkg = JSON.parse(readFileSync(join(projectDir, 'package.json'), 'utf8'));
       expect(pkg.name).toBe('blank');
       expect(pkg.description).toContain('Minimal empty BrandlyFrames project');
+      // agent SKILL.md shipped with every project [BF-102]
+      const skill = readFileSync(join(projectDir, 'SKILL.md'), 'utf8');
+      expect(skill).toContain('name: brandlyframes');
+      expect(skill).toContain('list_compositions');
     } finally {
       rmSync(projectDir, { recursive: true, force: true });
     }

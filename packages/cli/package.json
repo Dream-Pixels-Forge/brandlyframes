@@ -6,6 +6,10 @@
   "bin": {
     "brandlyframes": "./dist/index.js"
   },
+  "exports": {
+    ".": "./dist/index.js",
+    "./cdp-launcher": "./dist/cdp-launcher.js"
+  },
   "files": [
     "dist"
   ],

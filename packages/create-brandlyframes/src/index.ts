@@ -80,6 +80,12 @@ function scaffold(template: string, projectDir: string, projectName: string) {
 
   copyRecursive(srcDir, projectDir);
 
+  // Ship the agent SKILL.md with every project [BF-102].
+  const skillSrc = join(TEMPLATES_DIR, 'SKILL.md');
+  if (existsSync(skillSrc)) {
+    copyFileSync(skillSrc, join(projectDir, 'SKILL.md'));
+  }
+
   // Rewrite package.json with project name
   const pkgPath = join(projectDir, 'package.json');
   if (existsSync(pkgPath)) {
