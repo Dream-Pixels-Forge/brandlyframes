@@ -398,10 +398,10 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 ### Post-1.0 (next level)
 
 **v1.1 "Director's Cut": agent-native** (P9)
-- [ ] BF-100 `@brandlyframes/mcp` server (compositions, props, still, render, status)
-- [ ] BF-101 JSON Schema export of compositions
-- [ ] BF-102 Agent skill (`SKILL.md`) shipped in templates and docs
-- [ ] BF-103 Brief-to-MP4 end-to-end agent test in CI
+- [x] BF-100 `@brandlyframes/mcp` server (compositions, props, still, render, status)
+- [x] BF-101 JSON Schema export of compositions
+- [x] BF-102 Agent skill (`SKILL.md`) shipped in templates and docs
+- [x] BF-103 Brief-to-MP4 end-to-end agent test in CI
 
 **v1.2 "Cache Hit": incremental rendering** (P10)
 - [x] BF-110 Content-addressed frame/layer hashing
