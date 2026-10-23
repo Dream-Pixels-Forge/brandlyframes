@@ -404,9 +404,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [ ] BF-103 Brief-to-MP4 end-to-end agent test in CI
 
 **v1.2 "Cache Hit": incremental rendering** (P10)
-- [ ] BF-110 Content-addressed frame/layer hashing
-- [ ] BF-111 Shared cache: local, cloud, CI
-- [ ] BF-112 Cache-hit counters in CLI and Studio; byte-identical cold vs cached test
+- [x] BF-110 Content-addressed frame/layer hashing
+- [x] BF-111 Shared cache: local, cloud, CI
+- [x] BF-112 Cache-hit counters in CLI and Studio; byte-identical cold vs cached test
 
 **v1.3 "Cutting Room": two-way timeline** (P11)
 - [ ] BF-120 Visual timeline: clips, trim, markers
