@@ -396,3 +396,10 @@ Player.displayName = 'Player';
 
 /** Re-export registerRoot from core for convenience */
 export { registerRoot } from 'brandlyframes';
+
+/**
+ * Pure pixel comparison between two rendered frames (BF-440).
+ * Consumed by the Studio "diff preview vs render" button.
+ */
+export { compareRenderFrames } from './compare-frames';
+export type { RenderFrameDiff } from './compare-frames';
