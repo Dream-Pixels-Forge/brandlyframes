@@ -78,7 +78,7 @@ describe('CLI', () => {
     const output = execSync(`node ${cliBin} benchmark`, { encoding: 'utf8' });
     expect(output).toContain('BrandlyFrames Benchmarks');
     expect(output).toContain('Render throughput');
-  }, TEST_TIMEOUT);
+  }, 60_000);
 
   // frames subcommands [BF-060]
   it('should output frames probe help', () => {
