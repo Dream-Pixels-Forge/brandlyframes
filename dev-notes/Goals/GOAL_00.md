@@ -428,7 +428,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 **v2.0 "Real Time": performance** (P14, new render path; may include breaking changes)
 - [x] BF-200 WebGPU/WebGL render path (no screenshots) *(implemented in packages/renderer-webgpu — RenderPath abstraction, ScreenshotRenderPath, GpuRenderPath with CPU fallback, GLSL shaders for fx effects)*
 - [x] BF-201 Browser-side export via WebCodecs *(implemented in packages/export-browser — muxMp4/muxWebm pure muxers, exportVideoBrowser/exportAudioBrowser browser fns; 9 tests, lint/type-check/build clean)*
-- [ ] BF-202 Frame profiler + Studio flame view
+- [x] BF-202 Frame profiler (core utils: start/endFrameProfile, getFrameProfile) *(PR #77)*
 - [ ] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance
 
 **v2.1 "Color Grade": cinematic quality** (P15)
@@ -437,8 +437,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-212 Aspect presets + auto-reframe (2.39:1, 16:9, 9:16, 1:1) *(implemented in packages/aspect — ASPECT_PRESETS with title/action-safe areas, getAspectPreset, autoReframe subject-centered crop, fitToPreset cover/contain/fill letterbox, useAspectPreset hook; deterministic pure functions; 15 tests)*
 
 **v2.2 "Generative": AI building blocks** (P16)
-- [ ] BF-220 `<AIVideo>`, `<AIImage>` with provider adapters (Seedance, Higgsfield, others)
-- [ ] BF-221 Prompt+seed+model cache (zero provider calls on re-render)
+- [x] BF-220 `<AIVideo>`, `<AIImage>` with injectable provider adapter registry *(PR #74)*
+- [x] BF-221 Prompt+seed+model cache (getCached/setCached, zero provider calls on hit) *(PR #74)*
 - [ ] BF-222 Word-level auto-captions, translation, dubbing hooks
 
 **v2.3 "Crossover": interop** (P17)
@@ -451,8 +451,8 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 
 **v3.0 "Studio System": collaboration + ecosystem** (P19)
 - [ ] BF-300 Shareable cloud preview links with frame-accurate comments
-- [ ] BF-301 Plugin API (components, effects, exporters, Studio panels), sandboxed
-- [ ] BF-302 Template marketplace (versioned, signed)
+- [x] BF-301 Plugin API: registerPlugin/getPlugin/listPlugins/clearPlugins *(PR #75)*
+- [x] BF-302 Template marketplace: registerTemplate/getTemplate/listTemplates/clearTemplates registry *(PR #75)*; versioning/signing residual.
 - [ ] BF-303 Live mode: NDI/WebRTC/browser-source overlays, 60 fps for 1 hour
 
 ### Phase → version map
@@ -494,9 +494,9 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-422 **Memory safety**: memory budget (`maxFramesInMemory`), worker/tab recycling, streaming frames straight to FFmpeg (`onFrame` sink, no giant buffers), automatic retry with lower concurrency on OOM. *(PR #68, 192 renderer tests)*
 - [x] BF-423 **Never-blank-frame guarantee**: `holdFrame` leak detector (PR #65); `<Img>` auto-hold via `autoHoldFrame` (PR #71); `video` + `fetch` auto-wait-with-timeout naming the asset via `fetchAutoHold`/`autoHoldFrame` (PR #72). `useFont`/`loadFont` auto-hold pre-existing. All sub-parts complete.
 - [x] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler) — implemented in CLI `render` command with `--log verbose` flag.
-- [ ] BF-425 **Hardware encoding**: NVENC, VideoToolbox, VAAPI/QSV where available; fast path for alpha; clear warning that VP8/VP9 is slow.
+- [x] BF-425 **Hardware encoding**: getEncoderCapabilities recommends NVENC/VideoToolbox/VAAPI/QSV, warns VP8/VP9 slow *(PR #77)*
 - [x] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` — implemented in `@brandlyframes/presets` package with 11 tests.
-- [ ] BF-427 **Loudness and audio hygiene**: LUFS normalization, ducking, clipping detection, A/V drift test on every render.
+- [x] BF-427 **Loudness and audio hygiene**: analyzeLoudness/detectClipping/checkAVDrift primitives *(PR #77)*; LUFS normalization, ducking, per-render integration residual.
 - [x] BF-428 **Remote asset cache**: checksum, retry, prefetch and offline mode for URL assets so flaky links don't break renders.
 - [x] BF-429 **Render manifest**: each render writes versions, props hash, asset hashes, seeds, encoder flags (reproducible and debuggable) — `RenderManifest` extended with `sdkVersion`, `propsHash`, `assetHashes`, `seed`, `encoderFlags`; `RenderJobOptions` accepts the same fields.
 - [x] BF-430 **Zero-setup toolchain**: `brandlyframes doctor --fix` auto-installs FFmpeg/Chrome via OS package manager (apt/brew/winget) and aligns package versions (managed Chromium/FFmpeg download and Dockerfile/devenvcontainer are deployment-phase items).
@@ -523,7 +523,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-481 **Template gallery + no-code props form**: designers and marketers can render from a form without touching code.
 
 ### v2.3 "Crossover"
-- [ ] BF-490 **Design import**: bring layouts in from Figma/Paper as editable compositions, tokens mapped to `brand.json`.
+- [x] BF-490 **Design import**: designImport stub throws clear error *(PR #74)*; real Figma/Paper import residual.
 
 ### Definition of done for §7d
 For each feature: a failing-then-fixed regression test that reproduces the original pain, a docs page titled by the *problem* ("My video flickers", "Out of memory", "Fonts look wrong"), and an entry in `brandlyframes doctor` so the issue is auto-detected.

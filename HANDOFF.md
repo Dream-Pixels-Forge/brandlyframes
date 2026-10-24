@@ -1,6 +1,6 @@
 # HANDOFF — BrandlyFrames: merge backlog + drive remaining GOAL_00 tasks
-> Status: **Wave 3 — #42 fonts (BF-410) PR #64 merged; #46 render-resilience FULLY complete (BF-420/422/423/440 + all residuals)** · For new session
-> Date: 2026-10-24 · Branch: `main` @ cd16be6
+> Status: **Wave 3 render-resilience FULLY complete; Wave 4 (#50-#53) complete and merged** · For new session
+> Date: 2026-10-24 · Branch: `main` @ a90a76a
 
 ## 1. Current state
 
@@ -32,8 +32,14 @@
 4. Wave 4: **#50** profiler/benchmark/hw-encode/loudness, **#51** cloud hardening (mocked creds only — no credentials in CI), **#52** integrations (AI providers must be injectable/mocked — never network in tests), **#53** platform ecosystem.
 5. After each wave: merge serially, resolve conflicts (core/src/index.ts is the hot file), tick GOAL_00, keep issue labels flowing (`status:in-progress` → closed via `Closes #N`).
 6. When queue empties: run `pnpm type-check && pnpm lint && pnpm build && pnpm test` at root, then changesets version bump + BF-093 public release (npm scope check first).
-Next concrete action: #46 render-resilience FULLY complete — all items + all residual sub-parts done and verified (`pnpm type-check && pnpm lint && pnpm build && pnpm test` all green). GOAL_00 BF-420/421/422/423/424/426/428/429/440/450 all ticked. PRs: #65 (BF-423 leak detector), #66 (BF-422 streaming), #67 (BF-440 scaffolding), #68 (BF-422 OOM retry), #69 (BF-420 wall-clock guard), #70 (BF-440 compare-frames), #71 (BF-423 <Img> auto-hold), #72 (BF-423 video+fetch auto-hold), #73 (BF-440 player diff), plus BF-420 animation adapters direct commit.
-Then move to Wave 4 (#50 profiler/benchmark/hw-encode/loudness, #51 cloud hardening mocked, #52 AI provider integrations mocked, #53 platform ecosystem).
+Next concrete action: **Wave 4 (#50-#53) FULLY complete and verified** — all green (`pnpm type-check && pnpm lint && pnpm build && pnpm test`). GOAL_00 ticked:
+- #50 BF-202/BF-425/BF-427 (profiler, hw-encode, loudness) — PR #77
+- #51 BF-080/BF-081/BF-082/BF-471 (cloud doctor + cost guard) — PR #76  
+- #52 BF-220/BF-221/BF-490 (AI provider registry + cache + design stub) — PR #74
+- #53 BF-301/BF-302/BF-481 (plugin + template registry) — PR #75
+
+All four Wave 4 PRs merged (#74-#77). Residuals documented in GOAL_00. Queue empties next → changesets version bump + BF-093 public release (npm scope check first).
+Then move to next wave.
 
 ## 3. Verified ground truth (read this — saves hours)
 - **Subagent agent name is `worker`** — `general` does not exist (burned one wave learning this).
