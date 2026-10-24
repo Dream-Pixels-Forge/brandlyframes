@@ -17,6 +17,18 @@ export {
   type HoldFrameOptions,
 } from './holds';
 export {
+  CSS_ADAPTER_NAME,
+  type AnimationAdapter,
+  type AnimationElement,
+  createCssAnimationAdapter,
+  getAnimationAdapter,
+  pauseAllAnimations,
+  registerAnimationAdapter,
+  resumeAllAnimations,
+  seekAllAnimations,
+  unregisterAnimationAdapter,
+} from './animation-adapter';
+export {
   installVirtualClock,
   uninstallVirtualClock,
   setVirtualClockFrame,
