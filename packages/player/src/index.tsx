@@ -8,6 +8,7 @@ import {
 } from 'react';
 import { useCurrentFrame, useVideoConfig } from 'brandlyframes';
 import { Button } from '@brandlyframes/design';
+import { compareRenderFrames, type RenderFrameDiff } from './compare-frames';
 
 /** Player ref API exposed to consumers */
 export interface PlayerRef {
@@ -29,6 +30,15 @@ export interface PlayerRef {
   isPlaying(): boolean;
   /** Render a single frame at render quality via `onRenderFrame` (render-parity mode, BF-440). */
   renderFrame(frame: number): Promise<Uint8Array>;
+  /**
+   * Capture the render frame and the preview frame (via `onRenderFrame` /
+   * `onPreviewFrame`, defaulting to the render bytes) and diff them with
+   * `compareRenderFrames` (BF-440). Defaults to the current frame; requires
+   * `onRenderFrame`, otherwise returns null.
+   */
+  runRenderDiff(frame?: number): Promise<RenderFrameDiff | null>;
+  /** Get the last render-vs-preview diff produced by `runRenderDiff` (null initially). */
+  getRenderDiff(): RenderFrameDiff | null;
 }
 
 /** Player props */
@@ -66,6 +76,16 @@ export interface PlayerProps {
    * (mirrors the renderer's injectable-launcher pattern; no real FFmpeg here).
    */
   onRenderFrame?: (frame: number) => Promise<Uint8Array>;
+  /**
+   * Injected preview callback that returns preview-quality pixels for a frame.
+   * Defaults to the render bytes (zero diff) when not provided.
+   */
+  onPreviewFrame?: (frame: number) => Promise<Uint8Array>;
+  /**
+   * Callback invoked with the render-vs-preview frame diff after
+   * `runRenderDiff` completes (BF-440).
+   */
+  onRenderDiff?: (diff: RenderFrameDiff) => void;
   /** Custom className */
   className?: string;
   /** Custom style */
@@ -115,6 +135,8 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
       onError,
       renderParityMode = false,
       onRenderFrame,
+      onPreviewFrame,
+      onRenderDiff,
       className = '',
       style = {},
     },
@@ -146,6 +168,7 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
 
     // Render-parity mode (BF-440): render-quality frame exposed when paused
     const [renderResult, setRenderResult] = useState<Uint8Array | null>(null);
+    const [renderDiff, setRenderDiff] = useState<RenderFrameDiff | null>(null);
     const parityCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const renderFrame = useCallback(
@@ -162,6 +185,26 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
         }
       },
       [onRenderFrame],
+    );
+
+    // Run an end-to-end render-quality diff: capture the render frame and the
+    // preview frame (defaulting to the render bytes → zero diff), compare with
+    // compareRenderFrames, and surface the result via state + onRenderDiff.
+    // Errors from capture propagate to the caller. No-op without onRenderFrame.
+    const runRenderDiff = useCallback(
+      async (frame?: number): Promise<RenderFrameDiff | null> => {
+        if (!onRenderFrame) return null;
+        const targetFrame = frame ?? state.currentFrame;
+        const renderBytes = await onRenderFrame(targetFrame);
+        const previewBytes = onPreviewFrame
+          ? await onPreviewFrame(targetFrame)
+          : renderBytes;
+        const diff = compareRenderFrames(renderBytes, previewBytes);
+        setRenderDiff(diff);
+        onRenderDiff?.(diff);
+        return diff;
+      },
+      [onRenderFrame, onPreviewFrame, onRenderDiff, state.currentFrame],
     );
 
     // When paused + parity mode + callback: render the current frame at
@@ -214,6 +257,8 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
       },
       isPlaying: () => state.isPlaying,
       renderFrame: (frame: number) => renderFrame(frame),
+      runRenderDiff,
+      getRenderDiff: () => renderDiff,
     }));
 
     // Animation loop for playback
