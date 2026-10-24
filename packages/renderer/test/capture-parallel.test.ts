@@ -174,7 +174,10 @@ describe('captureParallel', () => {
         async () => pool.launcher,
       ),
     ).rejects.toThrow(/1 of 2 chunk/i);
-    expect(pool.launches()).toBe(3);
+    // Primary: chunk 0 (2 launches: initial + recycle) + chunk 1 (1 launch) =
+    // 3, plus the BF-422 pool-level retry of chunk 0 at lower concurrency
+    // (1 launch) = 4 total.
+    expect(pool.launches()).toBe(4);
     const survived = pool.tabs.some((tab) => tab.seeks.join(',') === '2,3');
     expect(survived).toBe(true);
   });

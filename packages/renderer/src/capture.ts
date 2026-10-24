@@ -313,6 +313,8 @@ export async function captureParallel(
   const launcher = await launcherFactory(flags);
   const pngs: Uint8Array[][] = new Array<Uint8Array[]>(chunks.length);
   const failures: unknown[] = [];
+  /** Chunk indices that still failed after the primary pool's per-chunk recycle. */
+  const failedIndices = new Set<number>();
   let cursor = 0;
 
   const runWorker = async (): Promise<void> => {
@@ -327,14 +329,21 @@ export async function captureParallel(
             onFrame: options.onFrame,
             maxFramesInMemory: options.maxFramesInMemory,
           });
+          failedIndices.delete(index);
         } catch {
           // Recycle once: fresh tab, retry this chunk; a second failure is final.
           await tab.close();
           tab = await launcher.launchTab(options.url, flags);
-          pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel', {
-            onFrame: options.onFrame,
-            maxFramesInMemory: options.maxFramesInMemory,
-          });
+          try {
+            pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel', {
+              onFrame: options.onFrame,
+              maxFramesInMemory: options.maxFramesInMemory,
+            });
+            failedIndices.delete(index);
+          } catch (error) {
+            failedIndices.add(index);
+            failures.push(error);
+          }
         }
       }
     } catch (error) {
@@ -347,6 +356,68 @@ export async function captureParallel(
   await Promise.allSettled(
     Array.from({ length: Math.min(concurrency, chunks.length) }, () => runWorker()),
   );
+
+  // Pool-level OOM recovery: retry failed chunks once at lower concurrency.
+  if (failedIndices.size > 0) {
+    const retryConcurrency = Math.max(1, Math.floor(concurrency / 2));
+    const retryList = [...failedIndices];
+    const retryLauncher = await launcherFactory(flags);
+    const retryFailures: unknown[] = [];
+    let retryCursor = 0;
+
+    await Promise.allSettled(
+      Array.from(
+        { length: Math.min(retryConcurrency, retryList.length) },
+        async () => {
+          let tab: BrowserTabLike | undefined;
+          try {
+            while (retryCursor < retryList.length) {
+              const index = retryList[retryCursor++];
+              const chunk = chunks[index] as FrameRange;
+              tab = await retryLauncher.launchTab(options.url, flags);
+              try {
+                pngs[index] = await captureFramesOnTab(
+                  tab,
+                  chunk.start,
+                  chunk.end,
+                  'captureParallel-retry',
+                  {
+                    onFrame: options.onFrame,
+                    maxFramesInMemory: options.maxFramesInMemory,
+                  },
+                );
+              } catch (error) {
+                retryFailures.push(error);
+              } finally {
+                await tab?.close();
+                tab = undefined;
+              }
+            }
+          } catch (error) {
+            retryFailures.push(error);
+          } finally {
+            await tab?.close();
+          }
+        },
+      ),
+    );
+    await retryLauncher.close();
+
+    if (retryFailures.length > 0) {
+      // Retry also failed: surface the original aggregated error (cause chains
+      // the first failure, not a retry failure).
+      const detail = failures
+        .map((error) => (error instanceof Error ? error.message : String(error)))
+        .join('; ');
+      throw new Error(
+        `captureParallel: ${failures.length} of ${chunks.length} chunk(s) failed: ${detail}`,
+        { cause: failures[0] },
+      );
+    }
+    // Retry recovered every failed chunk — clear the stale primary failures.
+    failures.length = 0;
+    failedIndices.clear();
+  }
 
   if (failures.length > 0) {
     const detail = failures
