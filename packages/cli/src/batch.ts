@@ -201,7 +201,7 @@ export const loadBatchInput = async (input: string): Promise<Record<string, stri
 
 const readCheckpoint = async (checkpointPath: string): Promise<Set<string>> => {
   const completed = new Set<string>();
-  let raw: string | null = null;
+  let raw: string;
   try {
     raw = await readFile(checkpointPath, 'utf8');
   } catch {
