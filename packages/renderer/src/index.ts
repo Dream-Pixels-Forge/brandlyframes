@@ -6,6 +6,10 @@
  */
 
 export { decodeFrameFFmpeg, FFmpegNotFoundError } from './ffmpeg-decode.js';
+export {
+  getEncoderCapabilities,
+  type EncoderCapabilities,
+} from './encoder-capabilities.js';
 export type {
   DecodeFrameFFmpegOptions,
   SpawnedProcessHandle,
