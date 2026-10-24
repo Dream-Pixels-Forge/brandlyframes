@@ -162,3 +162,88 @@ describe('Player seek accuracy', () => {
     expect(player.current.isPlaying()).toBe(false);
   });
 });
+
+describe('Render-parity mode (BF-440)', () => {
+  const parityPixels = new Uint8Array([255, 0, 0, 255]);
+
+  it('invokes onRenderFrame with the current frame when paused + parity mode + callback', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(parityPixels);
+    render(
+      <Player compositionId="test-comp" renderParityMode onRenderFrame={onRenderFrame} />,
+    );
+
+    expect(onRenderFrame).toHaveBeenCalledWith(0);
+
+    // The render promise resolves on the microtask queue and exposes the frame on a canvas overlay.
+    await act(async () => {});
+    expect(screen.getByTestId('render-parity-frame')).toBeInTheDocument();
+  });
+
+  it('is a no-op when parity mode is on but onRenderFrame is missing', () => {
+    render(<Player compositionId="test-comp" renderParityMode />);
+    expect(screen.queryByTestId('render-parity-frame')).not.toBeInTheDocument();
+  });
+
+  it('renderFrame() throws a clear error without onRenderFrame', async () => {
+    const player = { current: null as PlayerRef | null };
+    render(<Player ref={player} compositionId="test-comp" renderParityMode />);
+
+    await expect(player.current.renderFrame(1)).rejects.toThrow(/onRenderFrame/i);
+  });
+
+  it('does not invoke onRenderFrame while playing', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(parityPixels);
+    render(
+      <Player
+        compositionId="test-comp"
+        autoPlay
+        renderParityMode
+        onRenderFrame={onRenderFrame}
+      />,
+    );
+
+    expect(onRenderFrame).not.toHaveBeenCalled();
+    expect(screen.queryByTestId('render-parity-frame')).not.toBeInTheDocument();
+  });
+
+  it('re-renders the parity frame when seeking while paused', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(parityPixels);
+    const player = { current: null as PlayerRef | null };
+    render(
+      <>
+        <Player
+          ref={player}
+          compositionId="test-comp"
+          renderParityMode
+          onRenderFrame={onRenderFrame}
+        />
+        <button data-testid="seek-10" onClick={() => player.current.seekTo(10)}>
+          Seek 10
+        </button>
+      </>,
+    );
+
+    expect(onRenderFrame).toHaveBeenCalledWith(0);
+    await act(async () => {});
+
+    act(() => {
+      screen.getByTestId('seek-10').click();
+    });
+
+    expect(onRenderFrame).toHaveBeenCalledWith(10);
+  });
+
+  it('exposes renderFrame imperatively and returns the render pixels', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(parityPixels);
+    const player = { current: null as PlayerRef | null };
+    render(<Player ref={player} compositionId="test-comp" renderParityMode onRenderFrame={onRenderFrame} />);
+
+    await act(async () => {});
+
+    const pixels = await act(async () => player.current.renderFrame(42)!);
+
+    expect(onRenderFrame).toHaveBeenCalledWith(42);
+    expect(pixels).toEqual(parityPixels);
+    expect(screen.getByTestId('render-parity-frame')).toBeInTheDocument();
+  });
+});
