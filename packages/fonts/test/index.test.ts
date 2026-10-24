@@ -2,12 +2,14 @@
  * Fonts tests — [BF-071]
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { holdFrame, releaseFrame, getActiveHolds, clearFrameHolds } from 'brandlyframes';
 import {
   FontRegistry,
   fontRegistry,
   FontSource,
   FontMetrics,
+  useFont,
   measureText,
   shapeText,
   fontStacks,
@@ -308,5 +310,100 @@ describe('Glyph metrics', () => {
 
     expect(glyph.advanceWidth).toBeGreaterThan(0);
     expect(glyph.bbox.xMax).toBeGreaterThan(glyph.bbox.xMin);
+  });
+});
+
+describe('holdFrame integration (BF-410)', () => {
+  beforeEach(() => {
+    clearFrameHolds();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    clearFrameHolds();
+    vi.useRealTimers();
+  });
+
+  it('tracks active holds with a name', () => {
+    const handle = holdFrame('font-loading');
+    const holds = getActiveHolds();
+    expect(holds).toHaveLength(1);
+    expect(holds[0].handle).toBe(handle);
+    expect(holds[0].name).toBe('font-loading');
+    expect(holds[0].timeoutInMilliseconds).toBeNull();
+    releaseFrame(handle);
+    expect(getActiveHolds()).toHaveLength(0);
+  });
+
+  it('auto-releases a hold on timeout', () => {
+    const handle = holdFrame('temp-hold', { timeoutInMilliseconds: 20 });
+    expect(getActiveHolds()).toHaveLength(1);
+    // Advance timers past the timeout
+    vi.advanceTimersByTime(25);
+    expect(getActiveHolds()).toHaveLength(0);
+    // Releasing an already-expired hold is idempotent-safe (throws, caught by caller)
+    expect(() => releaseFrame(handle)).toThrow('unknown or already released hold');
+  });
+
+  it('clearFrameHolds empties the registry', () => {
+    holdFrame('a');
+    holdFrame('b');
+    expect(getActiveHolds()).toHaveLength(2);
+    clearFrameHolds();
+    expect(getActiveHolds()).toHaveLength(0);
+  });
+});
+
+describe('useFont (BF-410)', () => {
+  beforeEach(() => {
+    clearFrameHolds();
+  });
+
+  afterEach(() => {
+    clearFrameHolds();
+  });
+
+  it('is exported as a function', () => {
+    expect(typeof useFont).toBe('function');
+  });
+
+  it('loads local font sources via fontRegistry (no network)', async () => {
+    const sources: FontSource[] = [{ family: 'TestFont', weight: 400, urls: { woff2: '/fonts/test.woff2' } }];
+    const results = await fontRegistry.loadAll(sources, { preload: true });
+    expect(results).toHaveLength(1);
+    expect(results[0].family).toBe('TestFont');
+    expect(results[0].loaded).toBe(true);
+  });
+
+  it('loads multiple local font sources in parallel', async () => {
+    const sources: FontSource[] = [
+      { family: 'FontA', weight: 400, urls: { woff2: '/fonts/a.woff2' } },
+      { family: 'FontB', weight: 700, urls: { woff2: '/fonts/b.woff2' } },
+    ];
+    const results = await fontRegistry.loadAll(sources, { preload: true });
+    expect(results).toHaveLength(2);
+    expect(results.every((r) => r.loaded)).toBe(true);
+  });
+
+  it('supports Google Fonts URL sources', () => {
+    const sources = googleFonts.inter([400]);
+    expect(sources).toHaveLength(1);
+    expect(sources[0].family).toBe('Inter');
+    expect(sources[0].urls?.woff2).toContain('fonts.gstatic.com');
+  });
+
+  it('supports system font sources', () => {
+    const source = createSystemFontSource('SF Pro', '.SF Pro Display', { weight: 500 });
+    expect(source.local).toBe('.SF Pro Display');
+    expect(source.family).toBe('SF Pro');
+    expect(source.weight).toBe(500);
+  });
+
+  it('supports local file sources', () => {
+    const source = createFontSource('CustomFont', '/fonts/custom.woff2', { weight: 600, style: 'italic' });
+    expect(source.family).toBe('CustomFont');
+    expect(source.weight).toBe(600);
+    expect(source.style).toBe('italic');
+    expect(source.urls?.woff2).toBe('/fonts/custom.woff2');
   });
 });
