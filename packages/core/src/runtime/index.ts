@@ -14,6 +14,14 @@ export {
   type HoldFrameOptions,
 } from './holds';
 export {
+  installVirtualClock,
+  uninstallVirtualClock,
+  setVirtualClockFrame,
+  getVirtualClockFrame,
+  isVirtualClockActive,
+  isWallClockUnsafe,
+} from './virtual-clock';
+export {
   Audio,
   type AudioProps,
   AudioForPreview,
