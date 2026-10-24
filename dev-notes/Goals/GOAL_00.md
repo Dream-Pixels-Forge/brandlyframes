@@ -489,7 +489,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-412 **Frame inspector**: click any element to see its computed props/styles at the current frame.
 
 ### v0.3 "First Take"
-- [x] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; `warnWallClock()` runtime warning names the component using wall-clock time. CSS animations/transitions and Web Animations API adapters are residual. *(PR #69, 504 core tests)*
+- [x] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; `warnWallClock()` names wall-clock usage; animation-adapter registry + built-in 'css' adapter pause/seek/resume CSS animations to the frame. All sub-parts complete.
 - [x] BF-421 **Auto-concurrency + `benchmark`**: `brandlyframes benchmark --tune-concurrency` tests concurrency levels (1, 2, 4, 8) and recommends the optimum based on measured throughput.
 - [x] BF-422 **Memory safety**: memory budget (`maxFramesInMemory`), worker/tab recycling, streaming frames straight to FFmpeg (`onFrame` sink, no giant buffers), automatic retry with lower concurrency on OOM. *(PR #68, 192 renderer tests)*
 - [x] BF-423 **Never-blank-frame guarantee**: `holdFrame` leak detector (PR #65); `<Img>` auto-hold via `autoHoldFrame` (PR #71); `video` + `fetch` auto-wait-with-timeout naming the asset via `fetchAutoHold`/`autoHoldFrame` (PR #72). `useFont`/`loadFont` auto-hold pre-existing. All sub-parts complete.
