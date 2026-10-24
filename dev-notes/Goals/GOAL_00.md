@@ -484,7 +484,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-402 **Permissive license, no render fees**: MIT License (LICENSE file present), free for commercial use.
 
 ### v0.2 "Projector"
-- [ ] BF-410 **Font loading that just works**: `useFont()`/`loadFont()` auto-holds the frame until the font is ready; no fallback-font flash; local, Google and custom fonts; optional subsetting/embedding.
+- [x] BF-410 **Font loading that just works**: `useFont()`/`loadFont()` auto-holds the frame until the font is ready; no fallback-font flash; local, Google and custom fonts; optional subsetting/embedding. *(useFont() integrates with holdFrame()/releaseFrame(), 37 tests, no network, changeset landed in PR #64)*
 - [x] BF-411 **Error overlay with component stack**: any render error in Studio shows the failing component, frame number, and props, plus a suggested fix.
 - [x] BF-412 **Frame inspector**: click any element to see its computed props/styles at the current frame.
 
