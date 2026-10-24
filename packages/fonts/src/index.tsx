@@ -6,7 +6,7 @@
  */
 
 import type { FC } from 'react';
-import { useCurrentFrame } from 'brandlyframes';
+import { useCurrentFrame, holdFrame, releaseFrame } from 'brandlyframes';
 
 /**
  * Font weight values.
@@ -489,7 +489,11 @@ export function shapeText(
 }
 
 /**
- * React hook for font loading.
+ * React hook for font loading (BF-410).
+ *
+ * Holds the frame via {@link holdFrame} until every source resolves, so the
+ * renderer never captures a frame with a fallback font. Releases on load,
+ * error, timeout (naming the font URLs) or unmount — never double-releases.
  */
 export function useFont(sources: FontSource[]): { loaded: boolean; error?: string } {
   const _frame = useCurrentFrame();
@@ -498,31 +502,58 @@ export function useFont(sources: FontSource[]): { loaded: boolean; error?: strin
 
   React.useEffect(() => {
     let mounted = true;
-    let cancelled = false;
+    let released = false;
 
-    async function load() {
-      try {
-        const results = await fontRegistry.loadAll(sources, { preload: true });
-        if (mounted && !cancelled) {
-          const failed = results.find(r => !r.loaded);
-          if (failed) {
-            setError(failed.error || `Failed to load font: ${failed.family}`);
-          } else {
-            setLoaded(true);
-          }
-        }
-      } catch (err) {
-        if (mounted && !cancelled) {
-          setError(err instanceof Error ? err.message : 'Font loading failed');
+    const handle = holdFrame('font-loading');
+    const timeoutUrls = sources
+      .map((s) => (s.urls ? Object.values(s.urls).join(', ') : s.local ?? s.family))
+      .join(', ');
+    const timeout = setTimeout(() => {
+      if (!released && mounted) {
+        released = true;
+        releaseFrame(handle);
+        setError(`Font load timed out: ${timeoutUrls}`);
+      }
+    }, 10000);
+
+    const safeRelease = () => {
+      if (!released) {
+        released = true;
+        try {
+          releaseFrame(handle);
+        } catch {
+          // Already released (e.g. by timeout) — idempotent.
         }
       }
-    }
+    };
 
-    load();
+    fontRegistry.loadAll(sources, { preload: true }).then((results) => {
+      if (!mounted) {
+        safeRelease();
+        return;
+      }
+      clearTimeout(timeout);
+      const failed = results.find((r) => !r.loaded);
+      if (failed) {
+        setError(failed.error || `Failed to load font: ${failed.family}`);
+      } else {
+        setLoaded(true);
+      }
+      safeRelease();
+    }).catch((err) => {
+      if (!mounted) {
+        safeRelease();
+        return;
+      }
+      clearTimeout(timeout);
+      setError(err instanceof Error ? err.message : 'Font loading failed');
+      safeRelease();
+    });
 
     return () => {
       mounted = false;
-      cancelled = true;
+      clearTimeout(timeout);
+      safeRelease();
     };
   }, [sources]);
 
