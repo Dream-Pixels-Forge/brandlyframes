@@ -55,6 +55,8 @@ export {
   type VideoConfig,
   FrameContextProvider,
   type FrameContextProviderProps,
+  AudioDataProvider,
+  type AudioDataProviderProps,
 } from './context';
 
 /**
@@ -64,6 +66,31 @@ export {
  * {@link FrameContextProvider}.
  */
 export { useCurrentFrame, useVideoConfig, usePixelDensity, useCurrentScale, useIsInsideNonPremountFreeze, useBufferState, computeBufferState } from './hooks';
+
+/**
+ * Audio-reactive hooks (BF-130/131/132): per-frame loudness, spectrum and
+ * beat values derived from decoded audio, deterministic by frame. Audio is
+ * analyzed once and cached per buffer+fps (`analyzeAudioBuffer` /
+ * `getAudioAnalysis`); hooks sample the cache at the current frame. Sources
+ * are injected per composition with `<AudioDataProvider>`; without one the
+ * hooks return neutral values (SSR / render workers stay deterministic).
+ */
+export {
+  useAudioData,
+  useBeat,
+  useLoudness,
+  useSpectrum,
+  analyzeAudioBuffer,
+  getAudioAnalysis,
+  getLoudnessAtFrame,
+  getSpectrumAtFrame,
+  getBeatAtFrame,
+  type AudioFrameData,
+  type AudioAnalysis,
+  type AnalyzeAudioOptions,
+  type AudioBufferLike,
+  type Beat,
+} from './hooks';
 
 /**
  * Timeline components (BF-003, BF-004): frame-scoping building blocks.
