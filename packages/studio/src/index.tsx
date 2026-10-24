@@ -1,4 +1,5 @@
 import { ReactNode, useCallback, useState, MouseEvent } from 'react';
+import { Button } from '@brandlyframes/design';
 import { suggestFix } from './errorCapture';
 import { FrameHistory } from './frameHistory';
 import { InspectorRegistry, inspectElement, InspectedElement } from './inspector';
@@ -212,5 +213,41 @@ export const CacheCounters = ({
         <div className="cache-hit-rate">hit rate: {(stats.hitRate * 100).toFixed(1)}%</div>
       </div>
     </div>
+  );
+};
+
+// Render-parity toggle (BF-440): one-click "diff preview vs render".
+// The studio consumer wires onToggle to the Player:
+//   const [parity, setParity] = useState(false);
+//   <RenderParityButton onToggle={setParity} />
+//   <Player renderParityMode={parity} onRenderFrame={renderFrame} ... />
+export const RenderParityButton = ({
+  defaultEnabled = false,
+  onToggle,
+  offLabel = 'Diff preview vs render',
+  onLabel = 'Showing render',
+}: {
+  defaultEnabled?: boolean;
+  onToggle?: (enabled: boolean) => void;
+  offLabel?: string;
+  onLabel?: string;
+}) => {
+  const [enabled, setEnabled] = useState(defaultEnabled);
+
+  const handleClick = () => {
+    const next = !enabled;
+    setEnabled(next);
+    onToggle?.(next);
+  };
+
+  return (
+    <Button
+      variant="secondary"
+      onClick={handleClick}
+      data-testid="render-parity-button"
+      aria-pressed={enabled}
+    >
+      {enabled ? onLabel : offLabel}
+    </Button>
   );
 };

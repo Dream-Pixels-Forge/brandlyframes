@@ -27,6 +27,8 @@ export interface PlayerRef {
   setPlaybackRate(rate: number): void;
   /** Check if currently playing */
   isPlaying(): boolean;
+  /** Render a single frame at render quality via `onRenderFrame` (render-parity mode, BF-440). */
+  renderFrame(frame: number): Promise<Uint8Array>;
 }
 
 /** Player props */
@@ -57,6 +59,13 @@ export interface PlayerProps {
   onEnded?: () => void;
   /** Callback on error */
   onError?: (error: Error) => void;
+  /** Render-parity mode (BF-440): when paused, shows the exact render-quality frame from `onRenderFrame`. No-op without `onRenderFrame`. */
+  renderParityMode?: boolean;
+  /**
+   * Injected render callback that returns render-quality pixels for a frame
+   * (mirrors the renderer's injectable-launcher pattern; no real FFmpeg here).
+   */
+  onRenderFrame?: (frame: number) => Promise<Uint8Array>;
   /** Custom className */
   className?: string;
   /** Custom style */
@@ -104,6 +113,8 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
       onFrameChange,
       onEnded,
       onError,
+      renderParityMode = false,
+      onRenderFrame,
       className = '',
       style = {},
     },
@@ -133,6 +144,49 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
     const lastFrameRef = useRef<number>(0);
     const lastTimeRef = useRef<number>(performance.now());
 
+    // Render-parity mode (BF-440): render-quality frame exposed when paused
+    const [renderResult, setRenderResult] = useState<Uint8Array | null>(null);
+    const parityCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const renderFrame = useCallback(
+      async (frame: number): Promise<Uint8Array> => {
+        if (!onRenderFrame) {
+          throw new Error('Player.renderFrame: onRenderFrame is not provided');
+        }
+        try {
+          const pixels = await onRenderFrame(frame);
+          setRenderResult(pixels);
+          return pixels;
+        } catch (err) {
+          throw err instanceof Error ? err : new Error(String(err));
+        }
+      },
+      [onRenderFrame],
+    );
+
+    // When paused + parity mode + callback: render the current frame at
+    // render quality. No-op without onRenderFrame; never interrupts playback.
+    useEffect(() => {
+      if (!state.isPlaying && renderParityMode && onRenderFrame) {
+        // Fire-and-forget: a failed parity render must not interrupt playback.
+        // Imperative callers await renderFrame() to observe errors.
+        void renderFrame(state.currentFrame).catch(() => undefined);
+      }
+    }, [state.isPlaying, renderParityMode, onRenderFrame, renderFrame, state.currentFrame]);
+
+    // Paint the render result into the overlay canvas once it mounts.
+    useEffect(() => {
+      if (!renderResult) return;
+      const canvas = parityCanvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const imageData = ctx.createImageData(compWidth, compHeight);
+      const writeLen = Math.min(imageData.data.length, renderResult.length);
+      imageData.data.set(renderResult.subarray(0, writeLen));
+      ctx.putImageData(imageData, 0, 0);
+    }, [renderResult, compWidth, compHeight]);
+
     // Expose imperative API
     useImperativeHandle(ref, () => ({
       play: () => {
@@ -159,6 +213,7 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
         setState(prev => ({ ...prev, playbackRate: rate }));
       },
       isPlaying: () => state.isPlaying,
+      renderFrame: (frame: number) => renderFrame(frame),
     }));
 
     // Animation loop for playback
@@ -314,6 +369,23 @@ export const Player = forwardRef<PlayerRef, PlayerProps>(
         >
           Composition: {compositionId} | Frame: {currentFrame} / {durationInFrames} | Props: {JSON.stringify(inputProps)}
         </div>
+        {/* Render-parity overlay: exact render-quality frame when paused (BF-440) */}
+        {renderParityMode && !state.isPlaying && renderResult && (
+          <canvas
+            ref={parityCanvasRef}
+            data-testid="render-parity-frame"
+            width={compWidth}
+            height={compHeight}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: '#000',
+            }}
+          />
+        )}
         {renderControls()}
       </div>
     );
