@@ -85,6 +85,20 @@ export interface CaptureChunkOptions {
   height?: number;
   /** Chrome flags (defaults to {@link DEFAULT_CHROME_FLAGS}). */
   flags?: readonly string[];
+  /**
+   * Streaming sink: each frame is handed to this callback as it is
+   * captured and is NOT accumulated into the returned array, so the
+   * result is always empty. Use this to stream frames straight to FFmpeg
+   * instead of holding every frame in memory.
+   */
+  onFrame?: (frame: number, png: Uint8Array) => void;
+  /**
+   * Maximum frames held in memory without a streaming sink. Throws a
+   * RangeError when more than `maxFramesInMemory` frames are accumulated
+   * before the result is returned. Ignored when `onFrame` is provided,
+   * since frames stream out instead of being buffered.
+   */
+  maxFramesInMemory?: number;
 }
 
 /**
@@ -143,11 +157,21 @@ export async function captureFrame(
  * behind {@link captureChunk} and {@link captureParallel}). Screenshot
  * failures propagate raw; seek failures are wrapped with the caller's label.
  */
+interface CaptureFrameSink {
+  /** Hand each captured frame to this callback instead of buffering it. */
+  readonly onFrame?: (frame: number, png: Uint8Array) => void;
+  /**
+   * Max frames buffered without a sink; throws RangeError when exceeded.
+   */
+  readonly maxFramesInMemory?: number;
+}
+
 async function captureFramesOnTab(
   tab: BrowserTabLike,
   start: number,
   end: number,
   label: string,
+  sink: CaptureFrameSink,
 ): Promise<Uint8Array[]> {
   const pngs: Uint8Array[] = [];
   for (let frame = start; frame < end; frame++) {
@@ -157,7 +181,20 @@ async function captureFramesOnTab(
       const message = error instanceof Error ? error.message : String(error);
       throw new Error(`${label}: frame ${frame} failed: ${message}`, { cause: error });
     }
-    pngs.push(await tab.screenshotPng());
+    const png = await tab.screenshotPng();
+    if (sink.onFrame) {
+      sink.onFrame(frame, png);
+    } else {
+      pngs.push(png);
+      if (
+        sink.maxFramesInMemory !== undefined &&
+        pngs.length > sink.maxFramesInMemory
+      ) {
+        throw new RangeError(
+          `${label}: memory budget exceeded — ${pngs.length} frames held in memory without a sink (max ${sink.maxFramesInMemory})`,
+        );
+      }
+    }
   }
   return pngs;
 }
@@ -167,7 +204,8 @@ async function captureFramesOnTab(
  *
  * @param options URL + half-open range + viewport
  * @param launcherFactory Launcher factory (injected; see {@link captureFrame})
- * @returns PNG bytes per frame, in frame order
+ * @returns PNG bytes per frame, in frame order — an empty array when
+ * `options.onFrame` is provided (streaming sink, nothing is buffered)
  */
 export async function captureChunk(
   options: CaptureChunkOptions,
@@ -180,7 +218,10 @@ export async function captureChunk(
   const launcher = await launcherFactory(flags);
   const tab = await launcher.launchTab(options.url, flags);
   try {
-    return await captureFramesOnTab(tab, range.start, range.end, 'captureChunk');
+    return await captureFramesOnTab(tab, range.start, range.end, 'captureChunk', {
+      onFrame: options.onFrame,
+      maxFramesInMemory: options.maxFramesInMemory,
+    });
   } finally {
     await tab.close();
     await launcher.close();
@@ -214,6 +255,20 @@ export interface CaptureParallelOptions {
   height?: number;
   /** Chrome flags (defaults to {@link DEFAULT_CHROME_FLAGS}). */
   flags?: readonly string[];
+  /**
+   * Streaming sink: each frame is handed to this callback as it is
+   * captured and is NOT accumulated into the returned array, so the
+   * result is always empty. Use this to stream frames straight to FFmpeg
+   * instead of holding every frame in memory.
+   */
+  onFrame?: (frame: number, png: Uint8Array) => void;
+  /**
+   * Maximum frames held in memory without a streaming sink. Throws a
+   * RangeError when more than `maxFramesInMemory` frames are accumulated
+   * before the result is returned. Ignored when `onFrame` is provided,
+   * since frames stream out instead of being buffered.
+   */
+  maxFramesInMemory?: number;
 }
 
 /**
@@ -234,7 +289,8 @@ export interface CaptureParallelOptions {
  * @param options URL + half-open range + concurrency + viewport
  * @param launcherFactory Launcher factory (injected; see {@link captureFrame})
  * @returns PNG bytes per frame, in frame order (chunk boundaries are not
- * observable in the result)
+ * observable in the result) — an empty array when `options.onFrame` is
+ * provided (streaming sink, nothing is buffered)
  * @throws RangeError for an invalid range, concurrency, or chunk size
  * @throws Error aggregating every failed chunk (with `cause`) if any chunk
  * could not be captured after its one retry
@@ -267,12 +323,18 @@ export async function captureParallel(
         const index = cursor++;
         const chunk = chunks[index] as FrameRange;
         try {
-          pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel');
+          pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel', {
+            onFrame: options.onFrame,
+            maxFramesInMemory: options.maxFramesInMemory,
+          });
         } catch {
           // Recycle once: fresh tab, retry this chunk; a second failure is final.
           await tab.close();
           tab = await launcher.launchTab(options.url, flags);
-          pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel');
+          pngs[index] = await captureFramesOnTab(tab, chunk.start, chunk.end, 'captureParallel', {
+            onFrame: options.onFrame,
+            maxFramesInMemory: options.maxFramesInMemory,
+          });
         }
       }
     } catch (error) {
