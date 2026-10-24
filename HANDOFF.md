@@ -1,6 +1,6 @@
 # HANDOFF — BrandlyFrames: merge backlog + drive remaining GOAL_00 tasks
-> Status: **Wave 3 — #42 fonts (BF-410) PR #64 merged; #46 render-resilience complete (BF-420/422/423/440)** · For new session
-> Date: 2026-10-24 · Branch: `main` @ ead7d91
+> Status: **Wave 3 — #42 fonts (BF-410) PR #64 merged; #46 render-resilience complete (BF-420/422/423/440)** · BF-422 fully done via PR #68 · For new session
+> Date: 2026-10-24 · Branch: `main` @ 1ce6221
 
 ## 1. Current state
 
@@ -32,10 +32,11 @@
 4. Wave 4: **#50** profiler/benchmark/hw-encode/loudness, **#51** cloud hardening (mocked creds only — no credentials in CI), **#52** integrations (AI providers must be injectable/mocked — never network in tests), **#53** platform ecosystem.
 5. After each wave: merge serially, resolve conflicts (core/src/index.ts is the hot file), tick GOAL_00, keep issue labels flowing (`status:in-progress` → closed via `Closes #N`).
 6. When queue empties: run `pnpm type-check && pnpm lint && pnpm build && pnpm test` at root, then changesets version bump + BF-093 public release (npm scope check first).
-Next concrete action: all #46 PRs merged; verify `main` is green (`pnpm type-check && pnpm lint && pnpm build && pnpm test` done — all green), then move to Wave 4 (#50/#51/#52/#53) or tick residual BF-422/BF-423 sub-parts:
-- BF-422 residual: automatic retry with lower concurrency on OOM (memory budget + streaming done).
-- BF-423 residual: auto-wait-with-timeout naming asset+component for `<Img>`/video/fonts/`fetch` (holdFrame leak detector done).
-- BF-420 residual: CSS/GSAP/Lottie/Framer-Motion/Tailwind adapters + wall-clock warning (virtual clock done).
+Next concrete action: #46 render-resilience fully done and verified (`pnpm type-check && pnpm lint && pnpm build && pnpm test` — all green), GOAL_00 BF-420/421/422/424/426/428/429/450 ticked. Residual spec sub-parts remain unclaimed:
+- BF-423: auto-wait-with-timeout naming asset+component for `<Img>`/video/fonts/`fetch` (holdFrame leak detector done via PR #65).
+- BF-420: CSS/GSAP/Lottie/Framer-Motion/Tailwind animation adapters + wall-clock-time runtime warning (virtual clock done).
+- BF-440: end-to-end diff-vs-render pixel comparison (renderParityMode scaffolding done via PR #67).
+Then move to Wave 4 (#50/#51/#52/#53).
 
 ## 3. Verified ground truth (read this — saves hours)
 - **Subagent agent name is `worker`** — `general` does not exist (burned one wave learning this).
