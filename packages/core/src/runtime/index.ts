@@ -11,6 +11,7 @@ export {
   getLeakedHolds,
   holdFrame,
   releaseFrame,
+  warnWallClock,
   type ActiveFrameHold,
   type FrameHold,
   type HoldFrameOptions,

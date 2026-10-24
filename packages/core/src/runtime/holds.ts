@@ -6,6 +6,10 @@
  * behavior is fully deterministic in Node tests (no wall-clock reads — only
  * an optional timeout schedules an automatic release).
  */
+import {
+  getVirtualClockFrame,
+  isVirtualClockActive,
+} from './virtual-clock';
 
 export type FrameHold = number;
 
@@ -117,4 +121,18 @@ export const assertNoLeakedHolds = (): void => {
 /** Releases nothing but clears the hold registry (runtime bootstrap / test isolation). */
 export const clearFrameHolds = (): void => {
   activeHolds.clear();
+};
+
+/**
+ * Wall-clock guard (BF-420): warn when wall-clock time is read during a
+ * virtual-clock render, naming the component. Silent when the virtual
+ * clock is inactive (no warning outside renders).
+ */
+export const warnWallClock = (componentName?: string): void => {
+  if (!isVirtualClockActive()) {
+    return;
+  }
+  console.warn(
+    `BrandlyFrames: ${componentName ?? 'component'} reads wall-clock time during a virtual-clock render; results are frame-derived and non-deterministic across renders. Use useCurrentFrame() instead. Frame ${getVirtualClockFrame()}.`,
+  );
 };
