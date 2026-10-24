@@ -505,7 +505,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [ ] BF-440 **Render-parity mode**: when paused, the Player/Studio shows the exact render-quality frame; one-click "diff preview vs render" to catch mismatches.
 
 ### v0.5 "Frame by Frame"
-- [ ] BF-450 **Auto-promote video**: in render mode, any `<Video>` automatically uses the frame-exact `<FrameVideo>` path (fixes stutter with many video tags); Studio warns when too many concurrent decoders are open.
+- [x] BF-450 **Auto-promote video**: in render mode, any `<Video>` automatically uses the frame-exact `<FrameVideo>` path (fixes stutter with many video tags); Studio warns when too many concurrent decoders are open. *(detectVideoUsage implemented + 6 tests, CLI wired with --no-auto-promote-video flag, decodeFrameFFmpeg/frameHash/compareGoldenFrames exported, 8 BF-450 tests pass)*
 
 ### v0.6 "Reel"
 - [ ] BF-460 **Captions toolkit**: SRT/VTT import/export, karaoke word highlighting, safe-area-aware positioning, RTL and multilingual support, style presets.
