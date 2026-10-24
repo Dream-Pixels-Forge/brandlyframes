@@ -247,3 +247,121 @@ describe('Render-parity mode (BF-440)', () => {
     expect(screen.getByTestId('render-parity-frame')).toBeInTheDocument();
   });
 });
+
+describe('Render-parity diff (BF-440)', () => {
+  const renderPixels = new Uint8Array([255, 0, 0, 255, 0, 255, 0, 255]);
+  const previewPixels = new Uint8Array([255, 0, 0, 255, 0, 0, 255, 255]);
+
+  it('captures render + preview frames and compares them via runRenderDiff', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(renderPixels);
+    const onPreviewFrame = vi.fn().mockResolvedValue(previewPixels);
+    const onRenderDiff = vi.fn();
+    let playerRef: PlayerRef | null = null;
+
+    render(
+      <Player
+        ref={el => {
+          playerRef = el;
+        }}
+        compositionId="test-comp"
+        onRenderFrame={onRenderFrame}
+        onPreviewFrame={onPreviewFrame}
+        onRenderDiff={onRenderDiff}
+      />,
+    );
+
+    const diff = await act(async () => playerRef!.runRenderDiff()!);
+
+    expect(onRenderFrame).toHaveBeenCalledWith(0);
+    expect(onPreviewFrame).toHaveBeenCalledWith(0);
+    expect(diff.differingPixelCount).toBeGreaterThan(0);
+    expect(diff.bbox).not.toBeNull();
+    expect(onRenderDiff).toHaveBeenCalledWith(diff);
+    // Read via the live ref: the imperative handle is recreated on render so
+    // `getRenderDiff()` reflects the state set by `runRenderDiff`.
+    expect(playerRef!.getRenderDiff()).toBe(diff);
+  });
+
+  it('uses the passed frame instead of the current frame', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(renderPixels);
+    const onPreviewFrame = vi.fn().mockResolvedValue(previewPixels);
+    let playerRef: PlayerRef | null = null;
+
+    render(
+      <Player
+        ref={el => {
+          playerRef = el;
+        }}
+        compositionId="test-comp"
+        onRenderFrame={onRenderFrame}
+        onPreviewFrame={onPreviewFrame}
+      />,
+    );
+
+    await act(async () => playerRef!.runRenderDiff(7)!);
+
+    expect(onRenderFrame).toHaveBeenCalledWith(7);
+    expect(onPreviewFrame).toHaveBeenCalledWith(7);
+  });
+
+  it('returns null when onRenderFrame is not provided', async () => {
+    let playerRef: PlayerRef | null = null;
+    render(
+      <Player
+        ref={el => {
+          playerRef = el;
+        }}
+        compositionId="test-comp"
+      />,
+    );
+
+    expect(await playerRef!.runRenderDiff()).toBeNull();
+  });
+
+  it('identical buffers produce a zero diff with a null bbox', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(renderPixels);
+    const onPreviewFrame = vi.fn().mockResolvedValue(renderPixels);
+    const onRenderDiff = vi.fn();
+    let playerRef: PlayerRef | null = null;
+
+    render(
+      <Player
+        ref={el => {
+          playerRef = el;
+        }}
+        compositionId="test-comp"
+        onRenderFrame={onRenderFrame}
+        onPreviewFrame={onPreviewFrame}
+        onRenderDiff={onRenderDiff}
+      />,
+    );
+
+    const diff = await act(async () => playerRef!.runRenderDiff()!);
+
+    expect(diff.differingPixelCount).toBe(0);
+    expect(diff.totalPixels).toBe(2);
+    expect(diff.bbox).toBeNull();
+    expect(onRenderDiff).toHaveBeenCalledWith(diff);
+    expect(playerRef!.getRenderDiff()).toBe(diff);
+  });
+
+  it('falls back to preview = render bytes (zero diff) when onPreviewFrame is missing', async () => {
+    const onRenderFrame = vi.fn().mockResolvedValue(renderPixels);
+    let playerRef: PlayerRef | null = null;
+
+    render(
+      <Player
+        ref={el => {
+          playerRef = el;
+        }}
+        compositionId="test-comp"
+        onRenderFrame={onRenderFrame}
+      />,
+    );
+
+    const diff = await act(async () => playerRef!.runRenderDiff()!);
+
+    expect(diff.differingPixelCount).toBe(0);
+    expect(diff.bbox).toBeNull();
+  });
+});
