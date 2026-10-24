@@ -9,3 +9,4 @@ export { staticFile } from './static-file';
 export { watchStaticFile } from './watch-static-file';
 export { MediaCache } from './media-cache';
 export { ms, sec, tc } from './time-helpers';
+export { fetchAutoHold } from './fetch-hold';
