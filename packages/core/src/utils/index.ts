@@ -23,4 +23,19 @@ export {
   clearTemplates,
   type Template,
 } from '../template-registry';
+export {
+  startFrameProfile,
+  endFrameProfile,
+  getFrameProfile,
+  clearFrameProfile,
+  type FrameProfileEntry,
+} from './frame-profiler';
+export {
+  analyzeLoudness,
+  detectClipping,
+  checkAVDrift,
+  type LoudnessAnalysis,
+  type ClippingReport,
+  type AvDriftReport,
+} from './loudness';
 export { fetchAutoHold } from './fetch-hold';
