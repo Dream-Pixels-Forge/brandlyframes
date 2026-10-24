@@ -94,6 +94,26 @@ export const releaseFrame = (handle: FrameHold): void => {
 export const getActiveHolds = (): readonly ActiveFrameHold[] =>
   Array.from(activeHolds.values());
 
+/** Holds that were created but never released — still blocking their frames (leaked). */
+export const getLeakedHolds = (): readonly ActiveFrameHold[] => getActiveHolds();
+
+/**
+ * Throws when any hold is still active (leaked), naming every unreleased hold
+ * by handle and name so the leaking component/asset can be found.
+ */
+export const assertNoLeakedHolds = (): void => {
+  const leaked = getLeakedHolds();
+  if (leaked.length === 0) {
+    return;
+  }
+  const detail = leaked
+    .map((h) => `hold #${h.handle}${h.name ? ` (${JSON.stringify(h.name)})` : ' (anonymous)'}`)
+    .join(', ');
+  throw new Error(
+    `assertNoLeakedHolds(): ${leaked.length} unreleased frame hold(s) still blocking their frame(s): ${detail}. Release each hold with releaseFrame(handle) or set a timeout via holdFrame(name, { timeoutInMilliseconds }).`,
+  );
+};
+
 /** Releases nothing but clears the hold registry (runtime bootstrap / test isolation). */
 export const clearFrameHolds = (): void => {
   activeHolds.clear();

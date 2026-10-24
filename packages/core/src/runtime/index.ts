@@ -5,8 +5,10 @@
  * frame-driven media primitives (`<Img>`, `<Audio>`, `<Video>`, BF-007).
  */
 export {
+  assertNoLeakedHolds,
   clearFrameHolds,
   getActiveHolds,
+  getLeakedHolds,
   holdFrame,
   releaseFrame,
   type ActiveFrameHold,
