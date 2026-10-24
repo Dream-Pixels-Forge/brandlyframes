@@ -9,4 +9,18 @@ export { staticFile } from './static-file';
 export { watchStaticFile } from './watch-static-file';
 export { MediaCache } from './media-cache';
 export { ms, sec, tc } from './time-helpers';
+export {
+  registerPlugin,
+  getPlugin,
+  listPlugins,
+  clearPlugins,
+  type Plugin,
+} from '../plugins';
+export {
+  registerTemplate,
+  getTemplate,
+  listTemplates,
+  clearTemplates,
+  type Template,
+} from '../template-registry';
 export { fetchAutoHold } from './fetch-hold';
