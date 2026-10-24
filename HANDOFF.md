@@ -1,6 +1,6 @@
 # HANDOFF — BrandlyFrames: merge backlog + drive remaining GOAL_00 tasks
-> Status: **Wave 1 merged (4/4), pre-existing #10–#14 closed (all implemented), 34/116 GOAL_00 tasks remaining** · For new session
-> Date: 2026-10-24 · Branch: `main` @ 02407a1
+> Status: **Wave 3 in progress — #42 fonts (BF-410) PR #64 open, awaiting CI; #46 render-resilience next** · For new session
+> Date: 2026-10-24 · Branch: `main` @ c611e03
 
 ## 1. Current state
 
@@ -22,7 +22,7 @@
 ## 2. Remaining work (in order)
 1. (Done — children collected and merged serially: #57, #58, #59/#60, #62, #63.)
 2. (Done — #10–#14 verified already implemented, all closed as done.)
-3. **Wave 3 (next)**: **#42 fonts** (BF-410, core+fonts) then **#46 render-resilience** (BF-420/422/423/440, core+renderer+player). Hold #46 until core-touching work lands — `packages/core/src/index.ts` is the conflict hotspot.
+3. **Wave 3 (in progress)**: **#42 fonts** (BF-410) — PR #64 open, `useFont()` holdFrame integration implemented + 37 tests green. Awaiting CI merge, then tick GOAL_00. Next: **#46 render-resilience** (BF-420/422/423/440, core+renderer+player).
 4. Wave 4: **#50** profiler/benchmark/hw-encode/loudness, **#51** cloud hardening (mocked creds only — no credentials in CI), **#52** integrations (AI providers must be injectable/mocked — never network in tests), **#53** platform ecosystem.
 5. After each wave: merge serially, resolve conflicts (core/src/index.ts is the hot file), tick GOAL_00, keep issue labels flowing (`status:in-progress` → closed via `Closes #N`).
 6. When queue empties: run `pnpm type-check && pnpm lint && pnpm build && pnpm test` at root, then changesets version bump + BF-093 public release (npm scope check first).
@@ -39,7 +39,7 @@ Next concrete action: `gh pr list --state open` — merge whatever the children 
 - CI: pull_request trigger did not fire for our PRs; ran manually via `gh workflow run ci.yml --ref <branch>`. Repo-wide `tsc` type-check task depends on builds.
 - camera/aspect tests fail in fresh checkouts until `pnpm --filter @brandlyframes/camera... build` (core dist must exist).
 - BF-080/081/082 need real cloud credentials — issues #51 explicitly scope to mocked harnesses.
-- GOAL count: `grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md` (34 now).
+- GOAL count: `grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md` (34 now; BF-410 ticks on #64 merge).
 
 ## 4. Files changed this session (repo)
 - `packages/core/` — random helpers, @types/node devDep · `packages/frames/test/test-clips.test.ts` — timeout
@@ -51,9 +51,9 @@ Next concrete action: `gh pr list --state open` — merge whatever the children 
 ```bash
 cd /home/dimona/Dream-Pixels-Forge/Dev/Packages/brandlyframes
 git pull && git log --oneline -6          # expect: PR merges listed in §1
-gh pr list --state open                    # expect empty (all children merged)
-gh issue list --state open --label status:ready   # next wave candidates (#42 fonts, #46 render-resilience)
-grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md           # 34
+gh pr list --state open                    # expect #64 (fonts) open, awaiting CI
+gh issue list --state open --label status:ready   # #46 render-resilience next
+grep -c "^\- \[ \]" dev-notes/Goals/GOAL_00.md           # 34 (BF-410 to tick on merge)
 pnpm --filter brandlyframes test && pnpm --filter @brandlyframes/cli test   # 460+ / 44+ green
 ```
 
