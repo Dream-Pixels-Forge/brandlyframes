@@ -1,10 +1,16 @@
 # HANDOFF — BrandlyFrames: merge backlog + drive remaining GOAL_00 tasks
-> Status: **Wave 3 — #42 fonts (BF-410) merged via PR #64; 33/116 GOAL_00 remaining; #46 render-resilience next** · For new session
-> Date: 2026-10-24 · Branch: `main` @ 5c74417
+> Status: **Wave 3 — #42 fonts (BF-410) PR #64 merged; #46 render-resilience complete (BF-420/422/423/440)** · For new session
+> Date: 2026-10-24 · Branch: `main` @ ead7d91
 
 ## 1. Current state
 
 **DONE this session (all merged to `main`, verified):**
+- Render-resilience wave #46 (BF-420/422/423/440) — all green, full gate `pnpm type-check && pnpm lint && pnpm build && pnpm test`:
+  - PR #65 `feat(core): holdFrame leak detector [BF-423]` — `assertNoLeakedHolds()`/`getLeakedHolds()` in `packages/core` (500 tests, core)
+  - PR #66 `feat(renderer): streaming capture + memory budget [BF-422]` — `onFrame` streaming sink + `maxFramesInMemory` in `capture.ts` (189 tests, renderer)
+  - PR #67 `feat(player,studio): render-parity mode [BF-440]` — `renderParityMode`/`onRenderFrame` + `RenderParityButton` (player 19/19, studio 73/73)
+  - PR #64 `feat(fonts): font loading [BF-410]` (previously merged, base for this wave)
+  - BF-420 virtual clock committed on this branch then merged to `main` (`feat: render-resilience v0.3 base — virtual clock [BF-420]`, 329 lines, 496 core tests)
 - PR #40 — 9-commit branch `feat/bf-201-203-p14-performance` squash-merged (P14 perf, P15 grade, P11 agent-native, BF-200 WebGPU, BF-428 asset cache, BF-211/212 camera+aspect, BF-400/401 partial)
 - CI fixes: `@types/node` added to packages/core; frames perf-benchmark test timeout → 60s
 - PR #54 — doc closure: BF-211/212 were **already implemented** in PR #40 (worker verified 30+ tests); GOAL_00 ticked
@@ -22,11 +28,14 @@
 ## 2. Remaining work (in order)
 1. (Done — children collected and merged serially: #57, #58, #59/#60, #62, #63.)
 2. (Done — #10–#14 verified already implemented, all closed as done.)
-3. **Wave 3 (done)**: **#42 fonts** (BF-410) — PR #64 merged, GOAL_00 ticked. Next: **#46 render-resilience** (BF-420/422/423/440, core+renderer+player).
+3. **Wave 3 complete**: **#42 fonts** (BF-410, PR #64) + **#46 render-resilience** (BF-420/422/423/440) all merged, GOAL_00 checkboxes left `[]` pending the remaining spec sub-parts (see residual below).
 4. Wave 4: **#50** profiler/benchmark/hw-encode/loudness, **#51** cloud hardening (mocked creds only — no credentials in CI), **#52** integrations (AI providers must be injectable/mocked — never network in tests), **#53** platform ecosystem.
 5. After each wave: merge serially, resolve conflicts (core/src/index.ts is the hot file), tick GOAL_00, keep issue labels flowing (`status:in-progress` → closed via `Closes #N`).
 6. When queue empties: run `pnpm type-check && pnpm lint && pnpm build && pnpm test` at root, then changesets version bump + BF-093 public release (npm scope check first).
-Next concrete action: `gh pr list --state open` — merge whatever the children already opened.
+Next concrete action: all #46 PRs merged; verify `main` is green (`pnpm type-check && pnpm lint && pnpm build && pnpm test` done — all green), then move to Wave 4 (#50/#51/#52/#53) or tick residual BF-422/BF-423 sub-parts:
+- BF-422 residual: automatic retry with lower concurrency on OOM (memory budget + streaming done).
+- BF-423 residual: auto-wait-with-timeout naming asset+component for `<Img>`/video/fonts/`fetch` (holdFrame leak detector done).
+- BF-420 residual: CSS/GSAP/Lottie/Framer-Motion/Tailwind adapters + wall-clock warning (virtual clock done).
 
 ## 3. Verified ground truth (read this — saves hours)
 - **Subagent agent name is `worker`** — `general` does not exist (burned one wave learning this).
