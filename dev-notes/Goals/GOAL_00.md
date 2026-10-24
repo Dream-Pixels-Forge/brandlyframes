@@ -492,7 +492,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-420 **Determinism Guard** (kills flicker): a virtual clock patches `requestAnimationFrame`, `setTimeout/Interval`, `Date.now`, `performance.now`; `warnWallClock()` runtime warning names the component using wall-clock time. CSS animations/transitions and Web Animations API adapters are residual. *(PR #69, 504 core tests)*
 - [x] BF-421 **Auto-concurrency + `benchmark`**: `brandlyframes benchmark --tune-concurrency` tests concurrency levels (1, 2, 4, 8) and recommends the optimum based on measured throughput.
 - [x] BF-422 **Memory safety**: memory budget (`maxFramesInMemory`), worker/tab recycling, streaming frames straight to FFmpeg (`onFrame` sink, no giant buffers), automatic retry with lower concurrency on OOM. *(PR #68, 192 renderer tests)*
-- [x] BF-423 **Never-blank-frame guarantee**: `holdFrame` leak detector (PR #65); `<Img>` auto-waits until loaded with a timeout naming the asset via `autoHoldFrame` (PR #71). `useFont`/`loadFont` auto-hold pre-existing. Residual: video + `fetch` auto-wait-with-timeout.
+- [x] BF-423 **Never-blank-frame guarantee**: `holdFrame` leak detector (PR #65); `<Img>` auto-hold via `autoHoldFrame` (PR #71); `video` + `fetch` auto-wait-with-timeout naming the asset via `fetchAutoHold`/`autoHoldFrame` (PR #72). `useFont`/`loadFont` auto-hold pre-existing. All sub-parts complete.
 - [x] BF-424 **Slow-frame report**: `--log=verbose` prints the slowest frames and slowest components after every render (basic version of the P14 profiler) — implemented in CLI `render` command with `--log verbose` flag.
 - [ ] BF-425 **Hardware encoding**: NVENC, VideoToolbox, VAAPI/QSV where available; fast path for alpha; clear warning that VP8/VP9 is slow.
 - [x] BF-426 **Platform export presets**: `web-safe`, `youtube`, `tiktok`, `instagram`, `whatsapp`, `broadcast` set pixel format, profile, level, bitrate, loudness and `faststart` — implemented in `@brandlyframes/presets` package with 11 tests.
@@ -502,7 +502,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-430 **Zero-setup toolchain**: `brandlyframes doctor --fix` auto-installs FFmpeg/Chrome via OS package manager (apt/brew/winget) and aligns package versions (managed Chromium/FFmpeg download and Dockerfile/devenvcontainer are deployment-phase items).
 
 ### v0.4 "Premiere"
-- [x] BF-440 **Render-parity mode**: `renderParityMode`/`onRenderFrame` + `PlayerRef.renderFrame` scaffolding (PR #67); `RenderParityButton` "Diff preview vs render" (PR #67); pure `compareRenderFrames` pixel-diff utility (PR #70). Residual: end-to-end render-quality-frame capture wired into the diff comparison.
+- [x] BF-440 **Render-parity mode**: `renderParityMode`/`onRenderFrame` + `PlayerRef.renderFrame` scaffolding (PR #67); `RenderParityButton` "Diff preview vs render" (PR #67); `compareRenderFrames` pixel-diff utility (PR #70); Player `runRenderDiff`/`getRenderDiff` + `onRenderDiff` end-to-end diff (PR #73). All sub-parts complete.
 
 ### v0.5 "Frame by Frame"
 - [x] BF-450 **Auto-promote video**: in render mode, any `<Video>` automatically uses the frame-exact `<FrameVideo>` path (fixes stutter with many video tags); Studio warns when too many concurrent decoders are open. *(detectVideoUsage implemented + 6 tests, CLI wired with --no-auto-promote-video flag, decodeFrameFFmpeg/frameHash/compareGoldenFrames exported, 8 BF-450 tests pass)*
