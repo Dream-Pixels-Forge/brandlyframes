@@ -13,8 +13,9 @@ import type { CaptionCue, KaraokeData, KaraokeWord } from './index';
 /** VTT/SRT clock timestamp inside cue text, e.g. `<00:00:01.240>`. */
 const WORD_TS = /<(\d{1,2}):(\d{2}):(\d{2})[.,](\d{1,3})>/g;
 
-/** Any other inline tag (`<c>`, `<i>`, `<v Name>`, …) — stripped, text kept. */
-const OTHER_TAG = /<[^<>]*>/g;
+/** Any other inline tag (`<c>`, `<i>`, `<v Name>`, …) — stripped, text kept.
+ * Word timestamps (`<00:00:01.240>`) are excluded so they survive stripping. */
+const OTHER_TAG = /<(?!\d{1,2}:\d{2}:\d{2}[.,]\d{1,3})[^<>]*>/g;
 
 const toSeconds = (h: string, m: string, s: string, ms: string): number =>
   Number(h) * 3600 + Number(m) * 60 + Number(s) + Number(ms.padEnd(3, '0')) / 1000;

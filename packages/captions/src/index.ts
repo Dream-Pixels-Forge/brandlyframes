@@ -73,10 +73,11 @@ export function parseSRT(content: string): ParsedCaption {
 
     if (lineIndex >= lines.length) continue;
 
-    // Parse timestamp line
+    // Parse timestamp line. An optional trailing `[,.]ddd` group tolerates
+    // exporters that emit an extra sub-millisecond fraction (`00:00:00.000,000`).
     const timestampLine = lines[lineIndex].trim();
     const timeMatch = timestampLine.match(
-      /(\d{2}):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{3})/
+      /(\d{2}):(\d{2}):(\d{2})[,.](\d{3})(?:[,.]\d{1,3})?\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{3})(?:[,.]\d{1,3})?/
     );
 
     if (!timeMatch) continue;
@@ -122,12 +123,20 @@ export function parseVTT(content: string): ParsedCaption {
   let inCue = false;
   let currentCue: Partial<CaptionCue> = {};
   let cueTextLines: string[] = [];
+  // Cue identifier line (the optional line before a timestamp block)
+  let pendingId: string | null = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
 
     // Skip WEBVTT header and metadata
     if (line.startsWith('WEBVTT') || line.startsWith('NOTE') || line.startsWith('STYLE') || line.startsWith('REGION')) {
+      continue;
+    }
+
+    // Empty line outside a cue also drops a dangling identifier
+    if (line === '' && !inCue) {
+      pendingId = null;
       continue;
     }
 
@@ -156,7 +165,8 @@ export function parseVTT(content: string): ParsedCaption {
 
     if (timeMatch) {
       inCue = true;
-      currentCue.id = `cue-${cues.length}`;
+      currentCue.id = pendingId ?? `cue-${cues.length}`;
+      pendingId = null;
       currentCue.startTime = timeToSeconds(
         parseInt(timeMatch[1]),
         parseInt(timeMatch[2]),
@@ -177,9 +187,11 @@ export function parseVTT(content: string): ParsedCaption {
       continue;
     }
 
-    // Cue text
+    // Cue text while inside a cue; otherwise an identifier line
     if (inCue) {
       cueTextLines.push(line);
+    } else {
+      pendingId = line;
     }
   }
 
