@@ -4,26 +4,27 @@
   "description": "Interop for BrandlyFrames: HyperFrames import and OTIO/EDL/FCP XML export for Premiere/Resolve/After Effects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "dev": "vitest"
   },
-  "peerDependencies": {
-    "react": ">=18"
-  },
-  "dependencies": {
-    "brandlyframes": "workspace:*",
-    "@brandlyframes/zod-types": "workspace:*",
-    "zod": "^3.23.0"
-  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "interop", "otio", "edl", "fcp", "xml"],
+  "keywords": [
+    "brandlyframes",
+    "interop",
+    "otio",
+    "edl",
+    "fcp",
+    "xml"
+  ],
   "license": "MIT"
 }
