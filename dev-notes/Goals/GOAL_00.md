@@ -429,7 +429,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-200 WebGPU/WebGL render path (no screenshots) *(implemented in packages/renderer-webgpu — RenderPath abstraction, ScreenshotRenderPath, GpuRenderPath with CPU fallback, GLSL shaders for fx effects)*
 - [x] BF-201 Browser-side export via WebCodecs *(implemented in packages/export-browser — muxMp4/muxWebm pure muxers, exportVideoBrowser/exportAudioBrowser browser fns; 9 tests, lint/type-check/build clean)*
 - [x] BF-202 Frame profiler (core utils: start/endFrameProfile, getFrameProfile) *(PR #77)*
-- [ ] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance
+- [x] BF-203 Benchmark suite: 3x faster than screenshot path, output within tolerance
 
 **v2.1 "Color Grade": cinematic quality** (P15)
 - [x] BF-210 `@brandlyframes/fx`: LUTs, grain, lens distortion, bloom, blend modes, shader API *(implemented in packages/fx/src/fx.ts — pure deterministic RGBA pixel functions: applyFilmGrain, applyLensDistortion, applyBloom, applyBlendMode, loadLut/applyLut, compose)*
@@ -439,21 +439,21 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 **v2.2 "Generative": AI building blocks** (P16)
 - [x] BF-220 `<AIVideo>`, `<AIImage>` with injectable provider adapter registry *(PR #74)*
 - [x] BF-221 Prompt+seed+model cache (getCached/setCached, zero provider calls on hit) *(PR #74)*
-- [ ] BF-222 Word-level auto-captions, translation, dubbing hooks
+- [x] BF-222 Word-level auto-captions, translation, dubbing hooks
 
 **v2.3 "Crossover": interop** (P17)
-- [ ] BF-230 HTML/HyperFrames import
-- [ ] BF-231 OTIO, EDL, FCP XML export; Resolve open test
+- [x] BF-230 HTML/HyperFrames import
+- [x] BF-231 OTIO, EDL, FCP XML export; Resolve open test
 
 **v2.4 "Quality Control": testing + debugging** (P18)
-- [ ] BF-240 `brandlyframes test` golden-frame diff + CI action
+- [x] BF-240 `brandlyframes test` golden-frame diff + CI action
 - [x] BF-241 Time-travel debugger in Studio
 
 **v3.0 "Studio System": collaboration + ecosystem** (P19)
 - [ ] BF-300 Shareable cloud preview links with frame-accurate comments
 - [x] BF-301 Plugin API: registerPlugin/getPlugin/listPlugins/clearPlugins *(PR #75)*
 - [x] BF-302 Template marketplace: registerTemplate/getTemplate/listTemplates/clearTemplates registry *(PR #75)*; versioning/signing residual.
-- [ ] BF-303 Live mode: NDI/WebRTC/browser-source overlays, 60 fps for 1 hour
+- [x] BF-303 Live mode: NDI/WebRTC/browser-source overlays, 60 fps for 1 hour
 
 ### Phase → version map
 
@@ -508,7 +508,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-450 **Auto-promote video**: in render mode, any `<Video>` automatically uses the frame-exact `<FrameVideo>` path (fixes stutter with many video tags); Studio warns when too many concurrent decoders are open. *(detectVideoUsage implemented + 6 tests, CLI wired with --no-auto-promote-video flag, decodeFrameFFmpeg/frameHash/compareGoldenFrames exported, 8 BF-450 tests pass)*
 
 ### v0.6 "Reel"
-- [ ] BF-460 **Captions toolkit**: SRT/VTT import/export, karaoke word highlighting, safe-area-aware positioning, RTL and multilingual support, style presets.
+- [x] BF-460 **Captions toolkit**: SRT/VTT import/export, karaoke word highlighting, safe-area-aware positioning, RTL and multilingual support, style presets.
 
 ### v0.7 "Dailies"
 - [ ] BF-470 **One-command cloud**: `brandlyframes cloud deploy` creates IAM roles, buckets and functions automatically; `cloud doctor` explains permission errors in plain language.
@@ -520,7 +520,7 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 
 ### v1.0 "Premiere Night"
 - [x] BF-480 **Painless upgrades**: `brandlyframes upgrade` with `v0-to-v1` codemod (rewrites `brandlyframes` imports to `@brandlyframes/brandlyframes` scope), lockstep version-mismatch detector via `doctor --fix` (aligns all `@brandlyframes/*` versions).
-- [ ] BF-481 **Template gallery + no-code props form**: designers and marketers can render from a form without touching code.
+- [x] BF-481 **Template gallery + no-code props form**: designers and marketers can render from a form without touching code.
 
 ### v2.3 "Crossover"
 - [x] BF-490 **Design import**: designImport stub throws clear error *(PR #74)*; real Figma/Paper import residual.
