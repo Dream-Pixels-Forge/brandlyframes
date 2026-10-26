@@ -268,3 +268,22 @@ export const RenderParityButton = ({
     </Button>
   );
 };
+
+// Visual timeline (BF-120): clips as draggable/resizable blocks with trim
+// handles, markers, and a playhead scrub synced with the studio preview
+// (wire `onSeek` to the player). Pure model reducers ship alongside so the
+// drag/trim clamping rules are testable without a DOM.
+export { TimelinePanel, type TimelinePanelProps } from './timeline/TimelinePanel';
+export {
+  clamp,
+  formatTimecode,
+  frameToPx,
+  moveClip,
+  pxPerFrame,
+  pxToFrame,
+  trimClipEnd,
+  trimClipStart,
+  type TimelineClip,
+  type TimelineClipPatch,
+  type TimelineMarker,
+} from './timeline/timeline-model';
