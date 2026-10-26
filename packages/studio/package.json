@@ -27,6 +27,7 @@
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@types/node": "^20.19.43",
     "@babel/generator": "^8.0.6",
     "@babel/parser": "^8.0.8",
     "@babel/traverse": "^8.0.7",
