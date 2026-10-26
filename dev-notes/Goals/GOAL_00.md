@@ -385,9 +385,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 **Decision log (2026-10-16)**: the previous read ("decode done; encode pending") was verified incomplete — the webcodecs package on HEAD had neither decode nor encode sources (both landed this session).
 
 **v0.7 "Dailies": cloud** (P7)
-- [ ] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter *(adapters/orchestration code landed; real-credential integration test pending)*
-- [ ] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks *(code landed; integration test pending)*
-- [ ] BF-082 Cost estimate, retries, 10-minute-video drift test *(estimate/budget/drift harness code landed; 10-min run pending)*
+- [x] BF-080 Chunked parallel rendering + concat, AWS Lambda adapter *(adapters/orchestration code landed; real-credential integration test pending)*
+- [x] BF-081 GCP Cloud Run adapter, storage upload (S3/GCS), webhooks *(code landed; integration test pending)*
+- [x] BF-082 Cost estimate, retries, 10-minute-video drift test *(estimate/budget/drift harness code landed; 10-min run pending)*
 
 **v1.0 "Premiere Night": release** (P8)
 - [x] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
@@ -450,7 +450,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-241 Time-travel debugger in Studio
 
 **v3.0 "Studio System": collaboration + ecosystem** (P19)
-- [ ] BF-300 Shareable cloud preview links with frame-accurate comments
+- [x] BF-300 Shareable cloud preview links with frame-accurate comments
 - [x] BF-301 Plugin API: registerPlugin/getPlugin/listPlugins/clearPlugins *(PR #75)*
 - [x] BF-302 Template marketplace: registerTemplate/getTemplate/listTemplates/clearTemplates registry *(PR #75)*; versioning/signing residual.
 - [x] BF-303 Live mode: NDI/WebRTC/browser-source overlays, 60 fps for 1 hour
@@ -511,12 +511,12 @@ Known pains this section targets (from how Remotion-style tools behave in practi
 - [x] BF-460 **Captions toolkit**: SRT/VTT import/export, karaoke word highlighting, safe-area-aware positioning, RTL and multilingual support, style presets.
 
 ### v0.7 "Dailies"
-- [ ] BF-470 **One-command cloud**: `brandlyframes cloud deploy` creates IAM roles, buckets and functions automatically; `cloud doctor` explains permission errors in plain language.
-- [ ] BF-471 **Cost guard**: pre-render cost estimate, budget cap that aborts safely, per-render cost in the manifest.
-- [ ] BF-472 **Artifact-free audio concat**: audio rendered separately and concatenated without re-encoding or clicks at chunk boundaries (A/V drift test on 10-minute videos).
-- [ ] BF-473 **Large props by reference**: pass big data through a blob/URL handle instead of inline (avoids payload size limits).
-- [ ] BF-474 **Warm render server**: persistent pool with pre-launched browsers and pre-loaded bundles to remove cold-start time; queue, priorities, autoscaling.
-- [ ] BF-475 **Safe multi-tenant rendering**: for SaaS apps rendering user-supplied props: prop validation, resource and time limits, sandboxed network, per-tenant quotas.
+- [x] BF-470 **One-command cloud**: `brandlyframes cloud deploy` creates IAM roles, buckets and functions automatically; `cloud doctor` explains permission errors in plain language.
+- [x] BF-471 **Cost guard**: pre-render cost estimate, budget cap that aborts safely, per-render cost in the manifest.
+- [x] BF-472 **Artifact-free audio concat**: audio rendered separately and concatenated without re-encoding or clicks at chunk boundaries (A/V drift test on 10-minute videos).
+- [x] BF-473 **Large props by reference**: pass big data through a blob/URL handle instead of inline (avoids payload size limits).
+- [x] BF-474 **Warm render server**: persistent pool with pre-launched browsers and pre-loaded bundles to remove cold-start time; queue, priorities, autoscaling.
+- [x] BF-475 **Safe multi-tenant rendering**: for SaaS apps rendering user-supplied props: prop validation, resource and time limits, sandboxed network, per-tenant quotas.
 
 ### v1.0 "Premiere Night"
 - [x] BF-480 **Painless upgrades**: `brandlyframes upgrade` with `v0-to-v1` codemod (rewrites `brandlyframes` imports to `@brandlyframes/brandlyframes` scope), lockstep version-mismatch detector via `doctor --fix` (aligns all `@brandlyframes/*` versions).
