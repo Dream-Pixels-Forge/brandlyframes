@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Product Promo</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      .hf-video {
+        display: block;
+      }
+    </style>
+    <script>
+      console.log("<div class='hf-clip' data-start-frame='999'>not a clip</div>");
+    </script>
+  </head>
+  <body>
+    <div
+      class="hyperframes-composition"
+      id="promo"
+      data-name="Product Promo"
+      data-fps="30"
+      data-width="1920"
+      data-height="1080"
+      data-duration-frames="150"
+    >
+      <div class="hf-track" data-track-name="Overlay">
+        <div
+          class="hf-clip hf-text"
+          data-name="Title"
+          data-start-frame="0"
+          data-duration-frames="45"
+        >
+          Hello & welcome
+        </div>
+        <div class="hf-marker" data-name="drop" data-frame="60"></div>
+      </div>
+      <div class="hf-track" data-track-name="Main">
+        <video
+          class="hf-video"
+          data-name="Intro"
+          data-start-frame="0"
+          data-duration-frames="60"
+          src="assets/intro.mp4"
+        ></video>
+        <!-- a comment between clips -->
+        <div
+          class="hf-clip hf-video"
+          data-name="Main Shot"
+          data-start-frame="60"
+          data-duration-frames="90"
+          data-src="assets/main.mp4"
+        >
+          <div
+            class="hf-clip hf-text"
+            data-name="Lower Third"
+            data-start-frame="70"
+            data-duration-frames="20"
+          ></div>
+        </div>
+        <img
+          class="hf-image"
+          data-start-frame="150"
+          data-duration-frames="30"
+          src="assets/card.png"
+        />
+      </div>
+      <audio
+        class="hf-audio"
+        data-name="Music"
+        data-start-frame="0"
+        data-duration-frames="180"
+        src="assets/music.mp3"
+      ></audio>
+      <section class="unknown-widget" data-start-frame="10" data-duration-frames="20"></section>
+    </div>
+  </body>
+</html>
