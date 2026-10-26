@@ -1,10 +1,13 @@
 {
   "name": "@brandlyframes/test",
+  "type": "module",
   "version": "1.0.0",
   "description": "Visual regression testing for BrandlyFrames: golden-frame diff, drift detection, CI action.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -22,6 +25,11 @@
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "test", "visual-regression", "golden-frame"],
+  "keywords": [
+    "brandlyframes",
+    "test",
+    "visual-regression",
+    "golden-frame"
+  ],
   "license": "MIT"
 }

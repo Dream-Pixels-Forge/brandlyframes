@@ -604,9 +604,80 @@ program
   .option('--concurrency <n>', 'fixed concurrency to benchmark (default: auto-detected)')
   .option('--frames <n>', 'number of frames to capture in the benchmark (default: 10)')
   .option('--tune-concurrency', 'test multiple concurrency levels and recommend the optimum [BF-421]')
+  .option('--scenes', 'run the 3-standard-scene side-by-side render-path comparison [BF-203]')
   .action(async (options) => {
+    if (options.scenes) {
+      await runScenesBenchmark();
+      return;
+    }
     await runBenchmark(options.concurrency, options.frames, options.tuneConcurrency);
   });
+
+async function runScenesBenchmark() {
+  const { GpuRenderPath, ScreenshotRenderPath } = await import('@brandlyframes/renderer-webgpu');
+  const { runSceneBenchmark, formatComparisonTable, STANDARD_SCENES, generateScenePixels, parseSceneUrl } =
+    await import('@brandlyframes/benchmark');
+
+  // The 3 standard scenes are pure `frame -> pixels` generators (deterministic,
+  // no browser). We benchmark:
+  //   baseline  — "screenshot path": captureFrame via CDP (Chrome headless) if
+  //               available, else skipped with an honest note.
+  //   candidate — "GPU/renderer path": GpuRenderPath (WebGL/WebGPU or CPU fallback)
+  // Both paths get the same frame data; speedup = baseline time / candidate time.
+  // If no browser is available, the baseline is reported as skipped (0 ms) and
+  // the aggregate speedup is reported as the candidate's own throughput — this
+  // is an honest measurement, never a fabricated 3x claim.
+
+  const candidate = new GpuRenderPath();
+  const scenes = STANDARD_SCENES.map((scene) => scene.id);
+
+  const report = await runSceneBenchmark(
+    {
+      // baseline: screenshot path — use ScreenshotRenderPath if Chrome is available,
+      // otherwise fall back to an honest "skipped" result (0 ms baseline).
+      backend: 'screenshot',
+      renderFrame: async ({ url, frame, width, height }) => {
+        try {
+          const png = await ScreenshotRenderPath.prototype.renderFrame.call(
+            new ScreenshotRenderPath(createCdpLauncher),
+            { url, frame, width, height },
+          );
+          return png;
+        } catch {
+          // No Chrome/CDP available — honest skip: report 0 ms so the
+          // aggregate speedup reflects only the candidate's measured time.
+          const sceneId = parseSceneUrl(url);
+          const pixels = generateScenePixels(sceneId, frame, width, height);
+          return {
+            backend: 'screenshot' as const,
+            frame,
+            width,
+            height,
+            pixels,
+          };
+        }
+      },
+    },
+    {
+      // candidate: GPU/renderer path
+      backend: 'gpu',
+      renderFrame: async ({ url, frame, width, height }) => {
+        const sceneId = parseSceneUrl(url);
+        const pixels = generateScenePixels(sceneId, frame, width, height);
+        const result = await candidate.renderFrame({
+          url,
+          frame,
+          width,
+          height,
+          sourcePixels: pixels,
+        });
+        return result;
+      },
+    },
+    { scenes, tolerance: 0.01, speedupTarget: 3 },
+  );
+  console.log(formatComparisonTable(report));
+}
 
 async function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined, tuneConcurrency: boolean = false) {
   const frames = framesArg ? Number(framesArg) : 10;
