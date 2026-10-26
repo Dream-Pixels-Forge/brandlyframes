@@ -782,6 +782,117 @@ class Semaphore {
 export { cloudDoctor, type CloudDoctorReport, type CloudDoctorCheck } from './doctor';
 
 // ============================================================================
+// Deploy plan + plain-language error explanations (BF-470)
+// ============================================================================
+
+export {
+  planCloudDeploy,
+  formatDeployPlan,
+  type DeployPlan,
+  type DeployPlanOptions,
+  type DeployPlanResource,
+} from './deploy-plan';
+
+export {
+  CLOUD_ERROR_EXPLANATIONS,
+  explainCloudError,
+  type CloudErrorExplanation,
+} from './doctor';
+
+// ============================================================================
+// Artifact-free audio concat (BF-472)
+// ============================================================================
+
+export {
+  buildAudioConcatArgs,
+  buildAudioConcatList,
+  concatAudioStreams,
+  createMockClock,
+  runAudioDriftHarness,
+  SYNTHETIC_DRIFT_TIMELINE,
+  type AudioConcatResult,
+  type AudioConcatSegment,
+  type AudioConcatListOptions,
+  type AudioConcatStreamOptions,
+  type AudioDriftHarnessOptions,
+  type MockClockOptions,
+} from './audio-concat';
+
+// ============================================================================
+// Large props by reference (BF-473)
+// ============================================================================
+
+export {
+  assertPropsUnderLimit,
+  createPropRef,
+  estimatePropsBytes,
+  InMemoryPropRefStore,
+  isPropRef,
+  MAX_INLINE_PROP_BYTES,
+  PropSizeExceededError,
+  resolvePropRefs,
+  toPropRef,
+  type CreatePropRefOptions,
+  type PropRef,
+  type PropRefHandle,
+  type PropRefResolver,
+  type PropRefStore,
+} from './prop-ref';
+
+// ============================================================================
+// Warm render server (BF-474)
+// ============================================================================
+
+export {
+  InMemoryWarmPool,
+  WarmPoolDisposedError,
+  type WarmPoolHooks,
+  type WarmPoolOptions,
+  type WarmPoolStats,
+  type WarmRenderPool,
+  type WarmWorker,
+} from './warm-pool';
+
+// ============================================================================
+// Safe multi-tenant rendering (BF-475)
+// ============================================================================
+
+export {
+  DEFAULT_TENANT_LIMITS,
+  MAX_PROPS_DEPTH,
+  MockTenantOrchestrator,
+  PropValidationError,
+  QuotaExceededError,
+  TenantLimitExceededError,
+  TenantQuotaLedger,
+  validateTenantProps,
+  type MockTenantOrchestratorOptions,
+  type TenantPropValidationResult,
+  type TenantQuota,
+  type TenantRenderLimits,
+  type TenantRenderInvocation,
+  type TenantRenderOutcome,
+  type TenantRenderRequest,
+} from './tenant-safety';
+
+// ============================================================================
+// Shareable cloud preview links (BF-300)
+// ============================================================================
+
+export {
+  buildPreviewLink,
+  InMemoryCommentStore,
+  parsePreviewLink,
+  type InMemoryCommentStoreOptions,
+  type ParsedPreviewLink,
+  type PreviewComment,
+  type PreviewCommentInput,
+  type PreviewCommentListFilter,
+  type PreviewCommentStore,
+  type PreviewLinkOptions,
+} from './preview-links';
+
+// ============================================================================
 // Cost guard (BF-471)
 // ============================================================================
 
