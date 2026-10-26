@@ -7,6 +7,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./live": {
+      "types": "./dist/live.d.ts",
+      "default": "./dist/live.js"
     }
   },
   "files": [
@@ -36,6 +40,7 @@
   },
   "dependencies": {
     "brandlyframes": "workspace:*",
-    "@brandlyframes/design": "workspace:*"
+    "@brandlyframes/design": "workspace:*",
+    "zod": "^4.6.7"
   }
 }
