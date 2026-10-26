@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -304,4 +304,77 @@ describe('CLI', () => {
     const stderr = (error as Error & { stderr?: string }).stderr ?? '';
     expect(stderr).toContain('frames must be an integer >= 1');
   }, TEST_TIMEOUT);
+
+  // test command — golden-frame visual regression [BF-240]
+  it('should test --help list golden-frame options', () => {
+    const output = execSync(`node ${cliBin} test --help`, { encoding: 'utf8' });
+    expect(output).toContain('golden');
+    expect(output).toContain('--update-goldens');
+    expect(output).toContain('--threshold');
+  }, TEST_TIMEOUT);
+
+  it('should test with a missing config exit non-zero with a readable error', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} test does-not-exist.test.json`, { encoding: 'utf8' });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const e = error as Error & { stderr?: string; status?: number };
+    expect(`${e.stderr ?? ''}${e.message}`).toContain('cannot read config');
+    expect(e.status).not.toBe(0);
+  }, TEST_TIMEOUT);
+
+  it('should test with a malformed config exit non-zero', () => {
+    const badConfig = join(tmpdir(), `bf-bad-config-${Date.now()}.json`);
+    writeFileSync(badConfig, '{ not json');
+    try {
+      let error: Error | null = null;
+      try {
+        execSync(`node ${cliBin} test ${badConfig}`, { encoding: 'utf8' });
+      } catch (err) {
+        error = err as Error;
+      }
+      expect(error).not.toBeNull();
+    } finally {
+      rmSync(badConfig, { force: true });
+    }
+  }, TEST_TIMEOUT);
+
+  it('should test with a config missing compositions exit non-zero', () => {
+    const badConfig = join(tmpdir(), `bf-empty-config-${Date.now()}.json`);
+    writeFileSync(badConfig, JSON.stringify({ threshold: 2 }));
+    try {
+      let error: Error | null = null;
+      try {
+        execSync(`node ${cliBin} test ${badConfig}`, { encoding: 'utf8' });
+      } catch (err) {
+        error = err as Error;
+      }
+      expect(error).not.toBeNull();
+      const e = error as Error & { stderr?: string };
+      expect(`${e.stderr ?? ''}${e.message}`).toContain('compositions');
+    } finally {
+      rmSync(badConfig, { force: true });
+    }
+  }, TEST_TIMEOUT);
+
+  // benchmark --scenes: side-by-side render-path comparison [BF-203]
+  it('should benchmark --scenes print the comparison table or an honest skip', () => {
+    const output = execSync(`node ${cliBin} benchmark --scenes`, {
+      encoding: 'utf8',
+      timeout: 120_000,
+    });
+    expect(output).toContain('Standard Scenes');
+    // Either real measured numbers, or an explicit honest skip — never a
+    // fabricated 3x claim.
+    const measured = output.includes('Measured aggregate speedup');
+    const skipped = output.includes('screenshot baseline: unavailable');
+    expect(measured || skipped).toBe(true);
+    if (measured) {
+      expect(output).toMatch(/Measured aggregate speedup: \d+\.\d+x/);
+      expect(output).toMatch(/tolerance/i);
+    }
+  }, 150_000);
 });

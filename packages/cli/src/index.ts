@@ -12,6 +12,21 @@ import {
   runRenderJob,
   stitchFrames,
 } from '@brandlyframes/renderer';
+import {
+  formatGoldenReport,
+  formatGoldenReportMarkdown,
+  runGoldenTests,
+  decodePng,
+  type GoldenTestEntry,
+} from '@brandlyframes/test';
+import {
+  formatComparisonTable,
+  generateScenePixels,
+  parseSceneUrl,
+  runSceneBenchmark,
+  type BenchmarkablePath,
+} from '@brandlyframes/benchmark';
+import { GpuRenderPath, ScreenshotRenderPath } from '@brandlyframes/renderer-webgpu';
 import { createCdpLauncher } from './cdp-launcher.js';
 import {
   runBatch,
@@ -395,6 +410,120 @@ function runDoctor(fix: boolean, json: boolean) {
     console.log('All checks passed. No issues detected.');
   } else {
     console.log(`Run with --fix to auto-fix fixable issues, or address the ${overall} items above.`);
+    process.exit(1);
+  }
+}
+
+// ----- test command — golden-frame visual regression [BF-240] -----
+program
+  .command('test [config]')
+  .description(
+    'golden-frame visual regression: render pinned frames and diff against goldens stored next to the composition [BF-240]',
+  )
+  .option('--update-goldens', 'recapture and overwrite golden images instead of diffing')
+  .option('--threshold <n>', 'max per-channel pixel difference 0-255 (overrides config)')
+  .option('--report <path>', 'write the text report to this file')
+  .option('--report-md <path>', 'write the markdown report to this file (for CI comments)')
+  .action((config, options) => {
+    runGoldenTestCli(config, options).catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+  });
+
+interface GoldenTestCliConfig {
+  threshold?: number;
+  width?: number;
+  height?: number;
+  compositions?: unknown;
+}
+
+async function runGoldenTestCli(
+  configArg: string | undefined,
+  options: {
+    updateGoldens?: boolean;
+    threshold?: string;
+    report?: string;
+    reportMd?: string;
+  },
+): Promise<void> {
+  const configPath = resolve(configArg ?? 'brandlyframes.test.json');
+  let config: GoldenTestCliConfig;
+  try {
+    config = JSON.parse(readFileSync(configPath, 'utf8')) as GoldenTestCliConfig;
+  } catch (error) {
+    console.error(
+      `test: cannot read config ${configPath}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    process.exit(1);
+  }
+  if (!Array.isArray(config.compositions) || config.compositions.length === 0) {
+    console.error('test: config must contain a non-empty "compositions" array');
+    process.exit(1);
+  }
+
+  const entries: GoldenTestEntry[] = [];
+  for (const [i, raw] of config.compositions.entries()) {
+    const c = raw as {
+      id?: unknown;
+      url?: unknown;
+      frames?: unknown;
+      dir?: unknown;
+      width?: unknown;
+      height?: unknown;
+    };
+    if (
+      typeof c.id !== 'string' ||
+      typeof c.url !== 'string' ||
+      !Array.isArray(c.frames) ||
+      !c.frames.every((f) => Number.isInteger(f) && (f as number) >= 0)
+    ) {
+      console.error(
+        `test: compositions[${i}] must have string id, string url, and an array of non-negative integer frames`,
+      );
+      process.exit(1);
+    }
+    entries.push({
+      id: c.id,
+      url: c.url,
+      frames: c.frames as number[],
+      dir: typeof c.dir === 'string' ? c.dir : '.',
+      width: typeof c.width === 'number' ? c.width : config.width,
+      height: typeof c.height === 'number' ? c.height : config.height,
+    });
+  }
+
+  let threshold = config.threshold;
+  if (options.threshold !== undefined) {
+    threshold = Number(options.threshold);
+  }
+  if (threshold !== undefined && (!Number.isInteger(threshold) || threshold < 0 || threshold > 255)) {
+    console.error('test: threshold must be an integer between 0 and 255');
+    process.exit(1);
+  }
+
+  // Real renderer seam: headless capture through the CDP launcher.
+  const capture = (o: { url: string; frame: number; width?: number; height?: number }) =>
+    captureFrame({ url: o.url, frame: o.frame, width: o.width, height: o.height }, createCdpLauncher);
+
+  const report = await runGoldenTests({
+    entries,
+    capture,
+    threshold,
+    updateGoldens: options.updateGoldens === true,
+  });
+
+  const text = formatGoldenReport(report);
+  console.log(text);
+  if (options.report) {
+    writeFileSync(options.report, `${text}\n`);
+    console.log(`Text report written: ${options.report}`);
+  }
+  if (options.reportMd) {
+    writeFileSync(options.reportMd, `${formatGoldenReportMarkdown(report)}\n`);
+    console.log(`Markdown report written: ${options.reportMd}`);
+  }
+  if (!report.passed) {
     process.exit(1);
   }
 }

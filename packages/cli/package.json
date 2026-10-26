@@ -23,6 +23,9 @@
   },
   "dependencies": {
     "@brandlyframes/renderer": "workspace:*",
+    "@brandlyframes/renderer-webgpu": "workspace:*",
+    "@brandlyframes/benchmark": "workspace:*",
+    "@brandlyframes/test": "workspace:*",
     "commander": "^12.0.0"
   },
   "devDependencies": {
