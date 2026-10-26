@@ -191,7 +191,6 @@ function setNumericJsxProp(path: NodePath<t.JSXOpeningElement>, name: string, va
   } else {
     path.node.attributes.push(newAttr);
   }
-  path.node = path.node; // mark dirty
 }
 
 /**

@@ -16,17 +16,10 @@ import {
   formatGoldenReport,
   formatGoldenReportMarkdown,
   runGoldenTests,
-  decodePng,
   type GoldenTestEntry,
 } from '@brandlyframes/test';
-import {
-  formatComparisonTable,
-  generateScenePixels,
-  parseSceneUrl,
-  runSceneBenchmark,
-  type BenchmarkablePath,
-} from '@brandlyframes/benchmark';
-import { GpuRenderPath, ScreenshotRenderPath } from '@brandlyframes/renderer-webgpu';
+// @brandlyframes/benchmark and renderer-webgpu are lazy-imported in runScenesBenchmark
+// to avoid pulling the GPU path into every CLI invocation.
 import { createCdpLauncher } from './cdp-launcher.js';
 import {
   runBatch,

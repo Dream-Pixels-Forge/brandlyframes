@@ -12,7 +12,7 @@
  * All math is in keyframe-model.ts (pure, testable without DOM).
  */
 
-import { useCallback, useMemo, useState, type CSSProperties } from 'react';
+import { useCallback, useMemo } from 'react';
 import { cssVar } from '@brandlyframes/design';
 import {
   type Keyframe,
@@ -20,8 +20,6 @@ import {
   bezierEasing,
   sampleKeyframeTrack,
   upsertKeyframe,
-  moveKeyframe,
-  removeKeyframe,
 } from './keyframe-model';
 
 export interface KeyframePanelProps {
@@ -37,13 +35,6 @@ export interface KeyframePanelProps {
 const CURVE_HEIGHT = 64;
 const CURVE_PADDING = 6;
 
-const curveStyle: CSSProperties = {
-  width: '100%',
-  height: CURVE_HEIGHT,
-  border: `1px solid ${cssVar('bf-border')}`,
-  borderRadius: 4,
-  backgroundColor: cssVar('bf-surface-1'),
-};
 
 /** Draw a single keyframe track's curve on a canvas element (SVG fallback). */
 function TrackCurve({
@@ -62,11 +53,7 @@ function TrackCurve({
   const pathD = useMemo(() => {
     if (track.frames.length < 2) return '';
     const points = track.frames
-      .map((kf) => {
-        const x = pad + kf.t * (svgW - 2 * pad);
-        // Normalise value range: map min..max to svgH
-        return kf;
-      });
+      .map((kf) => kf);
     const values = points.map((kf) => kf.value);
     const minV = Math.min(...values, 0);
     const maxV = Math.max(...values, 1);
@@ -143,7 +130,6 @@ export function KeyframePanel({
   );
 
   const addKeyframe = (trackIndex: number, t: number, value: number) => {
-    const track = tracks[trackIndex];
     const kf: Keyframe = { id: `kf-${Date.now()}-${t}`, t, value, easing: 'linear' };
     handleTrackChange(trackIndex, (tr) => upsertKeyframe(tr, kf));
   };

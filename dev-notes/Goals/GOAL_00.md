@@ -409,9 +409,9 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-112 Cache-hit counters in CLI and Studio; byte-identical cold vs cached test
 
 **v1.3 "Cutting Room": two-way timeline** (P11)
-- [ ] BF-120 Visual timeline: clips, trim, markers
-- [ ] BF-121 Keyframe editor + curve editor (easing, springs)
-- [ ] BF-122 AST write-back to source code; lossless round-trip tests
+- [x] BF-120 Visual timeline: clips, trim, markers
+- [x] BF-121 Keyframe editor + curve editor (easing, springs)
+- [x] BF-122 AST write-back to source code; lossless round-trip tests
 
 **v1.4 "Score": audio-reactive** (P12)
 - [x] BF-130 `useAudioData`, `useBeat`, `useLoudness`, `useSpectrum`

@@ -50,9 +50,6 @@ describe('KeyframePanel', () => {
         { id: 'b', t: 1, value: 1, easing: 'linear' },
       ]),
     ];
-    const { userEvent } = { userEvent: null };
-    // Use the testing-library user event to click the button
-    // (fireEvent is simpler here since we don't need full user-event semantics)
     render(<KeyframePanel tracks={tracks} onTracksChange={onTracksChange} />);
     const btn = screen.getByTestId('add-kf-opacity');
     btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
