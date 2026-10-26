@@ -393,7 +393,7 @@ The phases above are the *work*; the versions below are the *releases*. Every fe
 - [x] BF-090 `create-brandlyframes` + 5 templates (incl. `frame-video-demo`)
 - [x] BF-091 Docs site, API reference, brand guide page, Remotion migration guide *(docs-site type-checks green 2026-10-20; brand guide + migration guide routes present; API reference hand-written, generation pending)*
 - [x] BF-092 `brandlyframes doctor`, `upgrade`, security review, perf report *(doctor/upgrade/benchmark implemented + tested, 29/29 CLI tests; security review = SECURITY.md baseline only, no review report; perf report = CLI `benchmark` output, no written artifact)*
-- [x] BF-093 Public release, `@brandlyframes` scope live *(npm scope `@brandlyframes` and package `brandlyframes` both available — 404 on registry; all 41/41 type-check, lint clean, 34/34 build, all tests green; 6 changesets staged)*
+- [ ] BF-093 Public release, `@brandlyframes` scope live *(NOT published — verified 2026-10-26: `npm whoami` → 401, no `@brandlyframes/*` pkg on registry; prior publish attempt failed ERR_PNPM_OTP_NON_INTERACTIVE on 6 pkgs; scope name free (404); ~30 changesets staged awaiting `changeset version`; full gate was green. BLOCKED on fresh npm automation token, then `changeset version` → build → `changeset publish` → three-way code↔git↔registry verification per AGENTS.md §8)*
 
 ### Post-1.0 (next level)
 
