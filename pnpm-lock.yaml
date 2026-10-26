@@ -292,13 +292,13 @@ importers:
 
   packages/captions:
     dependencies:
+      '@brandlyframes/design':
+        specifier: workspace:*
+        version: link:../design
       brandlyframes:
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@brandlyframes/design':
-        specifier: workspace:*
-        version: link:../design
       '@brandlyframes/fonts':
         specifier: workspace:*
         version: link:../fonts

@@ -24,10 +24,10 @@
     "dev": "vitest"
   },
   "dependencies": {
+    "@brandlyframes/design": "workspace:*",
     "brandlyframes": "workspace:*"
   },
   "devDependencies": {
-    "@brandlyframes/design": "workspace:*",
     "@brandlyframes/fonts": "workspace:*",
     "@brandlyframes/frames": "workspace:*",
     "@brandlyframes/three": "workspace:*",
