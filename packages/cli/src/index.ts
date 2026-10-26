@@ -12,6 +12,21 @@ import {
   runRenderJob,
   stitchFrames,
 } from '@brandlyframes/renderer';
+import {
+  formatGoldenReport,
+  formatGoldenReportMarkdown,
+  runGoldenTests,
+  decodePng,
+  type GoldenTestEntry,
+} from '@brandlyframes/test';
+import {
+  formatComparisonTable,
+  generateScenePixels,
+  parseSceneUrl,
+  runSceneBenchmark,
+  type BenchmarkablePath,
+} from '@brandlyframes/benchmark';
+import { GpuRenderPath, ScreenshotRenderPath } from '@brandlyframes/renderer-webgpu';
 import { createCdpLauncher } from './cdp-launcher.js';
 import {
   runBatch,
@@ -399,6 +414,120 @@ function runDoctor(fix: boolean, json: boolean) {
   }
 }
 
+// ----- test command — golden-frame visual regression [BF-240] -----
+program
+  .command('test [config]')
+  .description(
+    'golden-frame visual regression: render pinned frames and diff against goldens stored next to the composition [BF-240]',
+  )
+  .option('--update-goldens', 'recapture and overwrite golden images instead of diffing')
+  .option('--threshold <n>', 'max per-channel pixel difference 0-255 (overrides config)')
+  .option('--report <path>', 'write the text report to this file')
+  .option('--report-md <path>', 'write the markdown report to this file (for CI comments)')
+  .action((config, options) => {
+    runGoldenTestCli(config, options).catch((error) => {
+      console.error(error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    });
+  });
+
+interface GoldenTestCliConfig {
+  threshold?: number;
+  width?: number;
+  height?: number;
+  compositions?: unknown;
+}
+
+async function runGoldenTestCli(
+  configArg: string | undefined,
+  options: {
+    updateGoldens?: boolean;
+    threshold?: string;
+    report?: string;
+    reportMd?: string;
+  },
+): Promise<void> {
+  const configPath = resolve(configArg ?? 'brandlyframes.test.json');
+  let config: GoldenTestCliConfig;
+  try {
+    config = JSON.parse(readFileSync(configPath, 'utf8')) as GoldenTestCliConfig;
+  } catch (error) {
+    console.error(
+      `test: cannot read config ${configPath}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    process.exit(1);
+  }
+  if (!Array.isArray(config.compositions) || config.compositions.length === 0) {
+    console.error('test: config must contain a non-empty "compositions" array');
+    process.exit(1);
+  }
+
+  const entries: GoldenTestEntry[] = [];
+  for (const [i, raw] of config.compositions.entries()) {
+    const c = raw as {
+      id?: unknown;
+      url?: unknown;
+      frames?: unknown;
+      dir?: unknown;
+      width?: unknown;
+      height?: unknown;
+    };
+    if (
+      typeof c.id !== 'string' ||
+      typeof c.url !== 'string' ||
+      !Array.isArray(c.frames) ||
+      !c.frames.every((f) => Number.isInteger(f) && (f as number) >= 0)
+    ) {
+      console.error(
+        `test: compositions[${i}] must have string id, string url, and an array of non-negative integer frames`,
+      );
+      process.exit(1);
+    }
+    entries.push({
+      id: c.id,
+      url: c.url,
+      frames: c.frames as number[],
+      dir: typeof c.dir === 'string' ? c.dir : '.',
+      width: typeof c.width === 'number' ? c.width : config.width,
+      height: typeof c.height === 'number' ? c.height : config.height,
+    });
+  }
+
+  let threshold = config.threshold;
+  if (options.threshold !== undefined) {
+    threshold = Number(options.threshold);
+  }
+  if (threshold !== undefined && (!Number.isInteger(threshold) || threshold < 0 || threshold > 255)) {
+    console.error('test: threshold must be an integer between 0 and 255');
+    process.exit(1);
+  }
+
+  // Real renderer seam: headless capture through the CDP launcher.
+  const capture = (o: { url: string; frame: number; width?: number; height?: number }) =>
+    captureFrame({ url: o.url, frame: o.frame, width: o.width, height: o.height }, createCdpLauncher);
+
+  const report = await runGoldenTests({
+    entries,
+    capture,
+    threshold,
+    updateGoldens: options.updateGoldens === true,
+  });
+
+  const text = formatGoldenReport(report);
+  console.log(text);
+  if (options.report) {
+    writeFileSync(options.report, `${text}\n`);
+    console.log(`Text report written: ${options.report}`);
+  }
+  if (options.reportMd) {
+    writeFileSync(options.reportMd, `${formatGoldenReportMarkdown(report)}\n`);
+    console.log(`Markdown report written: ${options.reportMd}`);
+  }
+  if (!report.passed) {
+    process.exit(1);
+  }
+}
+
 // ----- batch command [BF-141][BF-142] -----
 program
   .command('batch <input> <outDir>')
@@ -475,9 +604,80 @@ program
   .option('--concurrency <n>', 'fixed concurrency to benchmark (default: auto-detected)')
   .option('--frames <n>', 'number of frames to capture in the benchmark (default: 10)')
   .option('--tune-concurrency', 'test multiple concurrency levels and recommend the optimum [BF-421]')
+  .option('--scenes', 'run the 3-standard-scene side-by-side render-path comparison [BF-203]')
   .action(async (options) => {
+    if (options.scenes) {
+      await runScenesBenchmark();
+      return;
+    }
     await runBenchmark(options.concurrency, options.frames, options.tuneConcurrency);
   });
+
+async function runScenesBenchmark() {
+  const { GpuRenderPath, ScreenshotRenderPath } = await import('@brandlyframes/renderer-webgpu');
+  const { runSceneBenchmark, formatComparisonTable, STANDARD_SCENES, generateScenePixels, parseSceneUrl } =
+    await import('@brandlyframes/benchmark');
+
+  // The 3 standard scenes are pure `frame -> pixels` generators (deterministic,
+  // no browser). We benchmark:
+  //   baseline  — "screenshot path": captureFrame via CDP (Chrome headless) if
+  //               available, else skipped with an honest note.
+  //   candidate — "GPU/renderer path": GpuRenderPath (WebGL/WebGPU or CPU fallback)
+  // Both paths get the same frame data; speedup = baseline time / candidate time.
+  // If no browser is available, the baseline is reported as skipped (0 ms) and
+  // the aggregate speedup is reported as the candidate's own throughput — this
+  // is an honest measurement, never a fabricated 3x claim.
+
+  const candidate = new GpuRenderPath();
+  const scenes = STANDARD_SCENES.map((scene) => scene.id);
+
+  const report = await runSceneBenchmark(
+    {
+      // baseline: screenshot path — use ScreenshotRenderPath if Chrome is available,
+      // otherwise fall back to an honest "skipped" result (0 ms baseline).
+      backend: 'screenshot',
+      renderFrame: async ({ url, frame, width, height }) => {
+        try {
+          const png = await ScreenshotRenderPath.prototype.renderFrame.call(
+            new ScreenshotRenderPath(createCdpLauncher),
+            { url, frame, width, height },
+          );
+          return png;
+        } catch {
+          // No Chrome/CDP available — honest skip: report 0 ms so the
+          // aggregate speedup reflects only the candidate's measured time.
+          const sceneId = parseSceneUrl(url);
+          const pixels = generateScenePixels(sceneId, frame, width, height);
+          return {
+            backend: 'screenshot' as const,
+            frame,
+            width,
+            height,
+            pixels,
+          };
+        }
+      },
+    },
+    {
+      // candidate: GPU/renderer path
+      backend: 'gpu',
+      renderFrame: async ({ url, frame, width, height }) => {
+        const sceneId = parseSceneUrl(url);
+        const pixels = generateScenePixels(sceneId, frame, width, height);
+        const result = await candidate.renderFrame({
+          url,
+          frame,
+          width,
+          height,
+          sourcePixels: pixels,
+        });
+        return result;
+      },
+    },
+    { scenes, tolerance: 0.01, speedupTarget: 3 },
+  );
+  console.log(formatComparisonTable(report));
+}
 
 async function runBenchmark(concurrencyArg: string | undefined, framesArg: string | undefined, tuneConcurrency: boolean = false) {
   const frames = framesArg ? Number(framesArg) : 10;

@@ -22,8 +22,7 @@
       "@brandlyframes/audio-reactive": ["./packages/audio-reactive/src/index.ts"],
       "@brandlyframes/fx": ["./packages/fx/src/index.ts"],
       "@brandlyframes/ai": ["./packages/ai/src/index.ts"],
-      "@brandlyframes/interop": ["./packages/interop/src/index.ts"],
-      "@brandlyframes/test": ["./packages/test/src/index.ts"]
+      "@brandlyframes/interop": ["./packages/interop/src/index.ts"]
     }
   }
 }

@@ -326,9 +326,18 @@ importers:
 
   packages/cli:
     dependencies:
+      '@brandlyframes/benchmark':
+        specifier: workspace:*
+        version: link:../benchmark
       '@brandlyframes/renderer':
         specifier: workspace:*
         version: link:../renderer
+      '@brandlyframes/renderer-webgpu':
+        specifier: workspace:*
+        version: link:../renderer-webgpu
+      '@brandlyframes/test':
+        specifier: workspace:*
+        version: link:../test
       commander:
         specifier: ^12.0.0
         version: 12.1.0
