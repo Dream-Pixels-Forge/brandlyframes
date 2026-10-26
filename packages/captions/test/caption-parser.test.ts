@@ -231,6 +231,37 @@ Hello world`;
       expect(output).toContain('position:50%');
       expect(output).toContain('align:center');
     });
+
+    it('round-trips VTT correctly (BF-460)', () => {
+      const parsed = parseVTT(sampleVTT);
+      const output = generateVTT(parsed);
+      const reparsed = parseVTT(output);
+
+      expect(reparsed.format).toBe('vtt');
+      expect(reparsed.cues).toHaveLength(parsed.cues.length);
+      parsed.cues.forEach((cue, i) => {
+        expect(reparsed.cues[i].text).toBe(cue.text);
+        expect(reparsed.cues[i].startTime).toBeCloseTo(cue.startTime, 2);
+        expect(reparsed.cues[i].endTime).toBeCloseTo(cue.endTime, 2);
+      });
+    });
+
+    it('round-trips VTT with settings and inline word timings (BF-460)', () => {
+      const vtt = `WEBVTT\n\nintro\n00:00:00.000 --> 00:00:02.000 position:50% align:center\nHello<00:00:00.320> world.`;
+      const parsed = parseVTT(vtt);
+      const reparsed = parseVTT(generateVTT(parsed));
+
+      expect(reparsed.cues[0].id).toBe('intro');
+      expect(reparsed.cues[0].text).toBe(parsed.cues[0].text);
+      expect(reparsed.cues[0].settings).toEqual(parsed.cues[0].settings);
+    });
+
+    it('round-trips SRT with cue ids renumbered 1..n (BF-460)', () => {
+      const srt = `1\n00:00:00.000,000 --> 00:00:01,000\nAlpha\n\n2\n00:00:02,000 --> 00:00:03,000\nBeta`;
+      const reparsed = parseSRT(generateSRT(parseSRT(srt)));
+      expect(reparsed.cues.map((c) => c.text)).toEqual(['Alpha', 'Beta']);
+      expect(reparsed.cues[1].startTime).toBeCloseTo(2, 2);
+    });
   });
 
   describe('secondsToTimecode', () => {
