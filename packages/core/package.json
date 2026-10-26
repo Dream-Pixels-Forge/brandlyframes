@@ -7,13 +7,17 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./template-registry": {
+      "types": "./dist/template-registry.d.ts",
+      "default": "./dist/template-registry.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json --emitDeclarationOnly && esbuild src/index.ts --bundle --format=esm --platform=node --jsx=automatic --outfile=dist/index.js --external:react --external:react-dom --external:zod",
+    "build": "tsc -p tsconfig.build.json --emitDeclarationOnly && esbuild src/index.ts --bundle --format=esm --platform=node --jsx=automatic --outfile=dist/index.js --external:react --external:react-dom --external:zod && esbuild src/template-registry.ts --bundle --format=esm --platform=node --outfile=dist/template-registry.js",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
