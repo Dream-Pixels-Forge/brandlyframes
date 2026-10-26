@@ -27,6 +27,10 @@
     "react-dom": "^19"
   },
   "devDependencies": {
+    "@babel/generator": "^8.0.6",
+    "@babel/parser": "^8.0.8",
+    "@babel/traverse": "^8.0.7",
+    "@babel/types": "^8.0.8",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^19.3.0",
@@ -39,8 +43,8 @@
     "vitest": "^5.0.4"
   },
   "dependencies": {
-    "brandlyframes": "workspace:*",
     "@brandlyframes/design": "workspace:*",
+    "brandlyframes": "workspace:*",
     "zod": "^4.6.7"
   }
 }

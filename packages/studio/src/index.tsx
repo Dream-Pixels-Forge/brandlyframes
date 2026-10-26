@@ -268,3 +268,50 @@ export const RenderParityButton = ({
     </Button>
   );
 };
+
+// Visual timeline (BF-120): clips as draggable/resizable blocks with trim
+// handles, markers, and a playhead scrub synced with the studio preview
+// (wire `onSeek` to the player). Pure model reducers ship alongside so the
+// drag/trim clamping rules are testable without a DOM.
+export { TimelinePanel, type TimelinePanelProps } from './timeline/TimelinePanel';
+export {
+  clamp,
+  formatTimecode,
+  frameToPx,
+  moveClip,
+  pxPerFrame,
+  pxToFrame,
+  trimClipEnd,
+  trimClipStart,
+  type TimelineClip,
+  type TimelineClipPatch,
+  type TimelineMarker,
+} from './timeline/timeline-model';
+// BF-121 keyframe editor: per-property keyframe tracks, bezier/spring curve
+// editor, live value preview. Pure model in timeline/keyframe-model.ts so
+// the easing/spring math is testable without a DOM.
+export { KeyframePanel, type KeyframePanelProps } from './timeline/KeyframePanel';
+export {
+  type EasingKind,
+  type Keyframe,
+  type KeyframeTrack,
+  bezierEasing,
+  moveKeyframe,
+  removeKeyframe,
+  sampleKeyframeTrack,
+  upsertKeyframe,
+} from './timeline/keyframe-model';
+
+// BF-122 AST write-back: serialize timeline/keyframe edits back to source.
+// parse → edit → write → parse produces identical semantics; where no edit
+// occurred the output text is byte-identical (lossless round-trip, Babel AST).
+export {
+  type AnimateTrack,
+  type ClipEdit,
+  type WriteBackOptions,
+  generateSource,
+  keyframeTrackToAnimateCall,
+  parseCompositionSource,
+  verifyNoEditRoundTrip,
+  writeBackTimeline,
+} from './timeline/ast-writeback';
