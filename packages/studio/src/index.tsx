@@ -10,6 +10,23 @@ export { FrameHistory } from './frameHistory';
 export { InspectorRegistry, inspectElement, resolveElementProps, getElementStyles } from './inspector';
 export type { InspectedElement } from './inspector';
 
+// Template gallery + no-code props form (BF-481): browse the core template
+// registry, pick a template, fill the Zod-driven form, render from it.
+export {
+  TemplateGallery,
+  NoCodePropsForm,
+  coreTemplateGalleryRegistry,
+  readTemplatePayload,
+} from './gallery';
+export type {
+  GalleryRegistry,
+  GalleryTemplate,
+  GalleryTemplatePayload,
+  NoCodePropsFormProps,
+  PropsSchema,
+  TemplateGalleryProps,
+} from './gallery';
+
 // Studio Shell - Main container for the Studio interface
 // Includes: composition sidebar, canvas, scrubber, hot reload (BF-011)
 export const StudioShell = ({ children }: { children: ReactNode }) => {
