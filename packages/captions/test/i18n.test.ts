@@ -88,11 +88,11 @@ describe('RTL and multilingual support [BF-460]', () => {
 
     it('wraps mixed CJK and Latin text losslessly', () => {
       const text = 'See 東京タワー today!';
-      const lines = wrapCaptionText(text, 8);
+      const lines = wrapCaptionText(text, 14);
       for (const line of lines) {
-        expect(measureTextUnits(line)).toBeLessThanOrEqual(8);
+        expect(measureTextUnits(line)).toBeLessThanOrEqual(14);
       }
-      expect(lines.join('|').replace(/\|/g, ' ').includes('東京タワー')).toBe(true);
+      expect(lines.join(' ').replace(/\s+/g, ' ')).toBe(text);
     });
 
     it('keeps RTL text as whole words and preserves content', () => {

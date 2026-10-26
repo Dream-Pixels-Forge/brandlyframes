@@ -536,5 +536,11 @@ export function scaleCues(cues: CaptionCue[], factor: number): CaptionCue[] {
   }));
 }
 
+export * from './word-timings';
+export * from './i18n';
+export * from './safe-area';
+export * from './styles';
+export * from './translation';
+export * from './auto-captions';
 export * from './caption-renderer';
 export * from './karaoke';
