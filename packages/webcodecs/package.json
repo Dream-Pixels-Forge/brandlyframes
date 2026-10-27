@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/webcodecs",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "WebCodecs-backed media metadata helpers for BrandlyFrames",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

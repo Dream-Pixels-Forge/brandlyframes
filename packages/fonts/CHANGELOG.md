@@ -1,5 +1,24 @@
 # @brandlyframes/fonts
 
+## 1.1.0
+
+### Minor Changes
+
+- 5c74417: feat: font loading that just works (BF-410) — `useFont()` now auto-holds the frame via `holdFrame()`/`releaseFrame()` until every font source resolves, so the renderer never captures a frame with a fallback font. Supports local files, Google Fonts URLs and custom font URLs; timeout (10s) names the font URLs. Works with `@brandlyframes/fonts` `FontRegistry`, `loadFont()`, `loadFonts()`, `createFontSource()`, `createSystemFontSource()` and `googleFonts`. 37 tests pass, no network in tests.
+
+### Patch Changes
+
+- Updated dependencies [efd26c7]
+- Updated dependencies [a4451f5]
+- Updated dependencies [46eabf7]
+- Updated dependencies [5c74417]
+- Updated dependencies [2b9c535]
+- Updated dependencies [9c4ec35]
+- Updated dependencies [5581e9c]
+- Updated dependencies [5f0f50b]
+- Updated dependencies [6510b97]
+  - brandlyframes@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Agent-native MCP server for BrandlyFrames: list compositions, read/edit props, render still/video, inspect timeline and render status.",
   "type": "module",
   "main": "dist/index.js",

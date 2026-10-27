@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/test",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Visual regression testing for BrandlyFrames: golden-frame diff, drift detection, CI action.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -1,5 +1,35 @@
 # @brandlyframes/fx
 
+## 1.1.0
+
+### Minor Changes
+
+- f97773c: feat: implement cinematic effects in `@brandlyframes/fx`
+
+  Implement real, deterministic pixel-level effects (previously stubs returning strings):
+  - `applyFilmGrain` — seeded per-pixel noise (monochrome / per-channel)
+  - `applyLensDistortion` — radial distortion with bilinear resampling
+  - `applyBloom` — threshold-extract + blur + additive glow
+  - `applyBlendMode` — normal / multiply / screen / overlay with opacity
+  - `loadLut` / `applyLut` — 1D color-grading lookup with linear interpolation
+  - `compose` — shader-layer API that chains effects into one frame function
+
+  All effects are pure functions over RGBA `Uint8ClampedArray` — deterministic,
+  dependency-free, and safe in render workers and Node.
+
+### Patch Changes
+
+- Updated dependencies [efd26c7]
+- Updated dependencies [a4451f5]
+- Updated dependencies [46eabf7]
+- Updated dependencies [5c74417]
+- Updated dependencies [2b9c535]
+- Updated dependencies [9c4ec35]
+- Updated dependencies [5581e9c]
+- Updated dependencies [5f0f50b]
+- Updated dependencies [6510b97]
+  - brandlyframes@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

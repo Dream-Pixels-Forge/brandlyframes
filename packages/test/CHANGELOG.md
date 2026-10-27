@@ -1,5 +1,24 @@
 # @brandlyframes/test
 
+## 1.1.0
+
+### Minor Changes
+
+- 7c26897: BF-240/203: golden-frame diff CLI command + CI action, 3-scene side-by-side benchmark suite (measured 61.92x vs screenshot baseline, within tolerance).
+
+### Patch Changes
+
+- Updated dependencies [efd26c7]
+- Updated dependencies [a4451f5]
+- Updated dependencies [46eabf7]
+- Updated dependencies [5c74417]
+- Updated dependencies [2b9c535]
+- Updated dependencies [9c4ec35]
+- Updated dependencies [5581e9c]
+- Updated dependencies [5f0f50b]
+- Updated dependencies [6510b97]
+  - brandlyframes@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

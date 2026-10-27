@@ -1,5 +1,28 @@
 # @brandlyframes/brand
 
+## 1.1.0
+
+### Patch Changes
+
+- 8d66a6a: feat: useBrand() loads from brand.json [BF-140]
+
+  - `useBrand(brandId)` loads and validates `brand.json` from project root
+  - `loadBrandKitFromFile(filePath)` loads a brand kit from any JSON file
+  - Falls back to default kit when no brand.json exists
+  - Validates against brandKitSchema (name, primaryColor, secondaryColor, fontFamily, logoUrl)
+
+- Updated dependencies [efd26c7]
+- Updated dependencies [a4451f5]
+- Updated dependencies [46eabf7]
+- Updated dependencies [5c74417]
+- Updated dependencies [2b9c535]
+- Updated dependencies [9c4ec35]
+- Updated dependencies [5581e9c]
+- Updated dependencies [5f0f50b]
+- Updated dependencies [6510b97]
+  - brandlyframes@1.1.0
+  - @brandlyframes/zod-types@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/benchmark",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "BrandlyFrames benchmark suite — compares render paths, measures speedup, verifies output within tolerance [BF-203]",
   "private": false,
   "main": "dist/index.js",

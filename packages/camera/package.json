@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/camera",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Deterministic camera moves (dolly, pan, parallax) for BrandlyFrames 2D layers: a pure `frame -> transform` function, no randomness, no wall clock.",
   "type": "module",
   "exports": {

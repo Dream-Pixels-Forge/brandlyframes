@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/design",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "BrandlyFrames design system — Cinema Black tokens (CSS + TS + JSON) and deterministic React UI components (BF-013).",
   "type": "module",
   "exports": {

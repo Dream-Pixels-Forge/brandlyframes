@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/three",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Three.js integration for 3D scenes in BrandlyFrames",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

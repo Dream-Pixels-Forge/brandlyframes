@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/profiler",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "BrandlyFrames frame profiler — per-frame and per-component render timing with slow-frame report [BF-202]",
   "private": false,
   "main": "dist/index.js",

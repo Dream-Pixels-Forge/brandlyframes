@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/cloud",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "BrandlyFrames cloud — chunked parallel rendering with AWS Lambda & GCP Cloud Run adapters, storage upload, webhooks, cost estimation (BF-080/081/082).",
   "type": "module",
   "exports": {

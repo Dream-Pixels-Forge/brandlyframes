@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/audio-reactive",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Audio-reactive hooks for BrandlyFrames: beat detection, loudness, and spectrum per frame.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

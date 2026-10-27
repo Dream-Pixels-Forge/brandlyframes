@@ -1,5 +1,25 @@
 # @brandlyframes/captions
 
+## 1.1.0
+
+### Minor Changes
+
+- d3e40b5: feat: captions toolkit [BF-460] + word-level captions, translation & dubbing hooks [BF-222] — SRT/VTT round-trip now preserves WebVTT cue identifiers and tolerates extra sub-millisecond fractions; inline word timestamps (`<00:00:01.240>`) parse into per-word karaoke timing; new `wrapCaptionText`/`detectTextDirection`/`directionForLanguage` i18n utilities (RTL + CJK kinsoku line-breaking); safe-area positioning presets for 9:16/16:9/1:1 (`CAPTION_SAFE_AREA_PRESETS`, `resolveCaptionLayout`); Cinema Black style presets (`CAPTION_STYLE_PRESETS`, `resolveCaptionStyle`, `scaleCaptionStyle`) wired to `@brandlyframes/design` tokens; `<AutoCaptions>` word-level component (dir-aware, karaoke spans, plain mode); injectable `CaptionTranslator` registry (`translateCues`) and dubbing mapping API (`buildDubbingSegments`, `dubCues`, `getActiveDubbing`) — providers are registered adapters, no network calls ship in the package. `@brandlyframes/design` moved to runtime dependencies (styles import it).
+
+### Patch Changes
+
+- Updated dependencies [efd26c7]
+- Updated dependencies [a4451f5]
+- Updated dependencies [46eabf7]
+- Updated dependencies [5c74417]
+- Updated dependencies [2b9c535]
+- Updated dependencies [9c4ec35]
+- Updated dependencies [5581e9c]
+- Updated dependencies [5f0f50b]
+- Updated dependencies [6510b97]
+  - brandlyframes@1.1.0
+  - @brandlyframes/design@1.1.0
+
 ## 1.0.0
 
 ### Major Changes

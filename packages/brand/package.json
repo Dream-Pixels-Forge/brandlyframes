@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/brand",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Brand kits (colors, fonts, logo) and batch rendering for BrandlyFrames via useBrand().",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

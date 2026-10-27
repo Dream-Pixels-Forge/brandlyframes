@@ -1,5 +1,46 @@
 # @brandlyframes/renderer
 
+## 1.1.0
+
+### Minor Changes
+
+- 6690012: feat: content-addressed frame/layer cache [BF-110][BF-111][BF-112]
+
+  - `@brandlyframes/cache`: `canonicalJson` + `frameCacheKey` — stable SHA-256
+    keys over canonical JSON of (composition config + props + frame + render
+    params); pluggable `CacheStore` interface with an fs store (`FsStore`) and
+    S3/GCS interface stubs (`S3Store`/`GcsStore`); `ContentCache` with
+    hit/miss counters and `getOrCompute`.
+  - `@brandlyframes/renderer`: `runRenderJob` accepts `cacheDir` to reuse
+    frames across identical renders and reports `cacheHits` / `cacheMisses`.
+  - `@brandlyframes/cli`: `brandlyframes render --cache <dir>` enables the
+    frame cache and prints hit/miss counters with hit rate.
+  - `@brandlyframes/studio`: `CacheCounters` component surfaces cache stats.
+
+- 5f4e5e3: feat: BF-450 add `detectVideoUsage` for `<Video>` auto-promotion
+
+  Add `detectVideoUsage(source)` — scans a composition source for `<Video>`
+  JSX usage so the render pipeline can transparently route `<Video>` frames
+  through the FFmpeg frame-exact decode backend instead of Chrome screenshot
+  capture (auto-promotion, no user opt-in). Includes golden-frame byte-identity
+  tests proving FFmpeg-decode output matches Chrome-screenshot output on CFR
+  sources.
+
+  The CLI render `build` command wiring + opt-out flag follow in a subsequent
+  change.
+
+### Patch Changes
+
+- 8d66a6a: feat: extend render manifest with reproducibility fields [BF-429]
+
+  - `RenderManifest` now includes optional `sdkVersion`, `propsHash`, `assetHashes`, `seed`, `encoderFlags`
+  - `RenderJobOptions` accepts the same fields for reproducibility and debuggability
+  - Fresh renders write the manifest with all fields before capturing
+
+- Updated dependencies [6690012]
+- Updated dependencies [8d66a6a]
+  - @brandlyframes/cache@1.1.0
+
 ## 1.0.0
 
 ### Major Changes
