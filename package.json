@@ -1,7 +1,7 @@
 {
   "name": "brandlyframes-monorepo",
   "version": "0.1.0",
-  "private": false,
+  "private": true,
   "description": "BrandlyFrames — programmatic video SDK for React (frame -> pixels). Monorepo root.",
   "packageManager": "pnpm@11.5.1",
   "engines": {
