@@ -6,7 +6,9 @@
   "private": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -23,6 +25,16 @@
     "vitest": "^3.1.0",
     "@vitest/coverage-v8": "^5.0.4"
   },
-  "keywords": ["brandlyframes", "profiler", "performance", "frame-timing", "flame-view"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "profiler",
+    "performance",
+    "frame-timing",
+    "flame-view"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

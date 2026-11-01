@@ -6,7 +6,9 @@
   "private": false,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -20,6 +22,17 @@
     "vitest": "^3.1.0",
     "@vitest/coverage-v8": "^5.0.4"
   },
-  "keywords": ["brandlyframes", "cache", "assets", "checksum", "retry", "prefetch"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "cache",
+    "assets",
+    "checksum",
+    "retry",
+    "prefetch"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

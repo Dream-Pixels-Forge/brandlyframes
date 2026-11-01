@@ -31,5 +31,9 @@
     "visual-regression",
     "golden-frame"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

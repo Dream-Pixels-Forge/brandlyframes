@@ -8,7 +8,9 @@
   "bin": {
     "brandlyframes-mcp": "./dist/cli.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -28,6 +30,15 @@
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "mcp", "agent", "ai"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "mcp",
+    "agent",
+    "ai"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

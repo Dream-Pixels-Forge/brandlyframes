@@ -4,7 +4,9 @@
   "description": "Audio-reactive hooks for BrandlyFrames: beat detection, loudness, and spectrum per frame.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -22,6 +24,16 @@
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "audio", "beat", "spectrum", "loudness"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "audio",
+    "beat",
+    "spectrum",
+    "loudness"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

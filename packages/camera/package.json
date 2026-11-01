@@ -9,7 +9,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -34,6 +36,17 @@
     "vitest": "^5.0.4",
     "@vitest/coverage-v8": "5.0.4"
   },
-  "keywords": ["brandlyframes", "camera", "dolly", "pan", "parallax", "motion"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "camera",
+    "dolly",
+    "pan",
+    "parallax",
+    "motion"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

@@ -30,5 +30,10 @@
   "dependencies": {
     "brandlyframes": "workspace:*",
     "@brandlyframes/renderer": "workspace:*"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  },
+  "license": "MIT"
 }

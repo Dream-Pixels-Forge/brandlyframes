@@ -5,7 +5,9 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json --emitDeclarationOnly && esbuild src/index.ts --bundle --format=esm --platform=node --outfile=dist/index.js --external:zod",
     "type-check": "tsc --noEmit",
@@ -24,6 +26,15 @@
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "zod", "types", "validation"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "zod",
+    "types",
+    "validation"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

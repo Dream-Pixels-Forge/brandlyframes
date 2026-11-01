@@ -4,7 +4,9 @@
   "description": "Brand kits (colors, fonts, logo) and batch rendering for BrandlyFrames via useBrand().",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "type-check": "tsc --noEmit",
@@ -26,6 +28,15 @@
     "typescript": "^5.9.3",
     "vitest": "^3.1.0"
   },
-  "keywords": ["brandlyframes", "brand", "batch", "brand-kit"],
-  "license": "MIT"
+  "keywords": [
+    "brandlyframes",
+    "brand",
+    "batch",
+    "brand-kit"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
 }

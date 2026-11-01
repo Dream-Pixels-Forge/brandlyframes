@@ -34,5 +34,10 @@
     "@vitest/coverage-v8": "^5.0.4",
     "typescript": "^5.9.3",
     "vitest": "^5.0.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  },
+  "license": "MIT"
 }

@@ -47,5 +47,10 @@
     "@brandlyframes/design": "workspace:*",
     "brandlyframes": "workspace:*",
     "zod": "^4.6.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  },
+  "license": "MIT"
 }
