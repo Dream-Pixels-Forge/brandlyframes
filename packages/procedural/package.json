@@ -1,0 +1,45 @@
+{
+  "name": "@brandlyframes/procedural",
+  "version": "1.1.0",
+  "description": "Procedural composition generators for BrandlyFrames: L-systems, cellular automata, noise-based terrain, fractals — all pure (frame) -> ReactNode functions.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "brandlyframes": "workspace:*",
+    "@brandlyframes/noise": "workspace:*",
+    "@brandlyframes/shapes": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.1.0"
+  },
+  "keywords": [
+    "brandlyframes",
+    "procedural",
+    "generative",
+    "l-system",
+    "cellular-automata",
+    "fractal",
+    "terrain"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dream-Pixels-Forge/brandlyframes.git"
+  }
+}
