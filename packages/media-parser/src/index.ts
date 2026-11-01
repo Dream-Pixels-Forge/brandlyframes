@@ -1,4 +1,3 @@
-// TODO: Implement media parsing capabilities
 export interface MediaMetadata {
   duration: number;
   size: {

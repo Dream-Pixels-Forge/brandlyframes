@@ -43,6 +43,7 @@ export const StudioShell = ({ children }: { children: ReactNode }) => {
 };
 
 // Props Editor - Generated from Zod schema (BF-012)
+// Renders one input per schema property and reports changes via _onChange.
 export const PropsEditor = <T extends Record<string, unknown>>({ 
   schema, 
   _initialData, 
@@ -52,16 +53,33 @@ export const PropsEditor = <T extends Record<string, unknown>>({
   _initialData?: T; 
   _onChange: (data: T) => void 
 }) => {
-  // TODO: Implement actual form generation from Zod schema
-  // This would use zod-to-json-schema or similar to generate UI components
+  const rawSchema = schema as { properties?: Record<string, { type?: string; title?: string }> } | undefined;
+  const properties = rawSchema?.properties ?? {};
+
+  const handleChange = (key: string, value: unknown) => {
+    _onChange({ ...(_initialData ?? {}), [key]: value } as T);
+  };
+
+  const initial = (_initialData ?? {}) as Record<string, unknown>;
+
   return (
     <div className="props-editor">
       <div className="props-editor-header">Props Editor</div>
       <div className="props-editor-content">
-        {/* Form fields would be generated here based on schema */}
-        <div className="props-editor-placeholder">
-          Props editor for: {JSON.stringify(schema)}
-        </div>
+        {Object.entries(properties).map(([key, field]) => (
+          <div key={key} className="props-field">
+            <label className="props-field-label">{field.title ?? key}</label>
+            <input
+              className="props-field-input"
+              type={field.type === 'number' ? 'number' : 'text'}
+              value={String(initial[key] ?? '')}
+              onChange={(e) => {
+                const nextValue = field.type === 'number' ? Number(e.target.value) : e.target.value;
+                handleChange(key, nextValue);
+              }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
