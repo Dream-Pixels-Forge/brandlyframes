@@ -561,3 +561,81 @@ For each feature: a failing-then-fixed regression test that reproduces the origi
 - Test suite and CI passing; v1.0.0 tagged.
 
 **Start with P0 and P1. Report after each phase gate.**
+
+---
+
+## 11. Next-level creative features (post-v1.0, experimental)
+
+These go beyond replicating Remotion — they make BrandlyFrames a *creatively distinct* platform for programmatic video. Every feature follows the `frame -> pixels` determinism contract: same frame number always yields same pixels.
+
+### 11.1 Visual & aesthetic
+
+- [ ] BF-501 **Film stock & chemical process emulation** — `<FilmGrain stock="kodak-5219" />`, `<Halation />`, `<Bloom />`, `<GateWeave />`, push/pull processing curves, deterministic per-frame grain
+- [ ] BF-502 **Anamorphic & lens character** — oval bokeh, horizontal flares, focus breathing, vintage lens vignetting, depth-of-field with custom blade counts
+- [ ] BF-503 **Glitch & datamoshing** — `<Datamosh intensity={0.4} />`, `<FrameDrop probability={0.1} seed={frame} />`, `<ChannelShift />`, deterministic "broken video" aesthetic
+- [ ] BF-504 **Volumetric & particle systems** — `<ParticleSystem count={5000} noise={perlin} />`, snow/dust/embers, volumetric light rays (god rays)
+
+### 11.2 Narrative & cinematic
+
+- [ ] BF-505 **Branching narrative rendering** — `<Choice point={120} options={["A","B","C"]} />`, multi-branch MP4 with chapter markers, Rashomon mode (same scene, 3 interpretations)
+- [ ] BF-506 **Auto-generated B-roll & cutaways** — `<BRoll source="script" keyword="ocean" />`, contextual stock/procedural footage insertion between segments
+- [ ] BF-507 **Emotion curve driving visual treatment** — `<EmotionCurve points={[{frame:0, valence:-0.8}]} />` global mood parameter shifting color grade, camera speed, typography weight
+- [ ] BF-508 **Dream logic / surreal transitions** — `<Morph from={objectA} to={objectB} over={60} />`, SVG shape morphing, impossible geometry
+
+### 11.3 Temporal & rhythmic
+
+- [ ] BF-509 **Polyrhythmic time** — per-layer frame rates (24fps foreground, 12fps background, 6fps UI overlay), variable speed within one composition
+- [ ] BF-510 **Reverse & ping-pong rendering** — `<Reverse start={300} end={0} />`, `<PingPong duration={60} />`
+
+### 11.4 Audio-to-visual
+
+- [ ] BF-511 **Audio-to-visual synthesis** — spectrum-to-geometry, beat-synchronized camera shake, lyric-driven kinetic typography
+- [ ] BF-512 **Sound-to-particle** — audio frequency bands drive particle counts, displacement, color shifts per frame
+
+### 11.5 Procedural & generative
+
+- [ ] BF-513 **Procedural composition generators** — L-systems, cellular automata, noise-based terrain, all pure `(frame) -> ReactNode` functions
+- [ ] BF-514 **L-system & fractal growth** — `<LSystem axiom="F" rules={{...}} iterations={6} />`, Mandelbrot/Julia set zooms, plants/lightning/coral that grow frame by frame
+- [ ] BF-515 **Data-driven generative environments** — `<Terrain data={elevationMap} />`, audio spectrum extruded into 3D flyover terrain
+
+### 11.6 Spatial & dimensional
+
+- [ ] BF-516 **2.5D multiplane camera** — `<Plane z={42} />` layers with parallax, depth maps from 2D artwork, Disney multiplane style
+- [ ] BF-517 **HDR / wide gamut / high frame rate** — 10-bit, Rec.2020, P3 color, 120fps/240fps, ProRes/DNxHD
+
+### 11.7 Interactive & participatory
+
+- [ ] BF-518 **Viewer-choice rendered-on-demand** — `?choice=A` URL renders personalized cut, `<Personalized text={userName} />` injection into signs/headlines
+- [ ] BF-519 **Live audience voting drives the render** — emoji reactions drive next frame batch, democratic rendering
+- [ ] BF-520 **QR code & scannable video** — animated QR codes changing per frame, linking to per-frame URLs
+- [ ] BF-521 **Reaction video auto-layout** — `<ReactionLayout main={video} reactor={webcam} />`, auto framing, lower thirds, audio ducking
+
+### 11.8 Data & live
+
+- [ ] BF-522 **Live data composition** — `<Ticker data={cryptoPrices} />`, weather/stock/sports scores baked into visuals per frame
+- [ ] BF-523 **Olfactory/haptic sync cues** — `<Haptic cue="rumble" frame={120} intensity={0.7} />` metadata export for VR/4D cinema
+
+### 11.9 Cross-media & interchange
+
+- [ ] BF-524 **Print + video from one source** — same `<Composition>` renders MP4 and 300 DPI PDF poster
+- [ ] BF-525 **Game engine interchange** — export to UE5 Sequencer, Unity Timeline, Blender NLA from composition JSON
+
+### 11.10 AI & generative video
+
+- [ ] BF-526 **Text-to-visual prompts** — `<VisualPrompt prompt="neon cathedral" seed={frame} />`, deterministic AI-generated frames locked to (prompt, seed, frame)
+- [ ] BF-527 **Generative frame synthesis** — AI video with consistent characters, style-locked latent space, frame blending between generations
+- [ ] BF-528 **Render as generative art / long-form** — `<Edition number={1} total={100} />`, different seed per edition, deterministic video art
+
+### 11.11 Developer tooling & collaborative
+
+- [ ] BF-529 **Visual node editor** — drag-drop graph connecting audio → spectrum → color grade → output, export as TSX (code stays source of truth)
+- [ ] BF-530 **"Remix" template system** — `<Template id="cyberpunk-intro" remix={{text:"My Brand"}} />`, one-click restyle
+- [ ] BF-531 **Multi-author composition** — simultaneous editing of different layers, frame-level merge conflicts
+- [ ] BF-532 **Real-time collaborative Studio** — multiplayer cursors, shared render progress, frame-accurate comments
+- [ ] BF-533 **Pose/motion-capture driven animation** — webcam pose estimation drives character rig or camera movement
+
+---
+
+## Definition of done for section 11
+
+For each creative feature: a demo composition that exercises it, a golden-frame determinism test, a docs page, and a changeset. Features ship in v1.1+ ("Director's Cut" and beyond), not v1.0.
