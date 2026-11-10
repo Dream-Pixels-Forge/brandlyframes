@@ -577,7 +577,7 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 
 ### 11.2 Narrative & cinematic
 
-- [ ] BF-505 **Branching narrative rendering** — `<Choice point={120} options={["A","B","C"]} />`, multi-branch MP4 with chapter markers, Rashomon mode (same scene, 3 interpretations)
+- [x] BF-505 **Branching narrative rendering** — `<Choice point={120} options={["A","B","C"]} />`, multi-branch MP4 with chapter markers, Rashomon mode (same scene, 3 interpretations) *(packages/frames/src/branch.ts: createBranchManifest, resolveCut, planBranchExports, rashomonCuts, stitchCut, 15 tests)*
 - [ ] BF-506 **Auto-generated B-roll & cutaways** — `<BRoll source="script" keyword="ocean" />`, contextual stock/procedural footage insertion between segments
 - [x] BF-507 **Emotion curve driving visual treatment** — `<EmotionCurve points={[{frame:0, valence:-0.8}]} />` global mood parameter shifting color grade, camera speed, typography weight *(packages/fx/src/emotion.ts: sampleEmotionCurve, emotionLut, emotionTreatment, applyEmotionFrame, emotionAtFrame, 20 tests)*
 - [x] BF-508 **Dream logic / surreal transitions** — `<Morph from={objectA} to={objectB} over={60} />`, SVG shape morphing, impossible geometry *(packages/paths/src/morph.tsx: samplePath, polygonToPath, morphPaths, <DreamMorph>, 13 tests)*

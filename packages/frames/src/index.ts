@@ -175,3 +175,4 @@ export {
   timeWarpFrame,
 } from './time-warp';
 export type { SpeedSegment, LayerTimeline, TimeWarpOptions } from './time-warp';
+export * from './branch';
