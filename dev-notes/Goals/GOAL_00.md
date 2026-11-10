@@ -595,7 +595,7 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 ### 11.5 Procedural & generative
 
 - [x] BF-513 **Procedural composition generators** — L-systems, cellular automata, noise-based terrain, all pure `(frame) -> ReactNode` functions *(packages/procedural: LSystem, CellularAutomata, NoiseTerrain, 33 tests)*
-- [ ] BF-514 **L-system & fractal growth** — `<LSystem axiom="F" rules={{...}} iterations={6} />`, Mandelbrot/Julia set zooms, plants/lightning/coral that grow frame by frame
+- [x] BF-514 **L-system & fractal growth** — `<LSystem axiom="F" rules={{...}} iterations={6} />`, Mandelbrot/Julia set zooms, plants/lightning/coral that grow frame by frame *(packages/procedural/src/growth.ts: lSystemGrowthPath, plant/coral/lightning presets; lsystem.tsx + fractal.tsx from BF-513)*
 - [ ] BF-515 **Data-driven generative environments** — `<Terrain data={elevationMap} />`, audio spectrum extruded into 3D flyover terrain
 
 ### 11.6 Spatial & dimensional
