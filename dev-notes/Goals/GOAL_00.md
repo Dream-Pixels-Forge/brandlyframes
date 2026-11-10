@@ -634,6 +634,27 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 - [ ] BF-532 **Real-time collaborative Studio** — multiplayer cursors, shared render progress, frame-accurate comments
 - [ ] BF-533 **Pose/motion-capture driven animation** — webcam pose estimation drives character rig or camera movement
 
+
+#### Backlog tracking (creative features, filed 2026-11-10)
+
+The section-11 creative-feature items are filed as grouped GitHub issues so the
+backlog is navigable; each is implemented in a separate PR and ticked here when
+shipped. Full-gate green at filing time; scope `@brandlyframes` free on npm.
+
+| Items | GitHub issue | Theme |
+| --- | --- | --- |
+| BF-502 | [#90](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/90) | Anamorphic & lens character |
+| BF-505, BF-506, BF-507, BF-508 | [#91](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/91) | Narrative / B-roll / emotion / surreal visuals |
+| BF-511, BF-512 | [#92](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/92) | Audio-driven visual synthesis |
+| BF-515, BF-516, BF-517, BF-518, BF-519 | [#93](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/93) | Data-driven / 2.5D / HDR / personalized |
+| BF-520, BF-521, BF-522, BF-523 | [#94](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/94) | QR video / reaction layout / live data / haptics |
+| BF-525, BF-526, BF-527, BF-528 | [#95](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/95) | Game interchange / text-to-visual / generative art |
+| BF-529, BF-530, BF-531, BF-532, BF-533 | [#96](https://github.com/Dream-Pixels-Forge/brandlyframes/issues/96) | Node editor / remix / multi-author / collab / pose |
+| BF-093 | _(release, not a feature)_ | Public `@brandlyframes` npm scope — blocked on an npm automation token |
+
+Shipped in this cycle (ticked above): BF-501, BF-503, BF-504, BF-509, BF-510,
+BF-513, BF-514, BF-524.
+
 ---
 
 ## Definition of done for section 11
