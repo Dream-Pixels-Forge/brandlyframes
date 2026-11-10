@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { inflateSync } from 'node:zlib';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
@@ -1089,7 +1090,7 @@ const decodePngToRgba = (
   }
   let offset = 8;
   let ihdr: Buffer | null = null;
-  let idatChunks: Buffer[] = [];
+  const idatChunks: Buffer[] = [];
   while (offset < png.length) {
     if (offset + 8 > png.length) break;
     const len = png.readUInt32BE(offset);
@@ -1157,7 +1158,6 @@ const decodePngToRgba = (
   // Expand RGB(A) rows into RGBA.
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const s = y * width * 3 + x * 3;
       const d = (y * width + x) * 4;
       out[d] = buf[y * width * 3 + x * 3 + 0];
       out[d + 1] = buf[y * width * 3 + x * 3 + 1];
@@ -1176,7 +1176,6 @@ const decodePngToRgba = (
 const inflatePng = (idat: Buffer, _stride: number, _height: number): Buffer | null => {
   try {
     // node:zlib inflate handles the zlib-wrapped IDAT data.
-    const { inflateSync } = require('node:zlib') as typeof import('node:zlib');
     return inflateSync(idat);
   } catch {
     return null;

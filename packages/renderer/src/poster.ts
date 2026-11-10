@@ -176,7 +176,6 @@ export const buildPosterPdf = (
   const page = pdfPageDimensions(compW, compH, dpi);
 
   const pages = estimatePosterPages(frames.length, framesPerPage, dpi);
-  const pageCount = pages.pages;
 
   // Per-page object numbering continues from id 4.
   const pagesObjId = 2;
@@ -235,7 +234,7 @@ const compositePage = (
   cw: number,
   ch: number,
   cols: number,
-  rows: number,
+  _rows: number,
 ): Uint8ClampedArray => {
   const out = new Uint8ClampedArray(compW * compH * 4);
   for (let i = 0; i < frames.length; i++) {
@@ -308,7 +307,6 @@ const assemblePdf = (
 ): Buffer => {
   const header = '%PDF-1.7\n';
   const chunks: Buffer[] = [Buffer.from(header)];
-  let cursor = header.length;
 
   const totalObjs = textObjs.length + streamObjs.length;
 
@@ -334,16 +332,12 @@ const assemblePdf = (
         `/ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length ${so.bytes.length} >>\n` +
         `stream\n`;
       chunks.push(Buffer.from(body));
-      cursor += body.length;
       chunks.push(so.bytes);
-      cursor += so.bytes.length;
       const tail = '\nendstream\nendobj\n';
       chunks.push(Buffer.from(tail));
-      cursor += tail.length;
     } else {
       const body = textById.get(id) ?? '';
       chunks.push(Buffer.from(body));
-      cursor += body.length;
     }
   }
 

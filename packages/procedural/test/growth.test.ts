@@ -11,7 +11,6 @@ import {
   growthPathForPreset,
   type LSystemConfig,
 } from '../src/growth';
-import { deriveLSystem } from '../src/lsystem';
 
 describe('countLSystemCommands', () => {
   it('counts only draw symbols', () => {
@@ -85,9 +84,6 @@ describe('lSystemGrowthPath', () => {
     const withOffset = lSystemGrowthPath('F', { F: 'F+F' }, 2, 0, config, {
       commandsPerFrame: 1,
       startOffset: 4,
-    });
-    const withoutOffset = lSystemGrowthPath('F', { F: 'F+F' }, 2, 0, config, {
-      commandsPerFrame: 1,
     });
     // with startOffset=4 (total=4) → nothing new to draw, path is the origin
     // plus any 'M' resuming. withoutOffset draws nothing at frame 0 either.

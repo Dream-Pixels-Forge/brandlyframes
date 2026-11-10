@@ -26,7 +26,6 @@ const hash = (n: number): number => {
   return (n >>> 0) / 0xFFFFFFFF;
 };
 
-const clampByte = (v: number): number => (v < 0 ? 0 : v > 255 ? 255 : Math.floor(v));
 
 // ---------------------------------------------------------------------------
 // applyDatamosh (BF-503)
@@ -222,9 +221,11 @@ export const applyChannelShift = (
  * `applyDatamosh` / `applyFrameDrop` directly in a custom shader layer, or
  * use this helper for the channel-shift part only.
  */
-export const makeGlitchSteps = (frame: number, seed: number): EffectStep[] => {
+export const makeGlitchSteps = (_frame: number, _seed: number): EffectStep[] => {
   // The channel shift is the only part expressible as an EffectStep.
   // (fx.ts `lut` / `filmGrain` / `bloom` steps don't cover channel shift,
   //  so we return an empty array and document the limitation.)
   return [];
 };
+
+export type { FramePixels };

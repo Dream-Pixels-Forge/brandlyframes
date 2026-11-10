@@ -14,6 +14,7 @@
 
 import type { LSystemConfig } from './lsystem';
 import { deriveLSystem, lSystemToPath } from './lsystem';
+export type { LSystemConfig };
 
 /**
  * Options for frame-by-frame L-system growth.

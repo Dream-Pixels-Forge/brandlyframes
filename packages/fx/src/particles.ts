@@ -147,7 +147,7 @@ export class ParticleSystem {
     // Horizontal drift: sine (per-particle phase) + noise walk.
     const driftPhase = r3 * Math.PI * 2;
     const wobble = valueNoise2D(i, frame, this.seed + 7919) - 0.5;
-    let x = (r0 + this.drift * Math.sin(driftPhase + frame * 0.05) + wobble * 0.005 + 1) % 1;
+    const x = (r0 + this.drift * Math.sin(driftPhase + frame * 0.05) + wobble * 0.005 + 1) % 1;
 
     const size = this.minSize + (this.maxSize - this.minSize) * r2;
     const opacity = clamp01(0.3 + 0.7 * r4);
@@ -350,3 +350,5 @@ export const makeParticleSteps = (): EffectStep[] => {
 
 // Re-export for convenience.
 export { valueNoise2D as particleNoise };
+
+export type { FramePixels };

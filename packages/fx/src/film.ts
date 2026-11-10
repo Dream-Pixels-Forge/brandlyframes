@@ -425,8 +425,8 @@ export const applyPushPull = (
  */
 export const makeFilmStockSteps = (
   stock: string | FilmStockSpec,
-  frame: number,
-  seed: number,
+  _frame: number,
+  _seed: number,
 ): EffectStep[] => {
   const spec = resolveFilmStock(stock);
   return [
@@ -450,3 +450,5 @@ export const makeFilmStockSteps = (
 
 // Re-export the underlying effect names so film.tsx consumers can import one thing.
 export { applyFilmGrain, applyBloom };
+
+export type { FramePixels };
