@@ -84,3 +84,18 @@ export type {
   AssertGoldenFrameOptions,
   AssertDeterministicOptions,
 } from './testing.js';
+// ---------------------------------------------------------------------------
+// poster (BF-524) — print + video from one source
+// ---------------------------------------------------------------------------
+export {
+  buildPosterPdf,
+  pdfPageDimensions,
+  estimatePosterPages,
+  hashPosterPdf,
+} from './poster.js';
+export type {
+  PosterFrame,
+  PosterPlan,
+  PdfPageDimensions,
+  BuildPosterPdfOptions,
+} from './poster.js';

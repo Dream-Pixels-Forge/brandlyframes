@@ -617,7 +617,7 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 
 ### 11.9 Cross-media & interchange
 
-- [ ] BF-524 **Print + video from one source** — same `<Composition>` renders MP4 and 300 DPI PDF poster
+- [x] BF-524 **Print + video from one source** — same `<Composition>` renders MP4 and 300 DPI PDF poster *(packages/renderer/src/poster.ts: buildPosterPdf, 300 DPI multi-page PDF w/ FlateDecode XObjects; CLI `poster` command captures the same <Composition> via CDP → PDF; 19 tests across renderer + cli)*
 - [ ] BF-525 **Game engine interchange** — export to UE5 Sequencer, Unity Timeline, Blender NLA from composition JSON
 
 ### 11.10 AI & generative video

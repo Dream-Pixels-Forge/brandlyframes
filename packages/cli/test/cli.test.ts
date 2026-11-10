@@ -185,6 +185,52 @@ describe('CLI', () => {
     expect(stderr).toContain('frame must be a non-negative integer');
   }, TEST_TIMEOUT);
 
+  // poster subcommand [BF-524]
+  it('should poster command reject end < start', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} poster http://example.com /tmp/poster.pdf 10 5`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('end >= start');
+  }, TEST_TIMEOUT);
+
+  it('should poster command reject non-integer frames', () => {
+    let error: Error | null = null;
+    try {
+      execSync(`node ${cliBin} poster http://example.com /tmp/poster.pdf abc def`, {
+        encoding: 'utf8',
+      });
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('start/end must be integers');
+  }, TEST_TIMEOUT);
+
+  it('should poster command reject non-positive dpi', () => {
+    let error: Error | null = null;
+    try {
+      execSync(
+        `node ${cliBin} poster http://example.com /tmp/poster.pdf 0 1 --dpi 0`,
+        {
+          encoding: 'utf8',
+        },
+      );
+    } catch (err) {
+      error = err as Error;
+    }
+    expect(error).not.toBeNull();
+    const stderr = (error as Error & { stderr?: string }).stderr ?? '';
+    expect(stderr).toContain('must be positive');
+  }, TEST_TIMEOUT);
+
   // compositions subcommand [BF-025]
   it('should compositions command reject an invalid codec', () => {
     let error: Error | null = null;
