@@ -7,6 +7,9 @@
 
 import type { FC, SVGProps } from 'react';
 import { useCurrentFrame } from 'brandlyframes';
+import { morphPaths, samplePath, polygonToPath, DreamMorph } from './morph';
+export { morphPaths, samplePath, polygonToPath, DreamMorph };
+export type { MorphOptions, DreamMorphProps } from './morph';
 
 /**
  * Path command types for building paths programmatically.
@@ -261,4 +264,8 @@ export default {
   starPath,
   polygonPath,
   spiralPath,
+  morphPaths,
+  samplePath,
+  polygonToPath,
+  DreamMorph,
 };
