@@ -1,5 +1,14 @@
 # @brandlyframes/mcp
 
+## 1.3.0
+
+### Patch Changes
+
+- @brandlyframes/cli@1.3.0
+  - brandlyframes@1.3.0
+  - @brandlyframes/renderer@1.3.0
+  - @brandlyframes/zod-types@1.3.0
+
 ## 1.2.0
 
 ### Patch Changes

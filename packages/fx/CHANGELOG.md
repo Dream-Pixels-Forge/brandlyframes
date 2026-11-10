@@ -1,5 +1,16 @@
 # @brandlyframes/fx
 
+## 1.3.0
+
+### Minor Changes
+
+- e2080dd: Add anamorphic & lens character emulation (BF-502, closes #90): `applyBokeh` (DOF with custom aperture-blade counts — circular/hexagonal/octagonal highlights), `applyHorizontalFlare` (2× scope-flare streaks), `applyFocusBreathing` (frame-driven focal shimmer), `applyVintageVignette` (corner falloff + oil-slick mottle), `applyAnamorphic` (2× squeeze/release), and a `makeLensCharacterLut` tonal grade. All pure deterministic pixel math — no GPU, no wall clock.
+- 7e0cd8f: Add emotion curve driving per-frame visual treatment (BF-507, part of #91): `sampleEmotionCurve` (linear keyframed valence/arousal, clamped at ends), `emotionLut` (mood-to-LUT: contrast from arousal, color temperature from valence, anchored identity endpoints), `emotionTreatment` (LUT + camera-speed multiplier + typography weight), `applyEmotionFrame`, `emotionAtFrame`. Pure deterministic — same curve + frame → byte-identical grade.
+
+### Patch Changes
+
+- brandlyframes@1.3.0
+
 ## 1.2.0
 
 ### Minor Changes

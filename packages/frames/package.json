@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/frames",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "BrandlyFrames frames — frame-exact timestamp mapping with rational timebase",
   "private": false,
   "main": "dist/index.js",

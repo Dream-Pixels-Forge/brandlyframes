@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/procedural",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Procedural composition generators for BrandlyFrames: L-systems, cellular automata, noise-based terrain, fractals — all pure (frame) -> ReactNode functions.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

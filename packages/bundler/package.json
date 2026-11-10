@@ -1,6 +1,6 @@
 {
   "name": "@brandlyframes/bundler",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "BrandlyFrames bundler — asset bundling, code splitting, and output optimization",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

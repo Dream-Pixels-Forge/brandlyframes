@@ -1,7 +1,7 @@
 {
   "name": "@brandlyframes/aspect",
   "type": "module",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "BrandlyFrames aspect-ratio presets (2.39:1, 16:9, 9:16, 1:1) with auto-reframe [BF-212]",
   "private": false,
   "main": "dist/index.js",

@@ -1,5 +1,14 @@
 # @brandlyframes/camera
 
+## 1.3.0
+
+### Patch Changes
+
+- Updated dependencies [e2080dd]
+- Updated dependencies [7e0cd8f]
+  - @brandlyframes/fx@1.3.0
+  - brandlyframes@1.3.0
+
 ## 1.2.0
 
 ### Patch Changes
