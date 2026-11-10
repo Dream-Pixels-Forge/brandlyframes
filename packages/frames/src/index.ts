@@ -162,3 +162,16 @@ export type {
   VFRPattern,
   PerfBenchmarkResult,
 } from './test-clips';
+
+// ---------------------------------------------------------------------------
+// time-warp (BF-509 / BF-510)
+// ---------------------------------------------------------------------------
+export {
+  reverseFrame,
+  pingPongFrame,
+  variableSpeedFrame,
+  layerFrame,
+  layerTimeline,
+  timeWarpFrame,
+} from './time-warp';
+export type { SpeedSegment, LayerTimeline, TimeWarpOptions } from './time-warp';

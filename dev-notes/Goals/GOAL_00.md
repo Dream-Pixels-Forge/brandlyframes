@@ -584,8 +584,8 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 
 ### 11.3 Temporal & rhythmic
 
-- [ ] BF-509 **Polyrhythmic time** — per-layer frame rates (24fps foreground, 12fps background, 6fps UI overlay), variable speed within one composition
-- [ ] BF-510 **Reverse & ping-pong rendering** — `<Reverse start={300} end={0} />`, `<PingPong duration={60} />`
+- [x] BF-509 **Polyrhythmic time** — per-layer frame rates (24fps foreground, 12fps background, 6fps UI overlay), variable speed within one composition *(packages/frames/src/time-warp.ts: layerFrame, layerTimeline, variableSpeedFrame)*
+- [x] BF-510 **Reverse & ping-pong rendering** — `<Reverse start={300} end={0} />`, `<PingPong duration={60} />` *(packages/frames/src/time-warp.ts: reverseFrame, pingPongFrame, timeWarpFrame)*
 
 ### 11.4 Audio-to-visual
 
