@@ -1,5 +1,13 @@
 # @brandlyframes/cloud
 
+## 1.2.0
+
+### Patch Changes
+
+- Updated dependencies [21d1788]
+  - @brandlyframes/renderer@1.2.0
+  - brandlyframes@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes

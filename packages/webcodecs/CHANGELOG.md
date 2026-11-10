@@ -1,5 +1,11 @@
 # @brandlyframes/webcodecs
 
+## 1.2.0
+
+### Patch Changes
+
+- brandlyframes@1.2.0
+
 ## 1.1.0
 
 ### Patch Changes

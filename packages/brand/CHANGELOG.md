@@ -1,5 +1,12 @@
 # @brandlyframes/brand
 
+## 1.2.0
+
+### Patch Changes
+
+- brandlyframes@1.2.0
+  - @brandlyframes/zod-types@1.2.0
+
 ## 1.1.0
 
 ### Patch Changes
