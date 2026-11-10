@@ -573,7 +573,7 @@ These go beyond replicating Remotion — they make BrandlyFrames a *creatively d
 - [ ] BF-501 **Film stock & chemical process emulation** — `<FilmGrain stock="kodak-5219" />`, `<Halation />`, `<Bloom />`, `<GateWeave />`, push/pull processing curves, deterministic per-frame grain
 - [ ] BF-502 **Anamorphic & lens character** — oval bokeh, horizontal flares, focus breathing, vintage lens vignetting, depth-of-field with custom blade counts
 - [x] BF-503 **Glitch & datamoshing** — `<Datamosh intensity={0.4} />`, `<FrameDrop probability={0.1} seed={frame} />`, `<ChannelShift />`, deterministic "broken video" aesthetic *(packages/fx/src/glitch.ts: applyDatamosh, applyFrameDrop, applyChannelShift, 13 tests)*
-- [ ] BF-504 **Volumetric & particle systems** — `<ParticleSystem count={5000} noise={perlin} />`, snow/dust/embers, volumetric light rays (god rays)
+- [x] BF-504 **Volumetric & particle systems** — `<ParticleSystem count={5000} noise={perlin} />`, snow/dust/embers, volumetric light rays (god rays) *(packages/fx/src/particles.ts: ParticleSystem, renderParticles, applyGodRays, applyVolumetricDust, 13 tests)*
 
 ### 11.2 Narrative & cinematic
 
