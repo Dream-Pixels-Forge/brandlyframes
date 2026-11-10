@@ -1,25 +1,29 @@
-export interface Beat {
-  frame: number;
-  strength: number;
-}
-
-export interface AudioAnalysis {
-  beats: Beat[];
-  loudness: number[];
-  spectrum: number[][];
-  durationInFrames: number;
-  fps: number;
-}
-
-export interface UseAudioOptions {
-  src: string;
-  fps?: number;
-}
-
-export function analyzeAudio(_src: string, _options?: UseAudioOptions): AudioAnalysis {
-  return { beats: [], loudness: [], spectrum: [], durationInFrames: 0, fps: _options?.fps ?? 30 };
-}
-
-export function getBeatAtFrame(_analysis: AudioAnalysis, _frame: number): Beat | null {
-  return null;
-}
+/**
+ * @brandlyframes/audio-reactive — beat detection, loudness, and spectrum
+ * per frame. Clean-room, deterministic: same WAV + options → same output.
+ *
+ * This module re-exports the analysis API; the React hooks (useAudio) are
+ * in index.tsx.
+ */
+export type {
+  Beat,
+  LoudnessTrack,
+  SpectrumTrack,
+  AudioAnalysis,
+  AnalyzeAudioOptions,
+} from './analysis';
+export { analyzeAudio, getBeatAtFrame } from './analysis';
+export type {
+  WavData,
+  SpectrumFrameOptions,
+  BeatDetectionOptions,
+} from './wav';
+export {
+  decodeWav,
+  fft,
+  nextPow2,
+  spectrumFrames,
+  detectBeats,
+  makeWav,
+  makeBeatedWav,
+} from './wav';
